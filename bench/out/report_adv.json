@@ -1,0 +1,641 @@
+{
+ "mode": "thorough",
+ "sets": {
+  "eval_adversarial": {
+   "role": "held-out",
+   "docs": 160,
+   "chars": 23621,
+   "raw": {
+    "char_precision": 76.22626262626262,
+    "direct_n": 600,
+    "direct_r50": 100.0,
+    "direct_r90": 99.66666666666667,
+    "indirect_n": 108,
+    "indirect_r50": 100.0,
+    "indirect_r90": 100.0,
+    "by": {
+     "coarse": {
+      "NAME": {
+       "n": 224,
+       "r50": 100.0,
+       "r90": 99.55357142857143
+      },
+      "FIN_ID": {
+       "n": 220,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "CONTACT": {
+       "n": 80,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "DATE": {
+       "n": 28,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "GOV_ID": {
+       "n": 24,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "ORG": {
+       "n": 16,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "ADDRESS": {
+       "n": 112,
+       "r50": 100.0,
+       "r90": 99.10714285714286
+      },
+      "SECRET": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      }
+     },
+     "label": {
+      "direct:first_name": {
+       "n": 52,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:last_name": {
+       "n": 36,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:account_number": {
+       "n": 76,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:name": {
+       "n": 132,
+       "r50": 100.0,
+       "r90": 99.24242424242425
+      },
+      "direct:phone_number": {
+       "n": 44,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:date": {
+       "n": 20,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:credit_debit_card": {
+       "n": 32,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:iban": {
+       "n": 60,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:email": {
+       "n": 36,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:customer_id": {
+       "n": 20,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:ssn": {
+       "n": 12,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:company": {
+       "n": 16,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:swift_bic": {
+       "n": 20,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:bank_routing_number": {
+       "n": 12,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:street_address": {
+       "n": 40,
+       "r50": 100.0,
+       "r90": 97.5
+      },
+      "indirect:city": {
+       "n": 40,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:postcode": {
+       "n": 28,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:country": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:password": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:user_name": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:passport_number": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:driver_license_number": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:tax_id": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:date_of_birth": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      }
+     },
+     "doctype": {
+      "common-word names": {
+       "n": 56,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "glued text": {
+       "n": 40,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "masked partials": {
+       "n": 56,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "odd spacing / line breaks": {
+       "n": 44,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "international formats": {
+       "n": 124,
+       "r50": 100.0,
+       "r90": 99.19354838709677
+      },
+      "email threads": {
+       "n": 76,
+       "r50": 100.0,
+       "r90": 98.6842105263158
+      },
+      "SWIFT / FIX": {
+       "n": 64,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "structured keys": {
+       "n": 92,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "prompt injection": {
+       "n": 40,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "coreference": {
+       "n": 48,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "keyword ids": {
+       "n": 24,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "chat log": {
+       "n": 20,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "public bodies / dates": {
+       "n": 24,
+       "r50": 100.0,
+       "r90": 100.0
+      }
+     },
+     "tpl": {
+      "templates also rendered (other values) for training": {
+       "n": 356,
+       "r50": 100.0,
+       "r90": 99.71910112359551
+      },
+      "templates never used in training": {
+       "n": 352,
+       "r50": 100.0,
+       "r90": 99.7159090909091
+      }
+     }
+    },
+    "precision_by_pred": {
+     "NAME": {
+      "pred_chars": 2460,
+      "precision": 90.52845528455285
+     },
+     "tier:direct": {
+      "pred_chars": 10459,
+      "precision": 81.06893584472702
+     },
+     "DEMOGRAPHIC": {
+      "pred_chars": 609,
+      "precision": 0.8210180623973727
+     },
+     "tier:indirect": {
+      "pred_chars": 1916,
+      "precision": 49.791231732776616
+     },
+     "FIN_ID": {
+      "pred_chars": 3544,
+      "precision": 79.57110609480813
+     },
+     "CONTACT": {
+      "pred_chars": 1954,
+      "precision": 96.05936540429887
+     },
+     "DATE": {
+      "pred_chars": 601,
+      "precision": 65.89018302828619
+     },
+     "ORG": {
+      "pred_chars": 706,
+      "precision": 78.328611898017
+     },
+     "SECRET": {
+      "pred_chars": 719,
+      "precision": 12.934631432545201
+     },
+     "ADDRESS": {
+      "pred_chars": 1489,
+      "precision": 82.06850235057085
+     },
+     "GOV_ID": {
+      "pred_chars": 240,
+      "precision": 100.0
+     },
+     "NETWORK": {
+      "pred_chars": 53,
+      "precision": 0.0
+     }
+    }
+   },
+   "policy": {
+    "char_precision": 76.1050505050505,
+    "direct_n": 597,
+    "direct_r50": 100.0,
+    "direct_r90": 99.66499162479062,
+    "indirect_n": 108,
+    "indirect_r50": 100.0,
+    "indirect_r90": 100.0,
+    "by": {
+     "coarse": {
+      "NAME": {
+       "n": 221,
+       "r50": 100.0,
+       "r90": 99.5475113122172
+      },
+      "FIN_ID": {
+       "n": 220,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "CONTACT": {
+       "n": 80,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "DATE": {
+       "n": 28,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "GOV_ID": {
+       "n": 24,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "ORG": {
+       "n": 16,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "ADDRESS": {
+       "n": 112,
+       "r50": 100.0,
+       "r90": 99.10714285714286
+      },
+      "SECRET": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      }
+     },
+     "label": {
+      "direct:first_name": {
+       "n": 52,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:last_name": {
+       "n": 33,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:account_number": {
+       "n": 76,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:name": {
+       "n": 132,
+       "r50": 100.0,
+       "r90": 99.24242424242425
+      },
+      "direct:phone_number": {
+       "n": 44,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:date": {
+       "n": 20,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:credit_debit_card": {
+       "n": 32,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:iban": {
+       "n": 60,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:email": {
+       "n": 36,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:customer_id": {
+       "n": 20,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:ssn": {
+       "n": 12,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:company": {
+       "n": 16,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:swift_bic": {
+       "n": 20,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:bank_routing_number": {
+       "n": 12,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:street_address": {
+       "n": 40,
+       "r50": 100.0,
+       "r90": 97.5
+      },
+      "indirect:city": {
+       "n": 40,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:postcode": {
+       "n": 28,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:country": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:password": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:user_name": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:passport_number": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:driver_license_number": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:tax_id": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:date_of_birth": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      }
+     },
+     "doctype": {
+      "common-word names": {
+       "n": 56,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "glued text": {
+       "n": 40,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "masked partials": {
+       "n": 56,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "odd spacing / line breaks": {
+       "n": 44,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "international formats": {
+       "n": 124,
+       "r50": 100.0,
+       "r90": 99.19354838709677
+      },
+      "email threads": {
+       "n": 76,
+       "r50": 100.0,
+       "r90": 98.6842105263158
+      },
+      "SWIFT / FIX": {
+       "n": 62,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "structured keys": {
+       "n": 92,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "prompt injection": {
+       "n": 40,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "coreference": {
+       "n": 47,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "keyword ids": {
+       "n": 24,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "chat log": {
+       "n": 20,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "public bodies / dates": {
+       "n": 24,
+       "r50": 100.0,
+       "r90": 100.0
+      }
+     },
+     "tpl": {
+      "templates also rendered (other values) for training": {
+       "n": 356,
+       "r50": 100.0,
+       "r90": 99.71910112359551
+      },
+      "templates never used in training": {
+       "n": 349,
+       "r50": 100.0,
+       "r90": 99.7134670487106
+      }
+     }
+    },
+    "precision_by_pred": {
+     "NAME": {
+      "pred_chars": 2460,
+      "precision": 89.91869918699187
+     },
+     "tier:direct": {
+      "pred_chars": 10459,
+      "precision": 80.92551869203557
+     },
+     "DEMOGRAPHIC": {
+      "pred_chars": 609,
+      "precision": 0.8210180623973727
+     },
+     "tier:indirect": {
+      "pred_chars": 1916,
+      "precision": 49.791231732776616
+     },
+     "FIN_ID": {
+      "pred_chars": 3544,
+      "precision": 79.57110609480813
+     },
+     "CONTACT": {
+      "pred_chars": 1954,
+      "precision": 96.05936540429887
+     },
+     "DATE": {
+      "pred_chars": 601,
+      "precision": 65.89018302828619
+     },
+     "ORG": {
+      "pred_chars": 706,
+      "precision": 78.328611898017
+     },
+     "SECRET": {
+      "pred_chars": 719,
+      "precision": 12.934631432545201
+     },
+     "ADDRESS": {
+      "pred_chars": 1489,
+      "precision": 82.06850235057085
+     },
+     "GOV_ID": {
+      "pred_chars": 240,
+      "precision": 100.0
+     },
+     "NETWORK": {
+      "pred_chars": 53,
+      "precision": 0.0
+     }
+    }
+   },
+   "latency_ms": {
+    "p50": 210.302726000009,
+    "p95": 400.7371239999884,
+    "p99": 460.9127720000288,
+    "mean": 240.29747948125504,
+    "per_1k_chars": 1627.6870884806233,
+    "stage_share": {
+     "rules_ms": 0.0010567559605895217,
+     "openmed_ms": 0.11322859007396444,
+     "gliner_ms": 0.8844820247753475,
+     "finalize_ms": 0.0011848150701094966
+    }
+   },
+   "wall_s": 19.556938409805298,
+   "leak_check_failures": 0,
+   "gold_direct_in_output": 0,
+   "gold_direct_values": 592,
+   "docs_with_gold_direct_in_output": 0
+  }
+ },
+ "generated": "2026-11-13 11:35 UTC",
+ "limit": 0,
+ "total_wall_s": 26.956746578216553,
+ "workers": 2,
+ "threads_per_worker": 1
+}

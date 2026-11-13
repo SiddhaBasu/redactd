@@ -1,0 +1,86 @@
+{
+ "models": {
+  "redactd-small": {
+   "kind": "token-classifier",
+   "licence": "MIT (microsoft/deberta-v3-xsmall) + our weights",
+   "megabytes": 95.3,
+   "files": {
+    "config.json": {
+     "sha256": "d5803f0926d57da81ed3184816de2270804f2eee0fedf6da85793d0a1872c9e9",
+     "bytes": 1813
+    },
+    "tokenizer.json": {
+     "sha256": "13e4e0e42d27ab0713dfbb8f9d2680f146bf6043b6f5de70d0ad8c31b014a28e",
+     "bytes": 8339975
+    },
+    "tokenizer_config.json": {
+     "sha256": "ec3c0d2aba6bc40accd1340bc849d65e3a6c239a6cffc6971cb28e3cb0ffa190",
+     "bytes": 646
+    },
+    "onnx/model_quantized.onnx": {
+     "sha256": "17d15c59b059d0754daf088b4b12adc13571148da6225ebcb9d9c3589d24e545",
+     "bytes": 86973188
+    }
+   }
+  },
+  "openmed-small": {
+   "kind": "token-classifier",
+   "licence": "Apache-2.0 (OpenMed)",
+   "megabytes": 180.1,
+   "files": {
+    "config.json": {
+     "sha256": "98a6205e5d01fee6b51e7a21d9c0a088cfa4b082b052b8de9e59538ae2b8a274",
+     "bytes": 6357
+    },
+    "tokenizer.json": {
+     "sha256": "bb5368279be6e174f0ab2d1d69ca93c1729d6b1795782ed6ff7cad049a02d817",
+     "bytes": 8339973
+    },
+    "tokenizer_config.json": {
+     "sha256": "4c04936292349cdb100ea987911843cfce5f4a600812b1c13d642c66195ce2d4",
+     "bytes": 641
+    },
+    "onnx/model_quantized.onnx": {
+     "sha256": "aacc1a8b688743a303e8d020aa09dc2b1b1acb610792d0b6060e6b46980700ff",
+     "bytes": 171750045
+    }
+   }
+  },
+  "gliner": {
+   "kind": "gliner",
+   "licence": "Apache-2.0 (knowledgator/gliner-pii-base-v1.0)",
+   "megabytes": 205.4,
+   "files": {
+    "config.json": {
+     "sha256": "bf5a2c872a58f01663ea6bb99653cfbe67f8075e9bf18b527cec5bea8428e1eb",
+     "bytes": 28
+    },
+    "tokenizer.json": {
+     "sha256": "ee028763434d18611c1c36356ea1d050e90a9fa94ede57fac48b39f85f818ad1",
+     "bytes": 8649232
+    },
+    "tokenizer_config.json": {
+     "sha256": "3ec8a90d8758fbc56d50831990c3a3a65660f020c5b06534adf43b04091ffa9e",
+     "bytes": 1691
+    },
+    "special_tokens_map.json": {
+     "sha256": "b2f1b2f15f29a6b6d9d6ea4eca1675d2c231a71477f151d48f79cc83a625ba21",
+     "bytes": 970
+    },
+    "added_tokens.json": {
+     "sha256": "c358eb74586ab438484d8acf4534f67283b33041bc5ffee6b20a4a075cdc3cd6",
+     "bytes": 65
+    },
+    "gliner_config.json": {
+     "sha256": "e33d3da38e0d369fa7574668d3798ca6c7d2b23cba7d628507112eeb426aaccb",
+     "bytes": 3902
+    },
+    "onnx/model_quint8.onnx": {
+     "sha256": "0514c8fd86d0513ce5351a3267f132b57d5bcd8f99a90d43cde1228092881d19",
+     "bytes": 196757174
+    }
+   }
+  }
+ },
+ "version": "891627dc007c"
+}

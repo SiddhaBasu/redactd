@@ -1,0 +1,43 @@
+# Deploy from the repo root:
+#   bash scripts/fetch_models.sh
+#   fly deploy --config apps/api/fly.toml --dockerfile apps/api/Dockerfile .
+app = "redactd-api"
+primary_region = "iad"            # Ashburn, Virginia (US). Documents are processed here, in memory only.
+
+[deploy]
+  release_command = "alembic upgrade head"
+  strategy = "immediate"          # one machine; no Redis yet, so in-flight jobs are lost on deploy (users rescan)
+
+[env]
+  PRELOAD_MODES = "thorough"
+  REDACTD_STANDARD = "distilled"
+  REDACTD_THOROUGH = "distilled,gliner"
+  MODEL_THREADS = "2"
+  MAX_CONCURRENT_RUNS = "2"
+  LOG_FORMAT = "json"
+  ANON_RATE_PER_MINUTE = "20"
+  RATE_PER_MINUTE = "60"
+# Set by .github/workflows/deploy-api.yml as secrets: IP_SALT (generated once), ALLOWED_ORIGINS, ALLOWED_ORIGIN_REGEX
+# Later: DATABASE_URL (Neon; until then a SQLite file inside the machine, reset on each deploy), REDIS_URL
+# Later, for more than one machine: REDIS_URL
+
+[http_service]
+  internal_port = 8000
+  force_https = true
+  auto_stop_machines = "stop"     # stops when idle (pay only while running); first request after idle waits for a cold start
+  auto_start_machines = true
+  min_machines_running = 0
+  [http_service.concurrency]
+    type = "requests"
+    soft_limit = 6
+    hard_limit = 12
+  [[http_service.checks]]
+    path = "/health"
+    interval = "15s"
+    timeout = "5s"
+    grace_period = "90s"
+
+[[vm]]
+  cpu_kind = "performance"
+  cpus = 2
+  memory = "4gb"                  # measured: ~1 GB resident with both models loaded

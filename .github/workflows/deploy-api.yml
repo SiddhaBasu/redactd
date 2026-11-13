@@ -1,0 +1,79 @@
+# Deploy the API to Fly.io. Manual: Actions -> deploy-api -> Run workflow (or the API / MCP workflow_dispatch).
+# Repo secrets needed: FLY_API_TOKEN (fly tokens create org), HF_TOKEN (read access to the private model repo).
+name: deploy-api
+on:
+  workflow_dispatch:
+    inputs:
+      app:
+        description: Fly app name (becomes https://<app>.fly.dev)
+        default: redactd-api
+      allowed_origins:
+        description: Comma-separated web origins allowed to call the API (production Vercel URL)
+        default: ""
+      allowed_origin_regex:
+        description: Regex for extra origins, e.g. Vercel previews ^https://redactd-[a-z0-9-]+\.vercel\.app$
+        default: ""
+permissions: { contents: read }
+concurrency: { group: deploy-api, cancel-in-progress: false }
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+      APP: ${{ inputs.app }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: superfly/flyctl-actions/setup-flyctl@1.5
+      - name: Check secrets
+        run: |
+          [ -n "$FLY_API_TOKEN" ] || { echo "::error::Add the FLY_API_TOKEN repository secret"; exit 1; }
+          [ -n "${{ secrets.HF_TOKEN }}" ] || { echo "::error::Add the HF_TOKEN repository secret"; exit 1; }
+      - name: Fetch model files (distilled model from the private HF repo, GLiNER from the public one)
+        env: { HF_TOKEN: "${{ secrets.HF_TOKEN }}" }
+        run: bash scripts/fetch_models.sh
+      - name: Model files match the web app's integrity manifest
+        run: |
+          python3 - <<'PY'
+          import hashlib, json, sys
+          m = json.load(open("apps/web/lib/models.manifest.json"))["models"]
+          bad = []
+          for model in ("redactd-small", "gliner"):
+              for f, meta in m[model]["files"].items():
+                  p = f"browser/models/{model}/{f}"
+                  try: h = hashlib.sha256(open(p, "rb").read()).hexdigest()
+                  except FileNotFoundError: bad.append(f"{p}: missing"); continue
+                  if h != meta["sha256"]: bad.append(f"{p}: sha256 differs from apps/web/lib/models.manifest.json")
+          if bad: print("\n".join(bad)); sys.exit("on-device mode would refuse these files: upload the matching model to HF or regenerate the manifest")
+          print("model files match the manifest")
+          PY
+      - name: Create the app if it does not exist
+        run: |
+          if flyctl status --app "$APP" >/dev/null 2>&1; then echo "app $APP exists"; else flyctl apps create "$APP" --org personal; fi
+      - name: Secrets (staged; applied by the deploy)
+        run: |
+          if ! flyctl secrets list --app "$APP" --json | grep -q '"IP_SALT"'; then
+            echo "IP_SALT=$(openssl rand -hex 32)" | flyctl secrets import --app "$APP" --stage
+          fi
+          printf 'ALLOWED_ORIGINS=%s\nALLOWED_ORIGIN_REGEX=%s\n' "${{ inputs.allowed_origins }}" "${{ inputs.allowed_origin_regex }}" | flyctl secrets import --app "$APP" --stage
+      - name: Deploy (remote builder)
+        run: flyctl deploy . --app "$APP" --config apps/api/fly.toml --dockerfile apps/api/Dockerfile --remote-only --ha=false --wait-timeout 10m
+      - name: Smoke test (health, Thorough redaction of the fixture, no fixture values in the output, model files served)
+        run: |
+          URL="https://$APP.fly.dev"
+          for i in $(seq 1 60); do curl -fsS "$URL/health" | grep -q '"thorough"' && break; sleep 5; done
+          curl -fsS "$URL/health"; echo
+          python3 - "$URL" <<'PY'
+          import json, sys, urllib.request
+          url = sys.argv[1]; doc = open("tests/fixtures/wire_recall.txt").read()
+          req = urllib.request.Request(f"{url}/v1/redact", data=json.dumps({"text": doc, "mode": "thorough"}).encode(), headers={"Content-Type": "application/json"})
+          r = json.load(urllib.request.urlopen(req, timeout=120))
+          must = ["Priya", "Raman", "0049821774471", "021000021", "GB82WEST12345698765432", "4111 1111 1111 1111", "123-45-6789", "Okafor"]
+          left = [v for v in must if v in r["output"]]
+          print("findings", r["findings"], "leaks", r["leaks"], "timings", r["timings"])
+          assert not left and r["leaks"] == 0, f"identifiers left in output: {len(left)}"
+          head = urllib.request.urlopen(urllib.request.Request(f"{url}/models/gliner/gliner_config.json", method="GET"), timeout=60)
+          assert head.status == 200 and head.headers.get("Cross-Origin-Resource-Policy") == "cross-origin"
+          print("smoke test passed")
+          PY

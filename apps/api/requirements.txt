@@ -1,0 +1,15 @@
+fastapi>=0.115
+uvicorn[standard]>=0.30
+sqlalchemy>=2.0
+alembic>=1.13
+pg8000>=1.31             # Postgres in production (DATABASE_URL=postgresql+pg8000://...). BSD-3; psycopg is LGPL, so it is not used
+redis>=5.0                # shared job store + rate limiter when REDIS_URL is set
+onnxruntime>=1.20
+tokenizers>=0.20
+numpy>=2.0
+cryptography>=42
+python-multipart>=0.0.9   # file uploads for /v1/extract
+python-docx>=1.1          # .docx (MIT)
+pypdf>=4.0                # text-layer PDF (BSD-3)
+olefile>=0.47             # .msg (BSD-2)
+gliner>=0.2.30            # GLiNER ONNX path (pulls torch CPU; see Dockerfile). Not needed once Thorough no longer uses GLiNER.
