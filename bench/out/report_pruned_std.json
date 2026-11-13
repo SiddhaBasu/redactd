@@ -1,0 +1,6615 @@
+{
+ "mode": "standard",
+ "sets": {
+  "eval_gretel_fin": {
+   "role": "dev",
+   "docs": 200,
+   "chars": 296331,
+   "raw": {
+    "char_precision": 35.410862840784645,
+    "direct_n": 690,
+    "direct_r50": 99.1304347826087,
+    "direct_r90": 98.55072463768116,
+    "indirect_n": 367,
+    "indirect_r50": 97.27520435967303,
+    "indirect_r90": 95.64032697547684,
+    "by": {
+     "coarse": {
+      "ADDRESS": {
+       "n": 200,
+       "r50": 99.5,
+       "r90": 99.0
+      },
+      "NAME": {
+       "n": 304,
+       "r50": 99.67105263157895,
+       "r90": 98.6842105263158
+      },
+      "FIN_ID": {
+       "n": 65,
+       "r50": 96.92307692307692,
+       "r90": 96.92307692307692
+      },
+      "DATE": {
+       "n": 94,
+       "r50": 98.93617021276596,
+       "r90": 97.87234042553192
+      },
+      "ORG": {
+       "n": 284,
+       "r50": 96.47887323943662,
+       "r90": 94.71830985915493
+      },
+      "CONTACT": {
+       "n": 69,
+       "r50": 98.55072463768116,
+       "r90": 98.55072463768116
+      },
+      "NETWORK": {
+       "n": 11,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "GOV_ID": {
+       "n": 19,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "SECRET": {
+       "n": 11,
+       "r50": 100.0,
+       "r90": 100.0
+      }
+     },
+     "label": {
+      "direct:street_address": {
+       "n": 191,
+       "r50": 99.47643979057591,
+       "r90": 98.95287958115183
+      },
+      "direct:local_latlng": {
+       "n": 9,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:name": {
+       "n": 271,
+       "r50": 99.6309963099631,
+       "r90": 98.5239852398524
+      },
+      "direct:swift_bic_code": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:date": {
+       "n": 68,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:company": {
+       "n": 284,
+       "r50": 96.47887323943662,
+       "r90": 94.71830985915493
+      },
+      "direct:email": {
+       "n": 36,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:account_pin": {
+       "n": 12,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:credit_card_number": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:credit_card_security_code": {
+       "n": 10,
+       "r50": 80.0,
+       "r90": 80.0
+      },
+      "direct:ipv6": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:phone_number": {
+       "n": 33,
+       "r50": 96.96969696969697,
+       "r90": 96.96969696969697
+      },
+      "direct:date_of_birth": {
+       "n": 11,
+       "r50": 90.9090909090909,
+       "r90": 90.9090909090909
+      },
+      "indirect:time": {
+       "n": 13,
+       "r50": 100.0,
+       "r90": 92.3076923076923
+      },
+      "direct:employee_id": {
+       "n": 10,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:ssn": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:first_name": {
+       "n": 31,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:passport_number": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:ipv4": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:iban": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:date_time": {
+       "n": 2,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:customer_id": {
+       "n": 9,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:api_key": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:last_name": {
+       "n": 1,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:password": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:bank_routing_number": {
+       "n": 3,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:bban": {
+       "n": 2,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:driver_license_number": {
+       "n": 3,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:user_name": {
+       "n": 1,
+       "r50": 100.0,
+       "r90": 100.0
+      }
+     },
+     "doctype": {
+      "BAI Format": {
+       "n": 50,
+       "r50": 96.0,
+       "r90": 96.0
+      },
+      "CSV": {
+       "n": 21,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "SWIFT Message": {
+       "n": 47,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "MT940": {
+       "n": 17,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "FpML": {
+       "n": 11,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Annual Report": {
+       "n": 10,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Supply Chain Management Agreement": {
+       "n": 29,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "IT support ticket": {
+       "n": 39,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "FIX Protocol": {
+       "n": 29,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Financial Risk Assessment": {
+       "n": 25,
+       "r50": 100.0,
+       "r90": 96.0
+      },
+      "Mortgage Amortization Schedule": {
+       "n": 2,
+       "r50": 50.0,
+       "r90": 50.0
+      },
+      "Loan Agreement": {
+       "n": 10,
+       "r50": 100.0,
+       "r90": 90.0
+      },
+      "Tax Return": {
+       "n": 10,
+       "r50": 100.0,
+       "r90": 90.0
+      },
+      "Financial Statement": {
+       "n": 7,
+       "r50": 85.71428571428571,
+       "r90": 85.71428571428571
+      },
+      "Loan Application": {
+       "n": 101,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Customer support conversational log": {
+       "n": 37,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Credit Card Statement": {
+       "n": 16,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Mortgage Contract": {
+       "n": 5,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Financial Regulatory Compliance Report": {
+       "n": 12,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Business Plan": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Regulatory Compliance Guide": {
+       "n": 25,
+       "r50": 96.0,
+       "r90": 84.0
+      },
+      "Financial Forecast": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Bill of Lading": {
+       "n": 29,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Payment Confirmation": {
+       "n": 31,
+       "r50": 96.7741935483871,
+       "r90": 96.7741935483871
+      },
+      "Audit Report": {
+       "n": 31,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Email": {
+       "n": 16,
+       "r50": 100.0,
+       "r90": 87.5
+      },
+      "Corporate Tax Return": {
+       "n": 1,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Employment Contract": {
+       "n": 17,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Trade Confirmation": {
+       "n": 23,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Bank Statement": {
+       "n": 11,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Policyholder's Report": {
+       "n": 43,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Dispute Resolution Policy": {
+       "n": 15,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Real Estate Loan Agreement": {
+       "n": 14,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Customer Agreement": {
+       "n": 35,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Safety Data Sheet": {
+       "n": 12,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "EDI": {
+       "n": 31,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Pension Plan Agreement": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Transaction Confirmation": {
+       "n": 13,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Investment Prospectus": {
+       "n": 14,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Renewal Reminder": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 83.33333333333333
+      },
+      "Product Disclosure Statement": {
+       "n": 5,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Privacy Policy": {
+       "n": 12,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Insurance Policy": {
+       "n": 24,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Financial Data Feed": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Financial Disclosure Statement": {
+       "n": 21,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "ISDA Definition": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "XBRL": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Shareholder Agreement": {
+       "n": 13,
+       "r50": 30.76923076923077,
+       "r90": 30.76923076923077
+      },
+      "Securities Prospectus": {
+       "n": 11,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Health Insurance Claim Form": {
+       "n": 16,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Regulatory Filing": {
+       "n": 15,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Corporate Governance Guidelines": {
+       "n": 11,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Compliance Certificate": {
+       "n": 21,
+       "r50": 100.0,
+       "r90": 95.23809523809524
+      },
+      "Credit Card Application": {
+       "n": 9,
+       "r50": 88.88888888888889,
+       "r90": 88.88888888888889
+      },
+      "Credit Application": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Financial Aid Application": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      }
+     },
+     "tpl": {}
+    },
+    "precision_by_pred": {
+     "NAME": {
+      "pred_chars": 5275,
+      "precision": 78.65402843601896
+     },
+     "tier:direct": {
+      "pred_chars": 26065,
+      "precision": 47.642432380586996
+     },
+     "DATE": {
+      "pred_chars": 5110,
+      "precision": 24.031311154598825
+     },
+     "tier:indirect": {
+      "pred_chars": 25984,
+      "precision": 23.14116379310345
+     },
+     "DEMOGRAPHIC": {
+      "pred_chars": 12861,
+      "precision": 2.0760438535106136
+     },
+     "SECRET": {
+      "pred_chars": 5277,
+      "precision": 4.623839302634073
+     },
+     "ADDRESS": {
+      "pred_chars": 9527,
+      "precision": 59.55704838878975
+     },
+     "FIN_ID": {
+      "pred_chars": 1773,
+      "precision": 32.14890016920474
+     },
+     "ORG": {
+      "pred_chars": 8013,
+      "precision": 56.38337701235492
+     },
+     "CONTACT": {
+      "pred_chars": 3646,
+      "precision": 37.73998902907296
+     },
+     "NETWORK": {
+      "pred_chars": 357,
+      "precision": 64.70588235294117
+     },
+     "GOV_ID": {
+      "pred_chars": 210,
+      "precision": 82.85714285714286
+     }
+    }
+   },
+   "policy": {
+    "char_precision": 33.706699456281584,
+    "direct_n": 674,
+    "direct_r50": 99.40652818991099,
+    "direct_r90": 99.10979228486647,
+    "indirect_n": 336,
+    "indirect_r50": 100.0,
+    "indirect_r90": 99.4047619047619,
+    "by": {
+     "coarse": {
+      "ADDRESS": {
+       "n": 199,
+       "r50": 99.49748743718592,
+       "r90": 98.99497487437186
+      },
+      "NAME": {
+       "n": 301,
+       "r50": 100.0,
+       "r90": 99.66777408637874
+      },
+      "FIN_ID": {
+       "n": 65,
+       "r50": 96.92307692307692,
+       "r90": 96.92307692307692
+      },
+      "DATE": {
+       "n": 94,
+       "r50": 98.93617021276596,
+       "r90": 97.87234042553192
+      },
+      "ORG": {
+       "n": 253,
+       "r50": 100.0,
+       "r90": 99.60474308300395
+      },
+      "CONTACT": {
+       "n": 57,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "NETWORK": {
+       "n": 11,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "GOV_ID": {
+       "n": 19,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "SECRET": {
+       "n": 11,
+       "r50": 100.0,
+       "r90": 100.0
+      }
+     },
+     "label": {
+      "direct:street_address": {
+       "n": 190,
+       "r50": 99.47368421052632,
+       "r90": 98.94736842105263
+      },
+      "direct:local_latlng": {
+       "n": 9,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:name": {
+       "n": 268,
+       "r50": 100.0,
+       "r90": 99.6268656716418
+      },
+      "direct:swift_bic_code": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:date": {
+       "n": 68,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:company": {
+       "n": 253,
+       "r50": 100.0,
+       "r90": 99.60474308300395
+      },
+      "direct:email": {
+       "n": 27,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:account_pin": {
+       "n": 12,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:credit_card_number": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:credit_card_security_code": {
+       "n": 10,
+       "r50": 80.0,
+       "r90": 80.0
+      },
+      "direct:ipv6": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:date_of_birth": {
+       "n": 11,
+       "r50": 90.9090909090909,
+       "r90": 90.9090909090909
+      },
+      "direct:phone_number": {
+       "n": 30,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:time": {
+       "n": 13,
+       "r50": 100.0,
+       "r90": 92.3076923076923
+      },
+      "direct:employee_id": {
+       "n": 10,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:ssn": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:first_name": {
+       "n": 31,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:passport_number": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:ipv4": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:iban": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:date_time": {
+       "n": 2,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:customer_id": {
+       "n": 9,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:api_key": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:last_name": {
+       "n": 1,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:password": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:bank_routing_number": {
+       "n": 3,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:bban": {
+       "n": 2,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:driver_license_number": {
+       "n": 3,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:user_name": {
+       "n": 1,
+       "r50": 100.0,
+       "r90": 100.0
+      }
+     },
+     "doctype": {
+      "BAI Format": {
+       "n": 50,
+       "r50": 96.0,
+       "r90": 96.0
+      },
+      "CSV": {
+       "n": 19,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "SWIFT Message": {
+       "n": 47,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "MT940": {
+       "n": 17,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "FpML": {
+       "n": 11,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Annual Report": {
+       "n": 10,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Supply Chain Management Agreement": {
+       "n": 28,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "IT support ticket": {
+       "n": 39,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "FIX Protocol": {
+       "n": 29,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Financial Risk Assessment": {
+       "n": 25,
+       "r50": 100.0,
+       "r90": 96.0
+      },
+      "Mortgage Amortization Schedule": {
+       "n": 2,
+       "r50": 50.0,
+       "r90": 50.0
+      },
+      "Loan Agreement": {
+       "n": 9,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Tax Return": {
+       "n": 10,
+       "r50": 100.0,
+       "r90": 90.0
+      },
+      "Financial Statement": {
+       "n": 5,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Loan Application": {
+       "n": 101,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Customer support conversational log": {
+       "n": 37,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Credit Card Statement": {
+       "n": 16,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Mortgage Contract": {
+       "n": 5,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Financial Regulatory Compliance Report": {
+       "n": 12,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Business Plan": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Regulatory Compliance Guide": {
+       "n": 9,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Financial Forecast": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Bill of Lading": {
+       "n": 29,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Payment Confirmation": {
+       "n": 30,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Audit Report": {
+       "n": 31,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Email": {
+       "n": 14,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Corporate Tax Return": {
+       "n": 1,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Employment Contract": {
+       "n": 17,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Trade Confirmation": {
+       "n": 21,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Bank Statement": {
+       "n": 11,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Policyholder's Report": {
+       "n": 34,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Dispute Resolution Policy": {
+       "n": 15,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Real Estate Loan Agreement": {
+       "n": 14,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Customer Agreement": {
+       "n": 35,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Safety Data Sheet": {
+       "n": 12,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "EDI": {
+       "n": 31,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Pension Plan Agreement": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Transaction Confirmation": {
+       "n": 13,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Investment Prospectus": {
+       "n": 14,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Renewal Reminder": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 83.33333333333333
+      },
+      "Product Disclosure Statement": {
+       "n": 5,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Privacy Policy": {
+       "n": 11,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Insurance Policy": {
+       "n": 24,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Financial Data Feed": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Financial Disclosure Statement": {
+       "n": 21,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "ISDA Definition": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "XBRL": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Securities Prospectus": {
+       "n": 11,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Health Insurance Claim Form": {
+       "n": 16,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Shareholder Agreement": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Regulatory Filing": {
+       "n": 15,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Corporate Governance Guidelines": {
+       "n": 11,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Compliance Certificate": {
+       "n": 20,
+       "r50": 100.0,
+       "r90": 95.0
+      },
+      "Credit Card Application": {
+       "n": 9,
+       "r50": 88.88888888888889,
+       "r90": 88.88888888888889
+      },
+      "Credit Application": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Financial Aid Application": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      }
+     },
+     "tpl": {}
+    },
+    "precision_by_pred": {
+     "NAME": {
+      "pred_chars": 5275,
+      "precision": 76.8909952606635
+     },
+     "tier:direct": {
+      "pred_chars": 26065,
+      "precision": 46.192211778246694
+     },
+     "DATE": {
+      "pred_chars": 5110,
+      "precision": 24.031311154598825
+     },
+     "tier:indirect": {
+      "pred_chars": 25984,
+      "precision": 21.182266009852217
+     },
+     "DEMOGRAPHIC": {
+      "pred_chars": 12861,
+      "precision": 1.7961278283181712
+     },
+     "SECRET": {
+      "pred_chars": 5277,
+      "precision": 4.623839302634073
+     },
+     "ADDRESS": {
+      "pred_chars": 9527,
+      "precision": 59.30513278051853
+     },
+     "FIN_ID": {
+      "pred_chars": 1773,
+      "precision": 32.14890016920474
+     },
+     "ORG": {
+      "pred_chars": 8013,
+      "precision": 50.48046923748908
+     },
+     "CONTACT": {
+      "pred_chars": 3646,
+      "precision": 30.581459133296764
+     },
+     "NETWORK": {
+      "pred_chars": 357,
+      "precision": 64.70588235294117
+     },
+     "GOV_ID": {
+      "pred_chars": 210,
+      "precision": 82.85714285714286
+     }
+    }
+   },
+   "latency_ms": {
+    "p50": 156.0644190003586,
+    "p95": 561.5857550001238,
+    "p99": 646.0897870001645,
+    "mean": 175.13427377499283,
+    "per_1k_chars": 118.20179041341798,
+    "stage_share": {
+     "rules_ms": 0.007767575361895094,
+     "distilled_ms": 0.9848897004681861,
+     "finalize_ms": 0.007301072299866831
+    }
+   },
+   "wall_s": 17.687877893447876,
+   "leak_check_failures": 0,
+   "gold_direct_in_output": 3,
+   "gold_direct_values": 513,
+   "docs_with_gold_direct_in_output": 3
+  },
+  "eval_nemotron_fin": {
+   "role": "dev",
+   "docs": 300,
+   "chars": 184527,
+   "raw": {
+    "char_precision": 74.4425688443224,
+    "direct_n": 1412,
+    "direct_r50": 99.92917847025495,
+    "direct_r90": 99.92917847025495,
+    "indirect_n": 657,
+    "indirect_r50": 97.4124809741248,
+    "indirect_r90": 97.10806697108067,
+    "by": {
+     "coarse": {
+      "NETWORK": {
+       "n": 49,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "ORG": {
+       "n": 127,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "CONTACT": {
+       "n": 262,
+       "r50": 99.61832061068702,
+       "r90": 99.61832061068702
+      },
+      "ADDRESS": {
+       "n": 265,
+       "r50": 99.62264150943396,
+       "r90": 99.62264150943396
+      },
+      "FIN_ID": {
+       "n": 480,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "DEMOGRAPHIC": {
+       "n": 158,
+       "r50": 91.13924050632912,
+       "r90": 89.87341772151899
+      },
+      "NAME": {
+       "n": 370,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "GOV_ID": {
+       "n": 103,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "SECRET": {
+       "n": 34,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "DATE": {
+       "n": 221,
+       "r50": 99.09502262443439,
+       "r90": 99.09502262443439
+      }
+     },
+     "label": {
+      "direct:mac_address": {
+       "n": 10,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:ipv4": {
+       "n": 26,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:ipv6": {
+       "n": 10,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:company_name": {
+       "n": 127,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:url": {
+       "n": 81,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:country": {
+       "n": 67,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:customer_id": {
+       "n": 106,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:account_number": {
+       "n": 167,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:political_view": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:education_level": {
+       "n": 14,
+       "r50": 100.0,
+       "r90": 92.85714285714286
+      },
+      "direct:swift_bic": {
+       "n": 29,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:bank_routing_number": {
+       "n": 61,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:credit_debit_card": {
+       "n": 64,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:first_name": {
+       "n": 194,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:last_name": {
+       "n": 144,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:street_address": {
+       "n": 71,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:city": {
+       "n": 35,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:state": {
+       "n": 45,
+       "r50": 97.77777777777777,
+       "r90": 97.77777777777777
+      },
+      "indirect:postcode": {
+       "n": 28,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:ssn": {
+       "n": 25,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:email": {
+       "n": 121,
+       "r50": 99.17355371900827,
+       "r90": 99.17355371900827
+      },
+      "direct:biometric_identifier": {
+       "n": 26,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:http_cookie": {
+       "n": 17,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:time": {
+       "n": 31,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:occupation": {
+       "n": 33,
+       "r50": 93.93939393939394,
+       "r90": 93.93939393939394
+      },
+      "direct:cvv": {
+       "n": 23,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:date": {
+       "n": 137,
+       "r50": 98.54014598540147,
+       "r90": 98.54014598540147
+      },
+      "direct:health_plan_beneficiary_number": {
+       "n": 19,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:phone_number": {
+       "n": 43,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:unique_id": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:employment_status": {
+       "n": 31,
+       "r50": 83.87096774193549,
+       "r90": 80.64516129032258
+      },
+      "indirect:age": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:date_of_birth": {
+       "n": 35,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:user_name": {
+       "n": 32,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:county": {
+       "n": 11,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:certificate_license_number": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:language": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:api_key": {
+       "n": 5,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:tax_id": {
+       "n": 14,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:race_ethnicity": {
+       "n": 20,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:coordinate": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:pin": {
+       "n": 17,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:medical_record_number": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:gender": {
+       "n": 2,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:blood_type": {
+       "n": 17,
+       "r50": 58.8235294117647,
+       "r90": 58.8235294117647
+      },
+      "indirect:religious_belief": {
+       "n": 10,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:fax_number": {
+       "n": 17,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:date_time": {
+       "n": 18,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:password": {
+       "n": 12,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:employee_id": {
+       "n": 9,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:sexuality": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:device_identifier": {
+       "n": 3,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:vehicle_identifier": {
+       "n": 2,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:license_plate": {
+       "n": 2,
+       "r50": 100.0,
+       "r90": 100.0
+      }
+     },
+     "doctype": {
+      "User Account and Transaction Services": {
+       "n": 282,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Insurance": {
+       "n": 214,
+       "r50": 96.26168224299066,
+       "r90": 95.79439252336448
+      },
+      "Banking": {
+       "n": 337,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Credit": {
+       "n": 214,
+       "r50": 98.59813084112149,
+       "r90": 98.59813084112149
+      },
+      "Brokerage": {
+       "n": 279,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Mortgage": {
+       "n": 401,
+       "r50": 98.75311720698254,
+       "r90": 98.50374064837905
+      },
+      "Investment": {
+       "n": 342,
+       "r50": 99.41520467836257,
+       "r90": 99.41520467836257
+      }
+     },
+     "tpl": {}
+    },
+    "precision_by_pred": {
+     "SECRET": {
+      "pred_chars": 2961,
+      "precision": 57.85207700101317
+     },
+     "tier:direct": {
+      "pred_chars": 25782,
+      "precision": 89.19013265068652
+     },
+     "NETWORK": {
+      "pred_chars": 949,
+      "precision": 94.94204425711276
+     },
+     "ORG": {
+      "pred_chars": 3094,
+      "precision": 78.53910795087266
+     },
+     "tier:indirect": {
+      "pred_chars": 13909,
+      "precision": 47.10619023653749
+     },
+     "DEMOGRAPHIC": {
+      "pred_chars": 8216,
+      "precision": 21.45813047711782
+     },
+     "CONTACT": {
+      "pred_chars": 9068,
+      "precision": 99.23908248786942
+     },
+     "ADDRESS": {
+      "pred_chars": 3393,
+      "precision": 82.81756557618627
+     },
+     "FIN_ID": {
+      "pred_chars": 5173,
+      "precision": 97.33230233906824
+     },
+     "NAME": {
+      "pred_chars": 3167,
+      "precision": 79.79160088411746
+     },
+     "GOV_ID": {
+      "pred_chars": 1071,
+      "precision": 94.30438842203549
+     },
+     "DATE": {
+      "pred_chars": 2599,
+      "precision": 90.76567910734899
+     }
+    }
+   },
+   "policy": {
+    "char_precision": 74.42241314151823,
+    "direct_n": 1412,
+    "direct_r50": 99.92917847025495,
+    "direct_r90": 99.92917847025495,
+    "indirect_n": 650,
+    "indirect_r50": 98.46153846153847,
+    "indirect_r90": 98.15384615384616,
+    "by": {
+     "coarse": {
+      "NETWORK": {
+       "n": 49,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "ORG": {
+       "n": 127,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "CONTACT": {
+       "n": 262,
+       "r50": 99.61832061068702,
+       "r90": 99.61832061068702
+      },
+      "ADDRESS": {
+       "n": 265,
+       "r50": 99.62264150943396,
+       "r90": 99.62264150943396
+      },
+      "FIN_ID": {
+       "n": 480,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "DEMOGRAPHIC": {
+       "n": 153,
+       "r50": 94.11764705882354,
+       "r90": 92.81045751633987
+      },
+      "NAME": {
+       "n": 370,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "GOV_ID": {
+       "n": 103,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "SECRET": {
+       "n": 34,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "DATE": {
+       "n": 219,
+       "r50": 100.0,
+       "r90": 100.0
+      }
+     },
+     "label": {
+      "direct:mac_address": {
+       "n": 10,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:ipv4": {
+       "n": 26,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:ipv6": {
+       "n": 10,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:company_name": {
+       "n": 127,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:url": {
+       "n": 81,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:country": {
+       "n": 67,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:customer_id": {
+       "n": 106,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:account_number": {
+       "n": 167,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:political_view": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:education_level": {
+       "n": 14,
+       "r50": 100.0,
+       "r90": 92.85714285714286
+      },
+      "direct:swift_bic": {
+       "n": 29,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:bank_routing_number": {
+       "n": 61,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:credit_debit_card": {
+       "n": 64,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:first_name": {
+       "n": 194,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:last_name": {
+       "n": 144,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:street_address": {
+       "n": 71,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:city": {
+       "n": 35,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:state": {
+       "n": 45,
+       "r50": 97.77777777777777,
+       "r90": 97.77777777777777
+      },
+      "indirect:postcode": {
+       "n": 28,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:ssn": {
+       "n": 25,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:email": {
+       "n": 121,
+       "r50": 99.17355371900827,
+       "r90": 99.17355371900827
+      },
+      "direct:biometric_identifier": {
+       "n": 26,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:http_cookie": {
+       "n": 17,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:time": {
+       "n": 31,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:occupation": {
+       "n": 33,
+       "r50": 93.93939393939394,
+       "r90": 93.93939393939394
+      },
+      "direct:cvv": {
+       "n": 23,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:date": {
+       "n": 135,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:health_plan_beneficiary_number": {
+       "n": 19,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:phone_number": {
+       "n": 43,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:unique_id": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:employment_status": {
+       "n": 26,
+       "r50": 100.0,
+       "r90": 96.15384615384616
+      },
+      "indirect:age": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:date_of_birth": {
+       "n": 35,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:user_name": {
+       "n": 32,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:county": {
+       "n": 11,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:certificate_license_number": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:language": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:api_key": {
+       "n": 5,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:tax_id": {
+       "n": 14,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:race_ethnicity": {
+       "n": 20,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:coordinate": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:pin": {
+       "n": 17,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:medical_record_number": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:gender": {
+       "n": 2,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:blood_type": {
+       "n": 17,
+       "r50": 58.8235294117647,
+       "r90": 58.8235294117647
+      },
+      "indirect:religious_belief": {
+       "n": 10,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:fax_number": {
+       "n": 17,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:date_time": {
+       "n": 18,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:password": {
+       "n": 12,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:employee_id": {
+       "n": 9,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:sexuality": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:device_identifier": {
+       "n": 3,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:vehicle_identifier": {
+       "n": 2,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:license_plate": {
+       "n": 2,
+       "r50": 100.0,
+       "r90": 100.0
+      }
+     },
+     "doctype": {
+      "User Account and Transaction Services": {
+       "n": 282,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Insurance": {
+       "n": 213,
+       "r50": 96.71361502347418,
+       "r90": 96.24413145539906
+      },
+      "Banking": {
+       "n": 337,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Credit": {
+       "n": 212,
+       "r50": 99.52830188679245,
+       "r90": 99.52830188679245
+      },
+      "Brokerage": {
+       "n": 279,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Mortgage": {
+       "n": 398,
+       "r50": 99.49748743718592,
+       "r90": 99.2462311557789
+      },
+      "Investment": {
+       "n": 341,
+       "r50": 99.70674486803519,
+       "r90": 99.70674486803519
+      }
+     },
+     "tpl": {}
+    },
+    "precision_by_pred": {
+     "SECRET": {
+      "pred_chars": 2961,
+      "precision": 57.85207700101317
+     },
+     "tier:direct": {
+      "pred_chars": 25782,
+      "precision": 89.19013265068652
+     },
+     "NETWORK": {
+      "pred_chars": 949,
+      "precision": 94.94204425711276
+     },
+     "ORG": {
+      "pred_chars": 3094,
+      "precision": 78.53910795087266
+     },
+     "tier:indirect": {
+      "pred_chars": 13909,
+      "precision": 47.048673520741964
+     },
+     "DEMOGRAPHIC": {
+      "pred_chars": 8216,
+      "precision": 21.45813047711782
+     },
+     "CONTACT": {
+      "pred_chars": 9068,
+      "precision": 99.23908248786942
+     },
+     "ADDRESS": {
+      "pred_chars": 3393,
+      "precision": 82.81756557618627
+     },
+     "FIN_ID": {
+      "pred_chars": 5173,
+      "precision": 97.33230233906824
+     },
+     "NAME": {
+      "pred_chars": 3167,
+      "precision": 79.79160088411746
+     },
+     "GOV_ID": {
+      "pred_chars": 1071,
+      "precision": 94.30438842203549
+     },
+     "DATE": {
+      "pred_chars": 2599,
+      "precision": 90.45786841092728
+     }
+    }
+   },
+   "latency_ms": {
+    "p50": 39.420756999788864,
+    "p95": 101.55829199993605,
+    "p99": 135.0355969998418,
+    "mean": 47.451078686675224,
+    "per_1k_chars": 77.14493600395913,
+    "stage_share": {
+     "rules_ms": 0.012769062370707613,
+     "distilled_ms": 0.9756499544656914,
+     "finalize_ms": 0.011433223965223272
+    }
+   },
+   "wall_s": 7.2656402587890625,
+   "leak_check_failures": 0,
+   "gold_direct_in_output": 1,
+   "gold_direct_values": 1270,
+   "docs_with_gold_direct_in_output": 1
+  },
+  "dev_nemotron_fin_structured": {
+   "role": "dev",
+   "docs": 200,
+   "chars": 206302,
+   "raw": {
+    "char_precision": 72.49850020523508,
+    "direct_n": 1093,
+    "direct_r50": 99.72552607502287,
+    "direct_r90": 99.45105215004574,
+    "indirect_n": 604,
+    "indirect_r50": 95.19867549668874,
+    "indirect_r90": 92.54966887417218,
+    "by": {
+     "coarse": {
+      "NAME": {
+       "n": 310,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "CONTACT": {
+       "n": 171,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "DATE": {
+       "n": 274,
+       "r50": 97.81021897810218,
+       "r90": 94.8905109489051
+      },
+      "FIN_ID": {
+       "n": 378,
+       "r50": 99.2063492063492,
+       "r90": 99.2063492063492
+      },
+      "ORG": {
+       "n": 135,
+       "r50": 99.25925925925925,
+       "r90": 99.25925925925925
+      },
+      "ADDRESS": {
+       "n": 189,
+       "r50": 93.65079365079364,
+       "r90": 92.06349206349206
+      },
+      "GOV_ID": {
+       "n": 98,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "DEMOGRAPHIC": {
+       "n": 98,
+       "r50": 89.79591836734694,
+       "r90": 84.6938775510204
+      },
+      "NETWORK": {
+       "n": 19,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "SECRET": {
+       "n": 25,
+       "r50": 100.0,
+       "r90": 88.0
+      }
+     },
+     "label": {
+      "direct:first_name": {
+       "n": 164,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:last_name": {
+       "n": 124,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:email": {
+       "n": 82,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:phone_number": {
+       "n": 31,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:date": {
+       "n": 193,
+       "r50": 97.40932642487047,
+       "r90": 93.26424870466322
+      },
+      "direct:bank_routing_number": {
+       "n": 46,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:company_name": {
+       "n": 135,
+       "r50": 99.25925925925925,
+       "r90": 99.25925925925925
+      },
+      "direct:url": {
+       "n": 50,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:customer_id": {
+       "n": 86,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:account_number": {
+       "n": 121,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:credit_debit_card": {
+       "n": 56,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:street_address": {
+       "n": 59,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:ssn": {
+       "n": 27,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:health_plan_beneficiary_number": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:swift_bic": {
+       "n": 13,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:time": {
+       "n": 28,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:pin": {
+       "n": 16,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:county": {
+       "n": 22,
+       "r50": 59.09090909090909,
+       "r90": 50.0
+      },
+      "indirect:religious_belief": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 66.66666666666667
+      },
+      "direct:employee_id": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:occupation": {
+       "n": 29,
+       "r50": 72.41379310344827,
+       "r90": 65.51724137931035
+      },
+      "indirect:employment_status": {
+       "n": 15,
+       "r50": 93.33333333333333,
+       "r90": 93.33333333333333
+      },
+      "indirect:country": {
+       "n": 35,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:coordinate": {
+       "n": 3,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:user_name": {
+       "n": 22,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:certificate_license_number": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:ipv4": {
+       "n": 10,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:ipv6": {
+       "n": 5,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:biometric_identifier": {
+       "n": 25,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:city": {
+       "n": 23,
+       "r50": 100.0,
+       "r90": 95.65217391304348
+      },
+      "indirect:date_time": {
+       "n": 23,
+       "r50": 95.65217391304348,
+       "r90": 95.65217391304348
+      },
+      "direct:cvv": {
+       "n": 27,
+       "r50": 88.88888888888889,
+       "r90": 88.88888888888889
+      },
+      "indirect:blood_type": {
+       "n": 14,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:medical_record_number": {
+       "n": 15,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:unique_id": {
+       "n": 5,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:state": {
+       "n": 28,
+       "r50": 89.28571428571429,
+       "r90": 89.28571428571429
+      },
+      "direct:password": {
+       "n": 12,
+       "r50": 100.0,
+       "r90": 75.0
+      },
+      "direct:date_of_birth": {
+       "n": 30,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:fax_number": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:language": {
+       "n": 8,
+       "r50": 87.5,
+       "r90": 87.5
+      },
+      "direct:national_id": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:gender": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:postcode": {
+       "n": 19,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:education_level": {
+       "n": 3,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:device_identifier": {
+       "n": 2,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:http_cookie": {
+       "n": 9,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:tax_id": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:age": {
+       "n": 5,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:api_key": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:race_ethnicity": {
+       "n": 11,
+       "r50": 100.0,
+       "r90": 90.9090909090909
+      },
+      "indirect:political_view": {
+       "n": 3,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:mac_address": {
+       "n": 2,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:vehicle_identifier": {
+       "n": 2,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:license_plate": {
+       "n": 1,
+       "r50": 100.0,
+       "r90": 100.0
+      }
+     },
+     "doctype": {
+      "Insurance Policy Summary": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Market Analysis": {
+       "n": 15,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "pandemic relief or stimulus claim": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Client Communication Log": {
+       "n": 15,
+       "r50": 100.0,
+       "r90": 86.66666666666667
+      },
+      "Security Agreement": {
+       "n": 5,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Employment Verification": {
+       "n": 9,
+       "r50": 88.88888888888889,
+       "r90": 88.88888888888889
+      },
+      "Title Deed": {
+       "n": 15,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Investment Policy Statement": {
+       "n": 24,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Insurance Compliance Report": {
+       "n": 19,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Address Verification": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Funding Request": {
+       "n": 9,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Investment Objectives": {
+       "n": 22,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Retail Products": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Debit Card Cancellation Form": {
+       "n": 11,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Loan Agreement": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "biometric enrollment form": {
+       "n": 11,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Investment Plan": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "blood bank inventory record": {
+       "n": 21,
+       "r50": 90.47619047619048,
+       "r90": 90.47619047619048
+      },
+      "Affidavit of No Unpaid Maintenance Fees": {
+       "n": 12,
+       "r50": 66.66666666666667,
+       "r90": 66.66666666666667
+      },
+      "Market Analysis Report": {
+       "n": 22,
+       "r50": 90.9090909090909,
+       "r90": 86.36363636363636
+      },
+      "Customer Information Update Form": {
+       "n": 3,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct deposit PIN form": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Policy Renewal Form": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Credit Card Authorization Form": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Risk Transfer Agreement": {
+       "n": 11,
+       "r50": 90.9090909090909,
+       "r90": 90.9090909090909
+      },
+      "Employment assesment": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Market Forecast": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Wire Transfer Instruction Form": {
+       "n": 3,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Personal Identification": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Account Closing Form": {
+       "n": 21,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Affidavit of No Unpaid Assessments": {
+       "n": 32,
+       "r50": 96.875,
+       "r90": 96.875
+      },
+      "income verification letter": {
+       "n": 11,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Fund Prospectus": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Investment Approach": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "disability benefits claim": {
+       "n": 10,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Portfolio Allocation": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Medical Records Release Form": {
+       "n": 25,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Driver License": {
+       "n": 19,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Credit Card Agreement": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Mortgage Services": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Insurance Policy Schedule": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "API biometric identifier payload": {
+       "n": 13,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Credit Card Replacement Form": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Life Insurance Policy": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Commercial Products": {
+       "n": 10,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Tax Exemption Form": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Credit Bureau Report": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Insurance Certificate": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Disability Claim": {
+       "n": 16,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Insurance Claim Form": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Promissory Note": {
+       "n": 16,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Customer Satisfaction Survey": {
+       "n": 10,
+       "r50": 90.0,
+       "r90": 90.0
+      },
+      "Commercial Solutions": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Age verification": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Loss Adjustment Expense": {
+       "n": 14,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Confidentiality Agreement": {
+       "n": 12,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Investment Memorandum": {
+       "n": 11,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Risk Assessment Report": {
+       "n": 11,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Customer Payment Information Sheet": {
+       "n": 5,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Credit Application": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Social Security Card": {
+       "n": 15,
+       "r50": 100.0,
+       "r90": 93.33333333333333
+      },
+      "Credit Limit Increase Form": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Risk Assessment": {
+       "n": 33,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Insurance Endorsement": {
+       "n": 22,
+       "r50": 100.0,
+       "r90": 95.45454545454545
+      },
+      "public housing application": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "termination or resignation notice": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Customer Agreement": {
+       "n": 5,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Account Statement": {
+       "n": 16,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Coverage Comparison Chart": {
+       "n": 10,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Renovation Plan": {
+       "n": 10,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Client Advisory Report": {
+       "n": 15,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Tax Documentation": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Quitclaim Deed": {
+       "n": 20,
+       "r50": 95.0,
+       "r90": 90.0
+      },
+      "Credit Card Statement": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Mortgage Agreement": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "clinical trial participant biometric file": {
+       "n": 17,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Application Setup Guide": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Investment Guidelines": {
+       "n": 11,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Credit Card Authorization": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Legal Correspondence Cover Page": {
+       "n": 4,
+       "r50": 75.0,
+       "r90": 75.0
+      },
+      "Debt Settlement Plan": {
+       "n": 19,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Investment Strategy": {
+       "n": 29,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Manual Payment Request": {
+       "n": 13,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Savings Account": {
+       "n": 8,
+       "r50": 87.5,
+       "r90": 87.5
+      },
+      "Frontend Error Log": {
+       "n": 2,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Loan Approval Form": {
+       "n": 9,
+       "r50": 100.0,
+       "r90": 88.88888888888889
+      },
+      "Credit Card Upgrade Form": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Affidavit of No Unpaid HOA Fees": {
+       "n": 17,
+       "r50": 94.11764705882354,
+       "r90": 94.11764705882354
+      },
+      "Investment Performance": {
+       "n": 12,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Cookie Consent Record": {
+       "n": 11,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Incident Report": {
+       "n": 20,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Insurance Claim Summary": {
+       "n": 10,
+       "r50": 90.0,
+       "r90": 90.0
+      },
+      "Bank Account Closure": {
+       "n": 17,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Due Diligence Report": {
+       "n": 16,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Payment Authorization": {
+       "n": 5,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Insurance Policy Statement": {
+       "n": 3,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Insurance Risk Analysis": {
+       "n": 10,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Risk Management Plan": {
+       "n": 5,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Support Ticket with Payment Details": {
+       "n": 13,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Corporate Products": {
+       "n": 9,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Credit Score Report": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Premium Payment Schedule": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Profit and Loss": {
+       "n": 10,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Analytics Configuration File": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Bank Statement": {
+       "n": 9,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Tax Return": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Investment Forecast": {
+       "n": 22,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Personal Products": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Affidavit of No Unpaid Liabilities": {
+       "n": 19,
+       "r50": 94.73684210526316,
+       "r90": 89.47368421052632
+      },
+      "Income Verification": {
+       "n": 5,
+       "r50": 80.0,
+       "r90": 80.0
+      },
+      "Authorization Form": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Privacy Policy Document": {
+       "n": 9,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Investment Account Opening": {
+       "n": 17,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Debit Card Renewal Form": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Emergency Fund": {
+       "n": 12,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Financial Statement": {
+       "n": 16,
+       "r50": 100.0,
+       "r90": 62.5
+      },
+      "Market Research": {
+       "n": 9,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Tax Planning": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Mortgage Modification": {
+       "n": 5,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "User Tracking Consent Form": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Trade Authorization": {
+       "n": 26,
+       "r50": 96.15384615384616,
+       "r90": 88.46153846153847
+      },
+      "Banking Solutions": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "social security application": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Credit Policy Document": {
+       "n": 27,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Credit Inquiry Form": {
+       "n": 3,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Account Opening Form": {
+       "n": 9,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Affidavit of Title": {
+       "n": 18,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Affidavit of No Fraud": {
+       "n": 14,
+       "r50": 42.857142857142854,
+       "r90": 42.857142857142854
+      },
+      "Investment Review": {
+       "n": 22,
+       "r50": 86.36363636363636,
+       "r90": 81.81818181818181
+      },
+      "tax return form (e.g., IRS 1040)": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Wi-Fi Client Report": {
+       "n": 7,
+       "r50": 85.71428571428571,
+       "r90": 85.71428571428571
+      },
+      "Portfolio Rebalance": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 71.42857142857143
+      },
+      "Credit Solutions": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Tax Form": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "patient biometric ID record": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Investment Proposal": {
+       "n": 20,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "smart lock PIN settings": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Investment Objective": {
+       "n": 11,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Investment Solutions": {
+       "n": 10,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "System Diagnostic Log": {
+       "n": 22,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Affidavit of No Unpaid Property Taxes": {
+       "n": 10,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Affidavit of Property Value": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Credit Authorization": {
+       "n": 10,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Reinsurance Agreement": {
+       "n": 19,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Identity Verification": {
+       "n": 9,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "test registration PIN receipt": {
+       "n": 10,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Client Advisory Note": {
+       "n": 12,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Motor Vehicle Policy": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Asset Allocation": {
+       "n": 9,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Investment Policy": {
+       "n": 12,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Investment Criteria": {
+       "n": 9,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Claim Form": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Insurance Audit Report": {
+       "n": 12,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Retirement Plan": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Credit Banking": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Treasury Department Report": {
+       "n": 11,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Business Contact Information Sheet": {
+       "n": 5,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Loan Modification Agreement": {
+       "n": 16,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Investment Philosophy": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 100.0
+      }
+     },
+     "tpl": {}
+    },
+    "precision_by_pred": {
+     "NAME": {
+      "pred_chars": 2269,
+      "precision": 88.6293521375055
+     },
+     "tier:direct": {
+      "pred_chars": 18363,
+      "precision": 88.85258400043566
+     },
+     "CONTACT": {
+      "pred_chars": 6251,
+      "precision": 97.18445048792194
+     },
+     "DATE": {
+      "pred_chars": 3366,
+      "precision": 86.18538324420678
+     },
+     "tier:indirect": {
+      "pred_chars": 13308,
+      "precision": 49.932371505861134
+     },
+     "FIN_ID": {
+      "pred_chars": 4181,
+      "precision": 94.64243004066013
+     },
+     "ORG": {
+      "pred_chars": 4930,
+      "precision": 58.62068965517241
+     },
+     "DEMOGRAPHIC": {
+      "pred_chars": 5012,
+      "precision": 17.039106145251395
+     },
+     "ADDRESS": {
+      "pred_chars": 2434,
+      "precision": 81.67625308134758
+     },
+     "GOV_ID": {
+      "pred_chars": 844,
+      "precision": 97.51184834123222
+     },
+     "SECRET": {
+      "pred_chars": 2029,
+      "precision": 54.80532281912272
+     },
+     "NETWORK": {
+      "pred_chars": 355,
+      "precision": 98.59154929577464
+     }
+    }
+   },
+   "policy": {
+    "char_precision": 72.25853304284676,
+    "direct_n": 1093,
+    "direct_r50": 99.72552607502287,
+    "direct_r90": 99.45105215004574,
+    "indirect_n": 571,
+    "indirect_r50": 98.77408056042032,
+    "indirect_r90": 97.8984238178634,
+    "by": {
+     "coarse": {
+      "NAME": {
+       "n": 310,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "CONTACT": {
+       "n": 171,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "DATE": {
+       "n": 261,
+       "r50": 99.61685823754789,
+       "r90": 99.61685823754789
+      },
+      "FIN_ID": {
+       "n": 378,
+       "r50": 99.2063492063492,
+       "r90": 99.2063492063492
+      },
+      "ORG": {
+       "n": 135,
+       "r50": 99.25925925925925,
+       "r90": 99.25925925925925
+      },
+      "ADDRESS": {
+       "n": 177,
+       "r50": 99.43502824858757,
+       "r90": 98.30508474576271
+      },
+      "GOV_ID": {
+       "n": 98,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "DEMOGRAPHIC": {
+       "n": 90,
+       "r50": 95.55555555555556,
+       "r90": 92.22222222222223
+      },
+      "NETWORK": {
+       "n": 19,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "SECRET": {
+       "n": 25,
+       "r50": 100.0,
+       "r90": 88.0
+      }
+     },
+     "label": {
+      "direct:first_name": {
+       "n": 164,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:last_name": {
+       "n": 124,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:email": {
+       "n": 82,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:phone_number": {
+       "n": 31,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:date": {
+       "n": 180,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:bank_routing_number": {
+       "n": 46,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:company_name": {
+       "n": 135,
+       "r50": 99.25925925925925,
+       "r90": 99.25925925925925
+      },
+      "direct:url": {
+       "n": 50,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:customer_id": {
+       "n": 86,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:account_number": {
+       "n": 121,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:credit_debit_card": {
+       "n": 56,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:street_address": {
+       "n": 59,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:ssn": {
+       "n": 27,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:health_plan_beneficiary_number": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:swift_bic": {
+       "n": 13,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:time": {
+       "n": 28,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:pin": {
+       "n": 16,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:county": {
+       "n": 12,
+       "r50": 100.0,
+       "r90": 91.66666666666667
+      },
+      "indirect:religious_belief": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 66.66666666666667
+      },
+      "direct:employee_id": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:occupation": {
+       "n": 22,
+       "r50": 86.36363636363636,
+       "r90": 86.36363636363636
+      },
+      "indirect:employment_status": {
+       "n": 14,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:country": {
+       "n": 35,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:coordinate": {
+       "n": 3,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:user_name": {
+       "n": 22,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:certificate_license_number": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:ipv4": {
+       "n": 10,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:ipv6": {
+       "n": 5,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:biometric_identifier": {
+       "n": 25,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:city": {
+       "n": 23,
+       "r50": 100.0,
+       "r90": 95.65217391304348
+      },
+      "indirect:date_time": {
+       "n": 23,
+       "r50": 95.65217391304348,
+       "r90": 95.65217391304348
+      },
+      "direct:cvv": {
+       "n": 27,
+       "r50": 88.88888888888889,
+       "r90": 88.88888888888889
+      },
+      "indirect:blood_type": {
+       "n": 14,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:medical_record_number": {
+       "n": 15,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:unique_id": {
+       "n": 5,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:password": {
+       "n": 12,
+       "r50": 100.0,
+       "r90": 75.0
+      },
+      "direct:date_of_birth": {
+       "n": 30,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:fax_number": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:language": {
+       "n": 8,
+       "r50": 87.5,
+       "r90": 87.5
+      },
+      "direct:national_id": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:gender": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:state": {
+       "n": 26,
+       "r50": 96.15384615384616,
+       "r90": 96.15384615384616
+      },
+      "indirect:postcode": {
+       "n": 19,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:education_level": {
+       "n": 3,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:device_identifier": {
+       "n": 2,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:http_cookie": {
+       "n": 9,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:tax_id": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:age": {
+       "n": 5,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:api_key": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:race_ethnicity": {
+       "n": 11,
+       "r50": 100.0,
+       "r90": 90.9090909090909
+      },
+      "indirect:political_view": {
+       "n": 3,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:mac_address": {
+       "n": 2,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:vehicle_identifier": {
+       "n": 2,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:license_plate": {
+       "n": 1,
+       "r50": 100.0,
+       "r90": 100.0
+      }
+     },
+     "doctype": {
+      "Insurance Policy Summary": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Market Analysis": {
+       "n": 15,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "pandemic relief or stimulus claim": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Client Communication Log": {
+       "n": 15,
+       "r50": 100.0,
+       "r90": 86.66666666666667
+      },
+      "Security Agreement": {
+       "n": 5,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Employment Verification": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Title Deed": {
+       "n": 15,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Investment Policy Statement": {
+       "n": 24,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Insurance Compliance Report": {
+       "n": 19,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Address Verification": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Funding Request": {
+       "n": 9,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Investment Objectives": {
+       "n": 22,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Retail Products": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Debit Card Cancellation Form": {
+       "n": 11,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Loan Agreement": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "biometric enrollment form": {
+       "n": 11,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Investment Plan": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "blood bank inventory record": {
+       "n": 19,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Affidavit of No Unpaid Maintenance Fees": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Market Analysis Report": {
+       "n": 19,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Customer Information Update Form": {
+       "n": 3,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct deposit PIN form": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Policy Renewal Form": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Credit Card Authorization Form": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Risk Transfer Agreement": {
+       "n": 11,
+       "r50": 90.9090909090909,
+       "r90": 90.9090909090909
+      },
+      "Employment assesment": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Market Forecast": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Wire Transfer Instruction Form": {
+       "n": 3,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Personal Identification": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Account Closing Form": {
+       "n": 21,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Affidavit of No Unpaid Assessments": {
+       "n": 32,
+       "r50": 96.875,
+       "r90": 96.875
+      },
+      "income verification letter": {
+       "n": 11,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Fund Prospectus": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Investment Approach": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "disability benefits claim": {
+       "n": 10,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Portfolio Allocation": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Medical Records Release Form": {
+       "n": 25,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Driver License": {
+       "n": 19,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Credit Card Agreement": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Mortgage Services": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Insurance Policy Schedule": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "API biometric identifier payload": {
+       "n": 13,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Credit Card Replacement Form": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Life Insurance Policy": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Commercial Products": {
+       "n": 10,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Tax Exemption Form": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Credit Bureau Report": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Insurance Certificate": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Disability Claim": {
+       "n": 16,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Insurance Claim Form": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Promissory Note": {
+       "n": 16,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Customer Satisfaction Survey": {
+       "n": 9,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Commercial Solutions": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Age verification": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Loss Adjustment Expense": {
+       "n": 14,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Confidentiality Agreement": {
+       "n": 12,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Investment Memorandum": {
+       "n": 11,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Risk Assessment Report": {
+       "n": 11,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Customer Payment Information Sheet": {
+       "n": 5,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Credit Application": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Social Security Card": {
+       "n": 15,
+       "r50": 100.0,
+       "r90": 93.33333333333333
+      },
+      "Credit Limit Increase Form": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Risk Assessment": {
+       "n": 33,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Insurance Endorsement": {
+       "n": 22,
+       "r50": 100.0,
+       "r90": 95.45454545454545
+      },
+      "public housing application": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "termination or resignation notice": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Customer Agreement": {
+       "n": 5,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Account Statement": {
+       "n": 16,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Coverage Comparison Chart": {
+       "n": 10,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Renovation Plan": {
+       "n": 10,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Client Advisory Report": {
+       "n": 15,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Tax Documentation": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Quitclaim Deed": {
+       "n": 18,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Credit Card Statement": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Mortgage Agreement": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "clinical trial participant biometric file": {
+       "n": 17,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Application Setup Guide": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Investment Guidelines": {
+       "n": 11,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Credit Card Authorization": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Legal Correspondence Cover Page": {
+       "n": 4,
+       "r50": 75.0,
+       "r90": 75.0
+      },
+      "Debt Settlement Plan": {
+       "n": 19,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Investment Strategy": {
+       "n": 29,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Manual Payment Request": {
+       "n": 13,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Savings Account": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Frontend Error Log": {
+       "n": 2,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Loan Approval Form": {
+       "n": 9,
+       "r50": 100.0,
+       "r90": 88.88888888888889
+      },
+      "Credit Card Upgrade Form": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Affidavit of No Unpaid HOA Fees": {
+       "n": 16,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Investment Performance": {
+       "n": 12,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Cookie Consent Record": {
+       "n": 11,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Incident Report": {
+       "n": 20,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Insurance Claim Summary": {
+       "n": 10,
+       "r50": 90.0,
+       "r90": 90.0
+      },
+      "Bank Account Closure": {
+       "n": 17,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Due Diligence Report": {
+       "n": 16,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Payment Authorization": {
+       "n": 5,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Insurance Policy Statement": {
+       "n": 3,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Insurance Risk Analysis": {
+       "n": 10,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Risk Management Plan": {
+       "n": 5,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Support Ticket with Payment Details": {
+       "n": 13,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Corporate Products": {
+       "n": 9,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Credit Score Report": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Premium Payment Schedule": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Profit and Loss": {
+       "n": 10,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Analytics Configuration File": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Bank Statement": {
+       "n": 9,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Tax Return": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Investment Forecast": {
+       "n": 22,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Personal Products": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Affidavit of No Unpaid Liabilities": {
+       "n": 19,
+       "r50": 94.73684210526316,
+       "r90": 89.47368421052632
+      },
+      "Income Verification": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Authorization Form": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Privacy Policy Document": {
+       "n": 9,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Investment Account Opening": {
+       "n": 17,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Debit Card Renewal Form": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Emergency Fund": {
+       "n": 12,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Financial Statement": {
+       "n": 10,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Market Research": {
+       "n": 9,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Tax Planning": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Mortgage Modification": {
+       "n": 5,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "User Tracking Consent Form": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Trade Authorization": {
+       "n": 24,
+       "r50": 95.83333333333333,
+       "r90": 95.83333333333333
+      },
+      "Banking Solutions": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "social security application": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Credit Policy Document": {
+       "n": 27,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Credit Inquiry Form": {
+       "n": 3,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Account Opening Form": {
+       "n": 9,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Affidavit of Title": {
+       "n": 18,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Affidavit of No Fraud": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Investment Review": {
+       "n": 21,
+       "r50": 85.71428571428571,
+       "r90": 85.71428571428571
+      },
+      "tax return form (e.g., IRS 1040)": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Wi-Fi Client Report": {
+       "n": 7,
+       "r50": 85.71428571428571,
+       "r90": 85.71428571428571
+      },
+      "Portfolio Rebalance": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 71.42857142857143
+      },
+      "Credit Solutions": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Tax Form": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "patient biometric ID record": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Investment Proposal": {
+       "n": 20,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "smart lock PIN settings": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Investment Objective": {
+       "n": 11,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Investment Solutions": {
+       "n": 10,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "System Diagnostic Log": {
+       "n": 22,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Affidavit of No Unpaid Property Taxes": {
+       "n": 10,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Affidavit of Property Value": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Credit Authorization": {
+       "n": 10,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Reinsurance Agreement": {
+       "n": 19,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Identity Verification": {
+       "n": 9,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "test registration PIN receipt": {
+       "n": 10,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Client Advisory Note": {
+       "n": 12,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Motor Vehicle Policy": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Asset Allocation": {
+       "n": 9,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Investment Policy": {
+       "n": 12,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Investment Criteria": {
+       "n": 9,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Claim Form": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Insurance Audit Report": {
+       "n": 12,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Retirement Plan": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Credit Banking": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Treasury Department Report": {
+       "n": 11,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Business Contact Information Sheet": {
+       "n": 5,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Loan Modification Agreement": {
+       "n": 16,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Investment Philosophy": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 100.0
+      }
+     },
+     "tpl": {}
+    },
+    "precision_by_pred": {
+     "NAME": {
+      "pred_chars": 2269,
+      "precision": 88.6293521375055
+     },
+     "tier:direct": {
+      "pred_chars": 18363,
+      "precision": 88.78723520121984
+     },
+     "CONTACT": {
+      "pred_chars": 6251,
+      "precision": 97.18445048792194
+     },
+     "DATE": {
+      "pred_chars": 3366,
+      "precision": 84.87819370172312
+     },
+     "tier:indirect": {
+      "pred_chars": 13308,
+      "precision": 49.45145776976255
+     },
+     "FIN_ID": {
+      "pred_chars": 4181,
+      "precision": 94.64243004066013
+     },
+     "ORG": {
+      "pred_chars": 4930,
+      "precision": 58.62068965517241
+     },
+     "DEMOGRAPHIC": {
+      "pred_chars": 5012,
+      "precision": 16.640063846767756
+     },
+     "ADDRESS": {
+      "pred_chars": 2434,
+      "precision": 81.18323746918652
+     },
+     "GOV_ID": {
+      "pred_chars": 844,
+      "precision": 97.51184834123222
+     },
+     "SECRET": {
+      "pred_chars": 2029,
+      "precision": 54.80532281912272
+     },
+     "NETWORK": {
+      "pred_chars": 355,
+      "precision": 98.59154929577464
+     }
+    }
+   },
+   "latency_ms": {
+    "p50": 89.51771400006692,
+    "p95": 571.1496129997613,
+    "p99": 608.8646629996219,
+    "mean": 139.85386163997646,
+    "per_1k_chars": 135.5816828144918,
+    "stage_share": {
+     "rules_ms": 0.007027281037884121,
+     "distilled_ms": 0.9878272237174046,
+     "finalize_ms": 0.0050984381241483455
+    }
+   },
+   "wall_s": 14.156302213668823,
+   "leak_check_failures": 0,
+   "gold_direct_in_output": 1,
+   "gold_direct_values": 824,
+   "docs_with_gold_direct_in_output": 1
+  },
+  "eval_gretel_fin_holdout": {
+   "role": "held-out",
+   "docs": 300,
+   "chars": 419736,
+   "raw": {
+    "char_precision": 32.73654433112484,
+    "direct_n": 962,
+    "direct_r50": 98.85654885654886,
+    "direct_r90": 97.71309771309771,
+    "indirect_n": 551,
+    "indirect_r50": 96.00725952813067,
+    "indirect_r90": 94.1923774954628,
+    "by": {
+     "coarse": {
+      "ORG": {
+       "n": 437,
+       "r50": 95.65217391304348,
+       "r90": 93.59267734553775
+      },
+      "NAME": {
+       "n": 439,
+       "r50": 99.08883826879271,
+       "r90": 98.17767653758543
+      },
+      "DATE": {
+       "n": 130,
+       "r50": 97.6923076923077,
+       "r90": 96.92307692307692
+      },
+      "ADDRESS": {
+       "n": 244,
+       "r50": 97.95081967213115,
+       "r90": 96.72131147540983
+      },
+      "FIN_ID": {
+       "n": 94,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "CONTACT": {
+       "n": 125,
+       "r50": 98.4,
+       "r90": 95.2
+      },
+      "NETWORK": {
+       "n": 19,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "GOV_ID": {
+       "n": 15,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "SECRET": {
+       "n": 10,
+       "r50": 100.0,
+       "r90": 100.0
+      }
+     },
+     "label": {
+      "indirect:company": {
+       "n": 437,
+       "r50": 95.65217391304348,
+       "r90": 93.59267734553775
+      },
+      "direct:name": {
+       "n": 406,
+       "r50": 99.01477832512315,
+       "r90": 98.0295566502463
+      },
+      "indirect:date": {
+       "n": 85,
+       "r50": 98.82352941176471,
+       "r90": 97.6470588235294
+      },
+      "direct:street_address": {
+       "n": 240,
+       "r50": 97.91666666666667,
+       "r90": 96.66666666666667
+      },
+      "direct:bban": {
+       "n": 14,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:first_name": {
+       "n": 14,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:swift_bic_code": {
+       "n": 18,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:last_name": {
+       "n": 16,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:phone_number": {
+       "n": 81,
+       "r50": 97.53086419753086,
+       "r90": 96.29629629629629
+      },
+      "indirect:time": {
+       "n": 25,
+       "r50": 92.0,
+       "r90": 92.0
+      },
+      "direct:email": {
+       "n": 44,
+       "r50": 100.0,
+       "r90": 93.18181818181819
+      },
+      "direct:customer_id": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:local_latlng": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:ipv6": {
+       "n": 12,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:bank_routing_number": {
+       "n": 11,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:ipv4": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:date_of_birth": {
+       "n": 16,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:user_name": {
+       "n": 3,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:passport_number": {
+       "n": 5,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:api_key": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:password": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:ssn": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:iban": {
+       "n": 14,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:employee_id": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:credit_card_security_code": {
+       "n": 5,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:credit_card_number": {
+       "n": 9,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:account_pin": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:date_time": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:driver_license_number": {
+       "n": 2,
+       "r50": 100.0,
+       "r90": 100.0
+      }
+     },
+     "doctype": {
+      "Business Plan": {
+       "n": 61,
+       "r50": 93.44262295081967,
+       "r90": 93.44262295081967
+      },
+      "MT940": {
+       "n": 16,
+       "r50": 81.25,
+       "r90": 81.25
+      },
+      "Payment Confirmation": {
+       "n": 42,
+       "r50": 100.0,
+       "r90": 97.61904761904762
+      },
+      "Regulatory Filing": {
+       "n": 33,
+       "r50": 96.96969696969697,
+       "r90": 96.96969696969697
+      },
+      "BAI Format": {
+       "n": 20,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Credit Card Application": {
+       "n": 19,
+       "r50": 94.73684210526316,
+       "r90": 94.73684210526316
+      },
+      "Safety Data Sheet": {
+       "n": 36,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Health Insurance Claim Form": {
+       "n": 65,
+       "r50": 96.92307692307692,
+       "r90": 96.92307692307692
+      },
+      "Financial Risk Assessment": {
+       "n": 22,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Financial Statement": {
+       "n": 33,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "ISDA Definition": {
+       "n": 61,
+       "r50": 95.08196721311475,
+       "r90": 86.88524590163935
+      },
+      "Product Disclosure Statement": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 75.0
+      },
+      "Insurance Policy": {
+       "n": 30,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Policyholder's Report": {
+       "n": 43,
+       "r50": 93.02325581395348,
+       "r90": 93.02325581395348
+      },
+      "Mortgage Amortization Schedule": {
+       "n": 10,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Loan Application": {
+       "n": 73,
+       "r50": 100.0,
+       "r90": 98.63013698630137
+      },
+      "FpML": {
+       "n": 38,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Employment Contract": {
+       "n": 14,
+       "r50": 92.85714285714286,
+       "r90": 92.85714285714286
+      },
+      "CSV": {
+       "n": 89,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Bill of Lading": {
+       "n": 98,
+       "r50": 97.95918367346938,
+       "r90": 95.91836734693878
+      },
+      "Insurance Claim Form": {
+       "n": 48,
+       "r50": 97.91666666666667,
+       "r90": 97.91666666666667
+      },
+      "Email": {
+       "n": 34,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Credit Card Statement": {
+       "n": 13,
+       "r50": 92.3076923076923,
+       "r90": 92.3076923076923
+      },
+      "IT support ticket": {
+       "n": 74,
+       "r50": 98.64864864864865,
+       "r90": 97.29729729729729
+      },
+      "Trade Confirmation": {
+       "n": 37,
+       "r50": 100.0,
+       "r90": 97.29729729729729
+      },
+      "Financial Aid Application": {
+       "n": 38,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Pension Plan Agreement": {
+       "n": 11,
+       "r50": 90.9090909090909,
+       "r90": 90.9090909090909
+      },
+      "Cryptocurrency Transaction Report": {
+       "n": 15,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "SWIFT Message": {
+       "n": 38,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Real Estate Loan Agreement": {
+       "n": 13,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "EDI": {
+       "n": 31,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Credit Application": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Dispute Resolution Policy": {
+       "n": 11,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Corporate Governance Guidelines": {
+       "n": 21,
+       "r50": 100.0,
+       "r90": 90.47619047619048
+      },
+      "FIX Protocol": {
+       "n": 17,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Supply Chain Management Agreement": {
+       "n": 6,
+       "r50": 66.66666666666667,
+       "r90": 50.0
+      },
+      "Audit Report": {
+       "n": 15,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Tax Assessment Notice": {
+       "n": 18,
+       "r50": 83.33333333333333,
+       "r90": 77.77777777777777
+      },
+      "Compliance Certificate": {
+       "n": 22,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Tax Return": {
+       "n": 24,
+       "r50": 95.83333333333333,
+       "r90": 91.66666666666667
+      },
+      "Customer Agreement": {
+       "n": 7,
+       "r50": 85.71428571428571,
+       "r90": 85.71428571428571
+      },
+      "Financial Disclosure Statement": {
+       "n": 13,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "XBRL": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Corporate Tax Return": {
+       "n": 11,
+       "r50": 100.0,
+       "r90": 90.9090909090909
+      },
+      "Currency Exchange Rate Sheet": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Customer support conversational log": {
+       "n": 36,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Financial Forecast": {
+       "n": 21,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Annual Report": {
+       "n": 9,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Securities Prospectus": {
+       "n": 2,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Privacy Policy": {
+       "n": 21,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Renewal Reminder": {
+       "n": 19,
+       "r50": 100.0,
+       "r90": 94.73684210526316
+      },
+      "Investment Prospectus": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Shareholder Agreement": {
+       "n": 2,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Financial Regulatory Compliance Report": {
+       "n": 16,
+       "r50": 93.75,
+       "r90": 87.5
+      },
+      "Mortgage Contract": {
+       "n": 8,
+       "r50": 87.5,
+       "r90": 87.5
+      },
+      "Regulatory Compliance Guide": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Bank Statement": {
+       "n": 12,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Financial Data Feed": {
+       "n": 1,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Loan Agreement": {
+       "n": 5,
+       "r50": 100.0,
+       "r90": 100.0
+      }
+     },
+     "tpl": {}
+    },
+    "precision_by_pred": {
+     "DEMOGRAPHIC": {
+      "pred_chars": 19737,
+      "precision": 3.181841211936971
+     },
+     "tier:indirect": {
+      "pred_chars": 40038,
+      "precision": 21.619461511564015
+     },
+     "ORG": {
+      "pred_chars": 11609,
+      "precision": 55.26746489792402
+     },
+     "ADDRESS": {
+      "pred_chars": 14942,
+      "precision": 46.252175076964264
+     },
+     "tier:direct": {
+      "pred_chars": 40560,
+      "precision": 43.71055226824458
+     },
+     "NAME": {
+      "pred_chars": 8507,
+      "precision": 75.3497120018808
+     },
+     "SECRET": {
+      "pred_chars": 6420,
+      "precision": 4.906542056074766
+     },
+     "FIN_ID": {
+      "pred_chars": 2772,
+      "precision": 41.883116883116884
+     },
+     "CONTACT": {
+      "pred_chars": 7035,
+      "precision": 31.54228855721393
+     },
+     "DATE": {
+      "pred_chars": 8692,
+      "precision": 18.54578923147722
+     },
+     "NETWORK": {
+      "pred_chars": 677,
+      "precision": 83.01329394387001
+     },
+     "GOV_ID": {
+      "pred_chars": 207,
+      "precision": 72.94685990338164
+     }
+    }
+   },
+   "policy": {
+    "char_precision": 31.63105784262637,
+    "direct_n": 939,
+    "direct_r50": 99.46751863684771,
+    "direct_r90": 99.14802981895633,
+    "indirect_n": 497,
+    "indirect_r50": 98.39034205231388,
+    "indirect_r90": 97.78672032193158,
+    "by": {
+     "coarse": {
+      "ORG": {
+       "n": 384,
+       "r50": 98.4375,
+       "r90": 97.91666666666667
+      },
+      "NAME": {
+       "n": 434,
+       "r50": 99.30875576036867,
+       "r90": 99.07834101382488
+      },
+      "DATE": {
+       "n": 129,
+       "r50": 98.44961240310077,
+       "r90": 97.67441860465117
+      },
+      "ADDRESS": {
+       "n": 238,
+       "r50": 99.15966386554622,
+       "r90": 98.31932773109244
+      },
+      "FIN_ID": {
+       "n": 94,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "CONTACT": {
+       "n": 113,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "NETWORK": {
+       "n": 19,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "GOV_ID": {
+       "n": 15,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "SECRET": {
+       "n": 10,
+       "r50": 100.0,
+       "r90": 100.0
+      }
+     },
+     "label": {
+      "indirect:company": {
+       "n": 384,
+       "r50": 98.4375,
+       "r90": 97.91666666666667
+      },
+      "direct:name": {
+       "n": 401,
+       "r50": 99.25187032418953,
+       "r90": 99.00249376558604
+      },
+      "indirect:date": {
+       "n": 84,
+       "r50": 100.0,
+       "r90": 98.80952380952381
+      },
+      "direct:street_address": {
+       "n": 234,
+       "r50": 99.14529914529915,
+       "r90": 98.2905982905983
+      },
+      "direct:bban": {
+       "n": 14,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:first_name": {
+       "n": 14,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:swift_bic_code": {
+       "n": 18,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:last_name": {
+       "n": 16,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:phone_number": {
+       "n": 76,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:time": {
+       "n": 25,
+       "r50": 92.0,
+       "r90": 92.0
+      },
+      "direct:email": {
+       "n": 37,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:customer_id": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:local_latlng": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:ipv6": {
+       "n": 12,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:bank_routing_number": {
+       "n": 11,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:ipv4": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:date_of_birth": {
+       "n": 16,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:user_name": {
+       "n": 3,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:passport_number": {
+       "n": 5,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:api_key": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:password": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:ssn": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:iban": {
+       "n": 14,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:employee_id": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:credit_card_security_code": {
+       "n": 5,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:credit_card_number": {
+       "n": 9,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:account_pin": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:date_time": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:driver_license_number": {
+       "n": 2,
+       "r50": 100.0,
+       "r90": 100.0
+      }
+     },
+     "doctype": {
+      "Business Plan": {
+       "n": 57,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "MT940": {
+       "n": 16,
+       "r50": 81.25,
+       "r90": 81.25
+      },
+      "Payment Confirmation": {
+       "n": 41,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Regulatory Filing": {
+       "n": 31,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "BAI Format": {
+       "n": 20,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Credit Card Application": {
+       "n": 18,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Safety Data Sheet": {
+       "n": 36,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Health Insurance Claim Form": {
+       "n": 64,
+       "r50": 96.875,
+       "r90": 96.875
+      },
+      "Financial Risk Assessment": {
+       "n": 22,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Financial Statement": {
+       "n": 33,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Product Disclosure Statement": {
+       "n": 5,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Insurance Policy": {
+       "n": 30,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Policyholder's Report": {
+       "n": 38,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Mortgage Amortization Schedule": {
+       "n": 10,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Loan Application": {
+       "n": 71,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "FpML": {
+       "n": 38,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Employment Contract": {
+       "n": 13,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "CSV": {
+       "n": 89,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Bill of Lading": {
+       "n": 97,
+       "r50": 97.9381443298969,
+       "r90": 95.87628865979381
+      },
+      "Insurance Claim Form": {
+       "n": 47,
+       "r50": 97.87234042553192,
+       "r90": 97.87234042553192
+      },
+      "Email": {
+       "n": 34,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Credit Card Statement": {
+       "n": 13,
+       "r50": 92.3076923076923,
+       "r90": 92.3076923076923
+      },
+      "IT support ticket": {
+       "n": 71,
+       "r50": 98.59154929577464,
+       "r90": 97.1830985915493
+      },
+      "Trade Confirmation": {
+       "n": 37,
+       "r50": 100.0,
+       "r90": 97.29729729729729
+      },
+      "Financial Aid Application": {
+       "n": 37,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Pension Plan Agreement": {
+       "n": 11,
+       "r50": 90.9090909090909,
+       "r90": 90.9090909090909
+      },
+      "Cryptocurrency Transaction Report": {
+       "n": 15,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "SWIFT Message": {
+       "n": 38,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Real Estate Loan Agreement": {
+       "n": 13,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "EDI": {
+       "n": 31,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Credit Application": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Dispute Resolution Policy": {
+       "n": 10,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Corporate Governance Guidelines": {
+       "n": 19,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "FIX Protocol": {
+       "n": 17,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Supply Chain Management Agreement": {
+       "n": 3,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Audit Report": {
+       "n": 15,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Tax Assessment Notice": {
+       "n": 14,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Compliance Certificate": {
+       "n": 22,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Tax Return": {
+       "n": 23,
+       "r50": 100.0,
+       "r90": 95.65217391304348
+      },
+      "Customer Agreement": {
+       "n": 7,
+       "r50": 85.71428571428571,
+       "r90": 85.71428571428571
+      },
+      "XBRL": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "ISDA Definition": {
+       "n": 39,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Corporate Tax Return": {
+       "n": 10,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Currency Exchange Rate Sheet": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Customer support conversational log": {
+       "n": 36,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Financial Forecast": {
+       "n": 21,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Annual Report": {
+       "n": 9,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Securities Prospectus": {
+       "n": 2,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Privacy Policy": {
+       "n": 18,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Renewal Reminder": {
+       "n": 18,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Investment Prospectus": {
+       "n": 2,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Shareholder Agreement": {
+       "n": 2,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Financial Regulatory Compliance Report": {
+       "n": 16,
+       "r50": 93.75,
+       "r90": 87.5
+      },
+      "Mortgage Contract": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Financial Disclosure Statement": {
+       "n": 11,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Bank Statement": {
+       "n": 12,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Financial Data Feed": {
+       "n": 1,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Loan Agreement": {
+       "n": 5,
+       "r50": 100.0,
+       "r90": 100.0
+      }
+     },
+     "tpl": {}
+    },
+    "precision_by_pred": {
+     "DEMOGRAPHIC": {
+      "pred_chars": 19737,
+      "precision": 1.8087855297157622
+     },
+     "tier:indirect": {
+      "pred_chars": 40038,
+      "precision": 20.00849193266397
+     },
+     "ORG": {
+      "pred_chars": 11609,
+      "precision": 52.04582651391162
+     },
+     "ADDRESS": {
+      "pred_chars": 14942,
+      "precision": 46.16517199839379
+     },
+     "tier:direct": {
+      "pred_chars": 40560,
+      "precision": 43.104043392504934
+     },
+     "NAME": {
+      "pred_chars": 8507,
+      "precision": 75.19689667332784
+     },
+     "SECRET": {
+      "pred_chars": 6420,
+      "precision": 4.626168224299065
+     },
+     "FIN_ID": {
+      "pred_chars": 2772,
+      "precision": 41.883116883116884
+     },
+     "CONTACT": {
+      "pred_chars": 7035,
+      "precision": 28.67093105899076
+     },
+     "DATE": {
+      "pred_chars": 8692,
+      "precision": 18.54578923147722
+     },
+     "NETWORK": {
+      "pred_chars": 677,
+      "precision": 83.01329394387001
+     },
+     "GOV_ID": {
+      "pred_chars": 207,
+      "precision": 72.94685990338164
+     }
+    }
+   },
+   "latency_ms": {
+    "p50": 145.87166300043464,
+    "p95": 543.7184579996028,
+    "p99": 658.4421730003669,
+    "mean": 170.91063054333367,
+    "per_1k_chars": 122.15580546581684,
+    "stage_share": {
+     "rules_ms": 0.007822653545685095,
+     "distilled_ms": 0.9846571797885691,
+     "finalize_ms": 0.007479857743556723
+    }
+   },
+   "wall_s": 25.715054988861084,
+   "leak_check_failures": 0,
+   "gold_direct_in_output": 5,
+   "gold_direct_values": 773,
+   "docs_with_gold_direct_in_output": 5
+  },
+  "eval_fin_holdout2": {
+   "role": "held-out",
+   "docs": 300,
+   "chars": 428381,
+   "raw": {
+    "char_precision": 34.362763590951076,
+    "direct_n": 902,
+    "direct_r50": 99.1130820399113,
+    "direct_r90": 98.33702882483371,
+    "indirect_n": 554,
+    "indirect_r50": 92.7797833935018,
+    "indirect_r90": 91.33574007220217,
+    "by": {
+     "coarse": {
+      "ADDRESS": {
+       "n": 271,
+       "r50": 98.8929889298893,
+       "r90": 97.0479704797048
+      },
+      "FIN_ID": {
+       "n": 96,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "NAME": {
+       "n": 396,
+       "r50": 98.98989898989899,
+       "r90": 98.98989898989899
+      },
+      "ORG": {
+       "n": 413,
+       "r50": 91.04116222760291,
+       "r90": 89.34624697336562
+      },
+      "GOV_ID": {
+       "n": 21,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "DATE": {
+       "n": 156,
+       "r50": 97.43589743589743,
+       "r90": 96.7948717948718
+      },
+      "CONTACT": {
+       "n": 81,
+       "r50": 100.0,
+       "r90": 97.53086419753086
+      },
+      "SECRET": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "NETWORK": {
+       "n": 15,
+       "r50": 100.0,
+       "r90": 100.0
+      }
+     },
+     "label": {
+      "direct:street_address": {
+       "n": 267,
+       "r50": 98.87640449438203,
+       "r90": 97.00374531835206
+      },
+      "direct:bban": {
+       "n": 16,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:name": {
+       "n": 376,
+       "r50": 98.93617021276596,
+       "r90": 98.93617021276596
+      },
+      "indirect:company": {
+       "n": 413,
+       "r50": 91.04116222760291,
+       "r90": 89.34624697336562
+      },
+      "direct:passport_number": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:date_time": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:email": {
+       "n": 32,
+       "r50": 100.0,
+       "r90": 96.875
+      },
+      "direct:phone_number": {
+       "n": 49,
+       "r50": 100.0,
+       "r90": 97.95918367346938
+      },
+      "direct:password": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:date_of_birth": {
+       "n": 15,
+       "r50": 93.33333333333333,
+       "r90": 93.33333333333333
+      },
+      "indirect:date": {
+       "n": 110,
+       "r50": 99.0909090909091,
+       "r90": 99.0909090909091
+      },
+      "direct:local_latlng": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:customer_id": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:ipv4": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:ipv6": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:credit_card_number": {
+       "n": 10,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:employee_id": {
+       "n": 21,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:ssn": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:bank_routing_number": {
+       "n": 10,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:swift_bic_code": {
+       "n": 15,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:first_name": {
+       "n": 5,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:api_key": {
+       "n": 3,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:time": {
+       "n": 24,
+       "r50": 91.66666666666667,
+       "r90": 87.5
+      },
+      "direct:credit_card_security_code": {
+       "n": 5,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:account_pin": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:last_name": {
+       "n": 10,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:driver_license_number": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:iban": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:user_name": {
+       "n": 5,
+       "r50": 100.0,
+       "r90": 100.0
+      }
+     },
+     "doctype": {
+      "EDI": {
+       "n": 19,
+       "r50": 94.73684210526316,
+       "r90": 94.73684210526316
+      },
+      "Financial Statement": {
+       "n": 10,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "CSV": {
+       "n": 66,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Trade Confirmation": {
+       "n": 13,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Annual Report": {
+       "n": 24,
+       "r50": 95.83333333333333,
+       "r90": 91.66666666666667
+      },
+      "ISDA Definition": {
+       "n": 26,
+       "r50": 88.46153846153847,
+       "r90": 88.46153846153847
+      },
+      "Investment Prospectus": {
+       "n": 34,
+       "r50": 94.11764705882354,
+       "r90": 94.11764705882354
+      },
+      "Credit Card Statement": {
+       "n": 36,
+       "r50": 91.66666666666667,
+       "r90": 86.11111111111111
+      },
+      "Financial Aid Application": {
+       "n": 17,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Audit Report": {
+       "n": 32,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "IT support ticket": {
+       "n": 54,
+       "r50": 100.0,
+       "r90": 96.29629629629629
+      },
+      "Loan Application": {
+       "n": 44,
+       "r50": 100.0,
+       "r90": 97.72727272727273
+      },
+      "BAI Format": {
+       "n": 32,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Real Estate Loan Agreement": {
+       "n": 29,
+       "r50": 96.55172413793103,
+       "r90": 96.55172413793103
+      },
+      "Compliance Certificate": {
+       "n": 27,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "XBRL": {
+       "n": 21,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Financial Regulatory Compliance Report": {
+       "n": 10,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Regulatory Filing": {
+       "n": 18,
+       "r50": 100.0,
+       "r90": 94.44444444444444
+      },
+      "Credit Application": {
+       "n": 17,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Customer Agreement": {
+       "n": 15,
+       "r50": 86.66666666666667,
+       "r90": 86.66666666666667
+      },
+      "FIX Protocol": {
+       "n": 31,
+       "r50": 96.7741935483871,
+       "r90": 93.54838709677419
+      },
+      "Privacy Policy": {
+       "n": 12,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Customer support conversational log": {
+       "n": 49,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Insurance Policy": {
+       "n": 91,
+       "r50": 98.9010989010989,
+       "r90": 98.9010989010989
+      },
+      "Health Insurance Claim Form": {
+       "n": 45,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Corporate Tax Return": {
+       "n": 17,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Email": {
+       "n": 22,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Payment Confirmation": {
+       "n": 64,
+       "r50": 96.875,
+       "r90": 96.875
+      },
+      "Insurance Claim Form": {
+       "n": 25,
+       "r50": 96.0,
+       "r90": 96.0
+      },
+      "Bill of Lading": {
+       "n": 86,
+       "r50": 100.0,
+       "r90": 98.83720930232558
+      },
+      "Shareholder Agreement": {
+       "n": 35,
+       "r50": 74.28571428571429,
+       "r90": 74.28571428571429
+      },
+      "Safety Data Sheet": {
+       "n": 30,
+       "r50": 83.33333333333333,
+       "r90": 83.33333333333333
+      },
+      "Employment Contract": {
+       "n": 19,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Tax Return": {
+       "n": 30,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Currency Exchange Rate Sheet": {
+       "n": 5,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "SWIFT Message": {
+       "n": 31,
+       "r50": 100.0,
+       "r90": 93.54838709677419
+      },
+      "Dispute Resolution Policy": {
+       "n": 1,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Financial Data Feed": {
+       "n": 10,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Bank Statement": {
+       "n": 16,
+       "r50": 93.75,
+       "r90": 93.75
+      },
+      "Tax Assessment Notice": {
+       "n": 21,
+       "r50": 80.95238095238095,
+       "r90": 80.95238095238095
+      },
+      "Business Plan": {
+       "n": 5,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Product Disclosure Statement": {
+       "n": 19,
+       "r50": 78.94736842105263,
+       "r90": 73.6842105263158
+      },
+      "Loan Agreement": {
+       "n": 14,
+       "r50": 92.85714285714286,
+       "r90": 92.85714285714286
+      },
+      "Supply Chain Management Agreement": {
+       "n": 22,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Policyholder's Report": {
+       "n": 29,
+       "r50": 89.65517241379311,
+       "r90": 82.75862068965517
+      },
+      "Regulatory Compliance Guide": {
+       "n": 9,
+       "r50": 88.88888888888889,
+       "r90": 88.88888888888889
+      },
+      "Financial Risk Assessment": {
+       "n": 20,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Renewal Reminder": {
+       "n": 13,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Financial Disclosure Statement": {
+       "n": 14,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "MT940": {
+       "n": 25,
+       "r50": 96.0,
+       "r90": 96.0
+      },
+      "FpML": {
+       "n": 13,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Securities Prospectus": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Financial Forecast": {
+       "n": 13,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Transaction Confirmation": {
+       "n": 28,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Mortgage Amortization Schedule": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Mortgage Contract": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Pension Plan Agreement": {
+       "n": 5,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Corporate Governance Guidelines": {
+       "n": 11,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Credit Card Application": {
+       "n": 10,
+       "r50": 90.0,
+       "r90": 80.0
+      }
+     },
+     "tpl": {}
+    },
+    "precision_by_pred": {
+     "DEMOGRAPHIC": {
+      "pred_chars": 16472,
+      "precision": 3.6364740165128704
+     },
+     "tier:indirect": {
+      "pred_chars": 36311,
+      "precision": 24.689488033929113
+     },
+     "SECRET": {
+      "pred_chars": 6660,
+      "precision": 2.6126126126126126
+     },
+     "tier:direct": {
+      "pred_chars": 40560,
+      "precision": 43.02268244575937
+     },
+     "CONTACT": {
+      "pred_chars": 6911,
+      "precision": 21.617710895673564
+     },
+     "FIN_ID": {
+      "pred_chars": 2574,
+      "precision": 41.686091686091686
+     },
+     "ADDRESS": {
+      "pred_chars": 15285,
+      "precision": 52.96041871115472
+     },
+     "NAME": {
+      "pred_chars": 8368,
+      "precision": 71.65391969407266
+     },
+     "DATE": {
+      "pred_chars": 7912,
+      "precision": 24.48179979777553
+     },
+     "ORG": {
+      "pred_chars": 11927,
+      "precision": 53.90290936530561
+     },
+     "NETWORK": {
+      "pred_chars": 452,
+      "precision": 89.82300884955752
+     },
+     "GOV_ID": {
+      "pred_chars": 310,
+      "precision": 68.38709677419355
+     }
+    }
+   },
+   "policy": {
+    "char_precision": 33.88403949473794,
+    "direct_n": 886,
+    "direct_r50": 99.66139954853273,
+    "direct_r90": 99.09706546275395,
+    "indirect_n": 530,
+    "indirect_r50": 95.66037735849056,
+    "indirect_r90": 94.33962264150944,
+    "by": {
+     "coarse": {
+      "ADDRESS": {
+       "n": 268,
+       "r50": 100.0,
+       "r90": 98.13432835820896
+      },
+      "FIN_ID": {
+       "n": 96,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "NAME": {
+       "n": 390,
+       "r50": 99.48717948717949,
+       "r90": 99.48717948717949
+      },
+      "ORG": {
+       "n": 390,
+       "r50": 94.61538461538461,
+       "r90": 93.07692307692308
+      },
+      "GOV_ID": {
+       "n": 21,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "DATE": {
+       "n": 155,
+       "r50": 98.06451612903226,
+       "r90": 97.41935483870968
+      },
+      "CONTACT": {
+       "n": 74,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "SECRET": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "NETWORK": {
+       "n": 15,
+       "r50": 100.0,
+       "r90": 100.0
+      }
+     },
+     "label": {
+      "direct:street_address": {
+       "n": 264,
+       "r50": 100.0,
+       "r90": 98.10606060606061
+      },
+      "direct:bban": {
+       "n": 16,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:name": {
+       "n": 370,
+       "r50": 99.45945945945945,
+       "r90": 99.45945945945945
+      },
+      "indirect:company": {
+       "n": 390,
+       "r50": 94.61538461538461,
+       "r90": 93.07692307692308
+      },
+      "direct:passport_number": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:date_time": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:email": {
+       "n": 26,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:phone_number": {
+       "n": 48,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:password": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:date_of_birth": {
+       "n": 15,
+       "r50": 93.33333333333333,
+       "r90": 93.33333333333333
+      },
+      "indirect:date": {
+       "n": 109,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:local_latlng": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:customer_id": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:ipv4": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:ipv6": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:credit_card_number": {
+       "n": 10,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:employee_id": {
+       "n": 21,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:ssn": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:bank_routing_number": {
+       "n": 10,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:swift_bic_code": {
+       "n": 15,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:first_name": {
+       "n": 5,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:api_key": {
+       "n": 3,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:time": {
+       "n": 24,
+       "r50": 91.66666666666667,
+       "r90": 87.5
+      },
+      "direct:credit_card_security_code": {
+       "n": 5,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:account_pin": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:last_name": {
+       "n": 10,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:driver_license_number": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:iban": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:user_name": {
+       "n": 5,
+       "r50": 100.0,
+       "r90": 100.0
+      }
+     },
+     "doctype": {
+      "EDI": {
+       "n": 18,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Financial Statement": {
+       "n": 10,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "CSV": {
+       "n": 66,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Trade Confirmation": {
+       "n": 13,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Annual Report": {
+       "n": 24,
+       "r50": 95.83333333333333,
+       "r90": 91.66666666666667
+      },
+      "ISDA Definition": {
+       "n": 22,
+       "r50": 95.45454545454545,
+       "r90": 95.45454545454545
+      },
+      "Investment Prospectus": {
+       "n": 32,
+       "r50": 96.875,
+       "r90": 96.875
+      },
+      "Credit Card Statement": {
+       "n": 36,
+       "r50": 91.66666666666667,
+       "r90": 86.11111111111111
+      },
+      "Financial Aid Application": {
+       "n": 17,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Audit Report": {
+       "n": 32,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "IT support ticket": {
+       "n": 53,
+       "r50": 100.0,
+       "r90": 96.22641509433963
+      },
+      "Loan Application": {
+       "n": 43,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "BAI Format": {
+       "n": 32,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Real Estate Loan Agreement": {
+       "n": 28,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Compliance Certificate": {
+       "n": 27,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "XBRL": {
+       "n": 21,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Financial Regulatory Compliance Report": {
+       "n": 10,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Regulatory Filing": {
+       "n": 18,
+       "r50": 100.0,
+       "r90": 94.44444444444444
+      },
+      "Credit Application": {
+       "n": 17,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Customer Agreement": {
+       "n": 15,
+       "r50": 86.66666666666667,
+       "r90": 86.66666666666667
+      },
+      "FIX Protocol": {
+       "n": 31,
+       "r50": 96.7741935483871,
+       "r90": 93.54838709677419
+      },
+      "Privacy Policy": {
+       "n": 12,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Customer support conversational log": {
+       "n": 47,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Insurance Policy": {
+       "n": 90,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Health Insurance Claim Form": {
+       "n": 45,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Corporate Tax Return": {
+       "n": 17,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Email": {
+       "n": 21,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Payment Confirmation": {
+       "n": 61,
+       "r50": 96.72131147540983,
+       "r90": 96.72131147540983
+      },
+      "Insurance Claim Form": {
+       "n": 25,
+       "r50": 96.0,
+       "r90": 96.0
+      },
+      "Bill of Lading": {
+       "n": 86,
+       "r50": 100.0,
+       "r90": 98.83720930232558
+      },
+      "Safety Data Sheet": {
+       "n": 30,
+       "r50": 83.33333333333333,
+       "r90": 83.33333333333333
+      },
+      "Employment Contract": {
+       "n": 19,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Tax Return": {
+       "n": 30,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Currency Exchange Rate Sheet": {
+       "n": 5,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "SWIFT Message": {
+       "n": 31,
+       "r50": 100.0,
+       "r90": 93.54838709677419
+      },
+      "Dispute Resolution Policy": {
+       "n": 1,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Financial Data Feed": {
+       "n": 10,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Bank Statement": {
+       "n": 15,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Tax Assessment Notice": {
+       "n": 19,
+       "r50": 89.47368421052632,
+       "r90": 89.47368421052632
+      },
+      "Business Plan": {
+       "n": 5,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Product Disclosure Statement": {
+       "n": 16,
+       "r50": 87.5,
+       "r90": 87.5
+      },
+      "Loan Agreement": {
+       "n": 13,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Supply Chain Management Agreement": {
+       "n": 22,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Regulatory Compliance Guide": {
+       "n": 7,
+       "r50": 85.71428571428571,
+       "r90": 85.71428571428571
+      },
+      "Financial Risk Assessment": {
+       "n": 20,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Policyholder's Report": {
+       "n": 28,
+       "r50": 92.85714285714286,
+       "r90": 85.71428571428571
+      },
+      "Renewal Reminder": {
+       "n": 13,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Shareholder Agreement": {
+       "n": 24,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Financial Disclosure Statement": {
+       "n": 14,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "MT940": {
+       "n": 25,
+       "r50": 96.0,
+       "r90": 96.0
+      },
+      "FpML": {
+       "n": 13,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Securities Prospectus": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Transaction Confirmation": {
+       "n": 28,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Mortgage Amortization Schedule": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Mortgage Contract": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Financial Forecast": {
+       "n": 12,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Pension Plan Agreement": {
+       "n": 5,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Corporate Governance Guidelines": {
+       "n": 11,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Credit Card Application": {
+       "n": 9,
+       "r50": 88.88888888888889,
+       "r90": 88.88888888888889
+      }
+     },
+     "tpl": {}
+    },
+    "precision_by_pred": {
+     "DEMOGRAPHIC": {
+      "pred_chars": 16472,
+      "precision": 2.9079650315687227
+     },
+     "tier:indirect": {
+      "pred_chars": 36311,
+      "precision": 24.15796865963482
+     },
+     "SECRET": {
+      "pred_chars": 6660,
+      "precision": 2.6126126126126126
+     },
+     "tier:direct": {
+      "pred_chars": 40560,
+      "precision": 42.591222879684416
+     },
+     "CONTACT": {
+      "pred_chars": 6911,
+      "precision": 19.505136738532773
+     },
+     "FIN_ID": {
+      "pred_chars": 2574,
+      "precision": 41.686091686091686
+     },
+     "ADDRESS": {
+      "pred_chars": 15285,
+      "precision": 52.809944389924766
+     },
+     "NAME": {
+      "pred_chars": 8368,
+      "precision": 71.58221797323135
+     },
+     "DATE": {
+      "pred_chars": 7912,
+      "precision": 24.48179979777553
+     },
+     "ORG": {
+      "pred_chars": 11927,
+      "precision": 53.29085268718035
+     },
+     "NETWORK": {
+      "pred_chars": 452,
+      "precision": 89.82300884955752
+     },
+     "GOV_ID": {
+      "pred_chars": 310,
+      "precision": 68.38709677419355
+     }
+    }
+   },
+   "latency_ms": {
+    "p50": 161.64947700053744,
+    "p95": 542.095867000171,
+    "p99": 606.5210799997658,
+    "mean": 170.35206185000789,
+    "per_1k_chars": 119.2994520181856,
+    "stage_share": {
+     "rules_ms": 0.007821832379695642,
+     "distilled_ms": 0.9845121573049164,
+     "finalize_ms": 0.0076249145204730214
+    }
+   },
+   "wall_s": 25.704557180404663,
+   "leak_check_failures": 0,
+   "gold_direct_in_output": 3,
+   "gold_direct_values": 720,
+   "docs_with_gold_direct_in_output": 3
+  }
+ },
+ "generated": "2026-11-13 18:04 UTC",
+ "limit": 0,
+ "total_wall_s": 91.88881850242615,
+ "workers": 2,
+ "threads_per_worker": 1
+}
