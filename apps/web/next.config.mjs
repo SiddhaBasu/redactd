@@ -3,6 +3,11 @@ const ortWasm = new URL("./node_modules/gliner/node_modules/onnxruntime-web/dist
 
 const nextConfig = {
   // Cross-origin isolation enables multi-threaded WASM (SharedArrayBuffer) for the in-browser models.
+  // Dev/preview convenience: when NEXT_PUBLIC_API_URL=/api, proxy API calls through this origin.
+  async rewrites() {
+    const target = process.env.API_PROXY_TARGET;
+    return target ? [{ source: "/api/:path*", destination: `${target}/:path*` }] : [];
+  },
   async headers() {
     return [{
       source: "/:path*",
