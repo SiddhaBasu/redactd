@@ -132,7 +132,7 @@ function passesFilters(text: string, sp: Span, o: Options, allow: Set<string>): 
   if (o.excludeTypes.includes(sp.type)) return false;
   if (allow.size && allow.has(normTerm(v))) return false;
   if (sp.source === "manual" || sp.source === "custom") return true;
-  if (GENERIC.has(normTerm(v))) return false;
+  if (GENERIC.has(normTerm(v)) && !(sp.type === "NAME" && v.length > 0 && isUpper(v[0]) && COMMON.has(normTerm(v)))) return false;   // "Banks" can be a surname
   if (o.orgAllowlist && sp.type === "ORG" && isPublicBody(v)) return false;
   if (o.dropNonpersonalDates && sp.type === "DATE" && isNonpersonalDate(v)) return false;
   return true;
@@ -288,6 +288,20 @@ export function keepLast4(text: string, spans: Span[]): Span[] {
   return out;
 }
 
+const PLACEHOLDER = /\[[A-Z_]+_[0-9a-f]+\]/g;
+/** Drop findings that sit inside a placeholder the document already contains ("[NAME_1]" from an earlier redaction). */
+function outsidePlaceholders(text: string, spans: Span[]): Span[] {
+  if (!text.includes("[")) return spans;
+  const toks: [number, number][] = [];
+  for (const m of text.matchAll(PLACEHOLDER)) toks.push([m.index!, m.index! + m[0].length]);
+  if (!toks.length) return spans;
+  return spans.filter((sp) => {
+    let lo = 0, hi = toks.length;
+    while (lo < hi) { const mid = (lo + hi) >> 1; if (toks[mid][0] <= sp.start) lo = mid + 1; else hi = mid; }
+    return !(lo > 0 && sp.end <= toks[lo - 1][1] && sp.source !== "manual" && sp.source !== "custom");
+  });
+}
+
 // ---------------------------------------------------------------- the whole post-processing chain
 export function finalize(text: string, raw: Span[], opts: Partial<Options> = {}): Span[] {
   const o: Options = { ...DEFAULT_OPTIONS, ...opts };
@@ -298,8 +312,8 @@ export function finalize(text: string, raw: Span[], opts: Partial<Options> = {})
     if (e <= s || !aboveThreshold(sp, o)) continue;
     kept.push(mk(s, e, sp.type, sp.source, sp.score ?? null, sp.label, [...(sp.why ?? [])], [...(sp.sources ?? [])]));
   }
-  const merged = mergeSpans(text, dropUnsupported(kept, o)).filter((sp) => passesFilters(text, sp, o, allow));
-  let out = propagate(text, merged).filter((sp) => passesFilters(text, sp, o, allow));
+  const merged = mergeSpans(text, dropUnsupported(outsidePlaceholders(text, kept), o)).filter((sp) => passesFilters(text, sp, o, allow));
+  let out = outsidePlaceholders(text, propagate(text, merged)).filter((sp) => passesFilters(text, sp, o, allow));
   out = applyTerms(text, out, o.customTerms, o.allowTerms);
   if (o.keepLast4) out = keepLast4(text, out);
   const res: Span[] = [];
@@ -318,11 +332,16 @@ export function render(text: string, spans: Span[], style: OutputStyle = "placeh
   const merged = mergeSpans(text, spans);
   const out: string[] = [], vault: Record<string, string> = {}, counters: Record<string, number> = {}, seen = new Map<string, string>();
   const marks: [number, number][] = [];
+  const taken = new Set(text.match(PLACEHOLDER) ?? []);   // placeholders the document already contains must not be reused
   let last = 0, len = 0;
   for (const sp of merged) {
     const val = text.slice(sp.start, sp.end), key = sp.type + "\u0000" + val;
     let ph = seen.get(key);
-    if (!ph) { counters[sp.type] = (counters[sp.type] ?? 0) + 1; ph = `[${sp.type}_${counters[sp.type]}]`; seen.set(key, ph); vault[ph] = val; }
+    if (!ph) {
+      counters[sp.type] = (counters[sp.type] ?? 0) + 1;
+      while (taken.has(`[${sp.type}_${counters[sp.type]}]`)) counters[sp.type]++;
+      ph = `[${sp.type}_${counters[sp.type]}]`; seen.set(key, ph); vault[ph] = val;
+    }
     const rep = style === "placeholder" ? ph : style === "label" ? `[${sp.type}]` : "█".repeat(6);
     const before = text.slice(last, sp.start);
     out.push(before, rep); len += before.length; marks.push([len, len + rep.length]); len += rep.length; last = sp.end;
@@ -370,14 +389,18 @@ export function convertOffsets<T extends { start: number; end: number }>(text: s
 /** Replacement string for each finding (indexed by position in `spans`, which must be sorted and non-overlapping):
  *  the same strings render() would write. Rejected findings get "". Used by the diff view. */
 export function replacementsFor(text: string, spans: (Span & { accepted?: boolean })[], style: OutputStyle): string[] {
-  const counters: Record<string, number> = {}, seen = new Map<string, string>();
+  const counters: Record<string, number> = {}, seen = new Map<string, string>(), taken = new Set(text.match(PLACEHOLDER) ?? []);
   return spans.map((sp) => {
     if (sp.accepted === false) return "";
     if (style === "block") return "█".repeat(6);
     if (style === "label") return `[${sp.type}]`;
     const key = sp.type + "\u0000" + text.slice(sp.start, sp.end);
     let ph = seen.get(key);
-    if (!ph) { counters[sp.type] = (counters[sp.type] ?? 0) + 1; ph = `[${sp.type}_${counters[sp.type]}]`; seen.set(key, ph); }
+    if (!ph) {
+      counters[sp.type] = (counters[sp.type] ?? 0) + 1;
+      while (taken.has(`[${sp.type}_${counters[sp.type]}]`)) counters[sp.type]++;
+      ph = `[${sp.type}_${counters[sp.type]}]`; seen.set(key, ph);
+    }
     return ph;
   });
 }

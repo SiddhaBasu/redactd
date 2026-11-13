@@ -26,7 +26,7 @@ SETS = [  # (name, role, description)
     ("eval_fin_holdout2", "held-out", "Gretel finance test, 300 more docs, never inspected"),
     ("eval_nemotron_fin_structured", "held-out", "Nemotron finance, structured format, 300 docs"),
     ("eval_gretel_en", "held-out", "Gretel general-domain PII, 300 docs (labels recovered by exact match)"),
-    ("eval_adversarial", "held-out", "Synthetic hard cases, 160 docs (half the templates unseen in training)"),
+    ("eval_adversarial", "regression", "Synthetic hard cases, 160 docs. Rules WERE tuned on it: an acceptance suite, not a held-out set"),
     ("eval_gretel_fin", "dev", "Gretel finance test, 200 docs — used for tuning"),
     ("eval_nemotron_fin", "dev", "Nemotron finance, unstructured, 300 docs — used for tuning; optimistic"),
     ("dev_nemotron_fin_structured", "dev", "Nemotron finance, structured, 200 docs — used for tuning"),
@@ -150,7 +150,8 @@ def render(rep):
          "Recall = share of gold identifiers with ≥50% / ≥90% of their characters redacted. Precision = share of redacted characters that fall inside a gold span "
          "(Gretel leaves real PII unlabelled, so its precision understates reality). *Raw* uses dataset labels as-is; *policy* removes gold spans that are template "
          "placeholders and, for organisation labels only, generic phrases and public bodies (`bench/gold_policy.py`).", "",
-         "**Held-out** sets are never used to tune rules, thresholds or prompts. **Dev** sets are.", "",
+         "**Held-out** sets are never used to tune rules, thresholds or prompts. **Dev** sets are. The **regression** set (hand-built hard cases) was "
+         "written by us and rules were fixed against it, so it shows that known hard cases pass, not how unseen text behaves.", "",
          "## Summary", "",
          "| Set | Role | Docs | Direct ≥50 raw | Direct ≥90 raw | Indirect ≥50 raw | Indirect ≥90 raw | Prec raw | Direct ≥50 pol | Direct ≥90 pol | Indirect ≥50 pol | Indirect ≥90 pol | Prec pol |",
          "|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|"]

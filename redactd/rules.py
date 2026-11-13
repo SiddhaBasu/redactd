@@ -150,6 +150,18 @@ RULES = [
     R("zip", "ADDRESS", r"\b\d{5}(?:-\d{4})?\b(?=\s*[,.\n])", "US ZIP code pattern"),
     R("api_key", "SECRET", r"\b(?:sk|pk|rk|ghp|gho|xox[bap]|AKIA)[-_A-Za-z0-9]{12,}\b|\b[A-Za-z0-9_\-]{32,}\b", "API key / long token pattern", validator="mixed_alnum"),
     R("secret_keyword", "SECRET", r"\b(?:password|passwd|pwd|pin|cvv|cvc)\s*[:=]\s*(\S+)", "value after a password/PIN keyword", flags="i"),
+    # --- field-aware rules for structured financial messages (B4)
+    R("swift_party_account", "FIN_ID", r":(?:50[AFK]|59[AF]?|5[2-8][AD]):/([A-Z0-9]{5,34})\b", "account in a SWIFT party field (:50K:, :59: …)"),
+    R("swift_party_name", "NAME", r":(?:50[FK]|59F?):(?:/[^\n]{1,40}\n)?([^\n:/][^\n]{1,34})", "name line of a SWIFT ordering customer / beneficiary field"),
+    R("swift_party_address", "ADDRESS", r":(?:50[FK]|59F?):(?:/[^\n]{1,40}\n)?[^\n:/][^\n]{1,34}\n((?:(?!:\d\d[A-Z]?:|-\})[^\n]{1,35}(?:\n(?=[^:\-\n]))?){1,3})", "address lines of a SWIFT party field"),
+    R("swift_account_id", "FIN_ID", r":25P?:([A-Z0-9/]{5,35})", "account identification in SWIFT field :25:"),
+    R("swift_remit_party", "NAME", r"/(?:ORDP|BENM|BENE|NAME)/([^/\n]{2,35})", "party name in a SWIFT remittance sub-field (/ORDP/, /BENM/)"),
+    R("fix_account", "FIN_ID", r"(?<![0-9A-Za-z])1=([^|\x01\n]{3,40})", "FIX tag 1 (Account)"),
+    R("fix_party_name", "NAME", r"(?<![0-9])448=([A-Za-z][A-Za-z.'-]{0,30}(?: [A-Za-z.'-]{1,30}){1,4})(?=[|\x01\n])", "FIX tag 448 (PartyID) holding a name"),
+    R("fix_party_id", "FIN_ID", r"(?<![0-9])448=([A-Za-z0-9_-]{0,30}\d[A-Za-z0-9_-]{0,30})", "FIX tag 448 (PartyID)"),
+    R("kv_identifier", "FIN_ID", r"\b(?:account|acct|iban|routing|card|customer|member|policy|loan|client)[_ ]?(?:number|num|no|id)?[\"']?\s?[:=]\s?[\"']?([A-Za-z0-9][A-Za-z0-9\-]{4,40})", "value of an account / customer key (JSON, CSV, key=value)", flags="i", validator="has_digit"),
+    R("iso20022_name", "NAME", r"<(?:Nm|Name)>([^<\n]{2,70})</", "ISO 20022 <Nm> element"),
+    R("iso20022_address", "ADDRESS", r"<(?:StrtNm|TwnNm|AdrLine|PstCd|BldgNb)>([^<\n]{1,70})</", "ISO 20022 postal address element"),
     R("title_name", "NAME", r"\b(?:Mr|Ms|Mrs|Dr|Mx)\.?\s([A-Z][a-z]+(?:\s[A-Z][a-z]+)?)", "name after a title (Mr, Ms, Dr…)"),
     # --- organisations. Alternation order matters: "Bank of X" must come before the generic "... Bank" suffix rule.
     R("org", "ORG",

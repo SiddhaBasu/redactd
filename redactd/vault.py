@@ -12,7 +12,7 @@ Mirrored by apps/web/lib/redact.ts (render/restore/leakCheck) and apps/web/lib/v
 """
 import hmac, hashlib, json, re, base64, os
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
-from .post import Span, merge_spans, propagate_spans, occurrences, occurrences_many  # noqa: F401
+from .post import Span, merge_spans, propagate_spans, occurrences, occurrences_many, PLACEHOLDER  # noqa: F401
 
 def _spans(tuples):
     return [Span(s, e, t, "x") for s, e, t, *_ in tuples]
@@ -29,6 +29,7 @@ def redact(text, spans, hmac_key: bytes | None = None, style: str = "placeholder
     """spans: (start, end, type) tuples that are already final (Pipeline.detect output). style: placeholder | label | block."""
     spans = merge(spans)
     out, vault, counters, seen, last = [], {}, {}, {}, 0
+    taken = set(PLACEHOLDER.findall(text))      # placeholders the document already contains must not be reused
     for s, e, t in spans:
         val = text[s:e]
         key = (t, val)
@@ -38,6 +39,7 @@ def redact(text, spans, hmac_key: bytes | None = None, style: str = "placeholder
                 ph = f"[{t}_{tag}]"
             else:
                 counters[t] = counters.get(t, 0) + 1
+                while f"[{t}_{counters[t]}]" in taken: counters[t] += 1
                 ph = f"[{t}_{counters[t]}]"
             seen[key] = ph; vault[ph] = val
         out.append(text[last:s]); last = e

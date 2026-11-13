@@ -152,7 +152,7 @@ def passes_filters(text: str, sp: Span, o: Options, allow: frozenset) -> bool:
     if sp.type in o.exclude_types: return False
     if allow and norm_term(v) in allow: return False
     if sp.source in ("manual", "custom"): return True
-    if norm_term(v) in _GENERIC: return False
+    if norm_term(v) in _GENERIC and not (sp.type == "NAME" and v[:1].isupper() and norm_term(v) in _COMMON): return False   # "Banks" can be a surname
     if o.org_allowlist and sp.type == "ORG" and is_public_body(v): return False
     if o.drop_nonpersonal_dates and sp.type == "DATE" and is_nonpersonal_date(v): return False
     return True
@@ -300,6 +300,21 @@ def keep_last4(text: str, spans: list[Span]) -> list[Span]:
     return out
 
 # ---------------------------------------------------------------- the whole post-processing chain
+PLACEHOLDER = re.compile(r"\[[A-Z_]+_[0-9a-f]+\]", re.ASCII)
+
+def outside_placeholders(text: str, spans: list[Span]) -> list[Span]:
+    """Drop findings that sit inside a placeholder the document already contains ("[NAME_1]" from an earlier
+    redaction). Redacting inside one would corrupt it and collide with the placeholders we generate."""
+    if "[" not in text: return spans
+    toks = [m.span() for m in PLACEHOLDER.finditer(text)]
+    if not toks: return spans
+    starts = [a for a, _ in toks]; out = []
+    for sp in spans:
+        i = bisect_right(starts, sp.start) - 1
+        if i >= 0 and sp.end <= toks[i][1] and sp.source not in ("manual", "custom"): continue
+        out.append(sp)
+    return out
+
 def finalize(text: str, raw: list[Span], o: Options | None = None) -> list[Span]:
     o = o or Options()
     allow = frozenset(norm_term(t) for t in o.allow_terms if norm_term(t))
@@ -308,9 +323,9 @@ def finalize(text: str, raw: list[Span], o: Options | None = None) -> list[Span]
         s, e = trim_bounds(text, sp.start, sp.end)
         if e <= s or not above_threshold(sp, o): continue
         kept.append(Span(s, e, sp.type, sp.source, sp.score, sp.label, list(sp.why), list(sp.sources)))
-    kept = drop_unsupported(kept, o)
+    kept = drop_unsupported(outside_placeholders(text, kept), o)
     merged = [sp for sp in merge_spans(text, kept) if passes_filters(text, sp, o, allow)]
-    out = [sp for sp in propagate_spans(text, merged) if passes_filters(text, sp, o, allow)]
+    out = [sp for sp in outside_placeholders(text, propagate_spans(text, merged)) if passes_filters(text, sp, o, allow)]
     out = apply_terms(text, out, o.custom_terms, o.allow_terms)
     if o.keep_last4: out = keep_last4(text, out)
     res = []
