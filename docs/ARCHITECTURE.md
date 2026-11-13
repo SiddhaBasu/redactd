@@ -5,138 +5,142 @@
 ```mermaid
 flowchart LR
   subgraph Browser["Browser (Next.js app)"]
-    UI["/redact workspace<br/>upload · review · export"]
-    R["/restore page"]
-    W["Web Worker<br/>(optional on-device mode)"]
-    K["Restore-key encryption<br/>AES-GCM + PBKDF2 (WebCrypto)"]
+    UI["/redact workspace<br/>add · scan · review · export"]
+    F["finalize()<br/>merge · filters · propagation · policy"]
+    R["/restore"]
+    W["Web Worker<br/>on-device detection (optional)"]
+    K["Restore key<br/>PBKDF2-SHA256 600k + AES-256-GCM (WebCrypto)"]
   end
-  subgraph API["redactd API (FastAPI, CPU containers)"]
-    EP["/v1/detect · /v1/redact · /v1/jobs"]
-    P["Detection pipeline<br/>(redactd/ core library)"]
-    J["Job store<br/>(in-memory → Redis)"]
+  subgraph API["redactd API (FastAPI, stateless)"]
+    EP["/v1/detect · /v1/redact · /v1/jobs (+SSE) · /v1/extract"]
+    P["redactd.pipeline"]
+    J["Job store · rate limiter<br/>memory or Redis"]
   end
-  DB[("Postgres<br/>usage counts only")]
-  CDN[("Static hosting / CDN<br/>app + model files")]
+  DB[("Postgres<br/>usage_events · api_keys (hashes)")]
+  CDN[("Static / CDN<br/>app, ORT wasm, model files")]
 
-  UI -- "HTTPS JSON: text in, spans out" --> EP
+  UI -- "HTTPS: text in, RAW findings out" --> EP
   EP --> P
   EP --> J
-  EP -- "chars, finding count, ms, salted client hash" --> DB
+  EP -- "chars, counts, ms, salted client hash" --> DB
+  UI --> F --> UI
   UI --> K
   R --> K
-  UI -. "on-device mode only" .-> W
-  CDN --> UI
-  CDN -. "model files (on-device mode)" .-> W
+  UI -. "on-device mode" .-> W -. "RAW findings" .-> F
+  CDN -. "model files, SHA-256 verified against the bundled manifest" .-> W
 ```
 
-**Who does what**
-
-| Layer | Responsibility | Never does |
+| Layer | Does | Never does |
 |---|---|---|
-| Browser | File input, review UI (accept/reject/add), rendering the redacted output, leak check, encrypting the restore key, restoring | Store documents anywhere |
-| API | Runs detection (rules + models) and returns character spans; async jobs for large files | Store or log text, spans or values; see restore keys |
-| Database | Usage metering (characters, number of findings, timing, salted client hash) | Hold any document content |
+| Browser | Input, policy (presets, custom terms, allow-list, keep-last-4), review, rendering, leak check, restore key, restore | Store documents; send terms, decisions, output or keys anywhere |
+| API | Rules + models → findings; text extraction from DOCX/PDF/EML/MSG; async jobs with progress | Store or log text, findings or values; call a hosted LLM; see restore keys |
+| Database | Usage metering, API key hashes and quotas | Hold content |
 
-Detection runs on the backend by default. On-device mode runs the same pipeline in a Web Worker for users who want zero data transfer, at the cost of a one-time model download of up to 370 MB.
+The web app asks the API for **raw** findings (`raw: true`) and applies the policy itself with `finalize()`. The
+same function exists in Python (`redactd/post.py`) and TypeScript (`apps/web/lib/redact.ts`) and is parity-tested,
+so API-only callers get identical results from the server.
 
-## 2. Detection pipeline (`redactd/pipeline.py`, mirrored in `apps/web/workers/detect.worker.ts`)
+## 2. Detection pipeline
+
+`redactd/pipeline.py`; mirrored by `apps/web/workers/detect.worker.ts` + `apps/web/lib/redact.ts`.
 
 ```mermaid
 flowchart TD
-  T["Input text (≤1 MB)"] --> A["1 · Pattern rules + validators<br/>Luhn (cards), ABA (routing), IBAN mod-97,<br/>SSN, email, phone, IP/MAC, dates, secrets"]
-  T --> B["2 · Organisation rules<br/>'Bank of …', '… Insurance Company, Ltd.', '… Capital Partners'"]
-  T --> C["3 · OpenMed-PII (DeBERTa, 44M backbone, int8 ONNX)<br/>token classifier, 54 fine labels → 10 types"]
-  T --> D["4 · GLiNER-PII (Knowledgator, int8 ONNX)<br/>zero-shot spans: names, banks, occupations, ages…"]
-  A & B & C & D --> E["5 · Trim + merge overlapping spans<br/>(validated rule type wins)"]
-  E --> F["6 · Propagate: redact every other occurrence of each value,<br/>plus each part of a name ('Raman' alone)"]
-  F --> G["Spans: start, end, type, source, score"]
-  G --> H["Browser review → render → leak check → download"]
+  T["Text (≤ 1 MB)"] --> A["Stage 1 · Rules + validators (redactd/rules.py → rules.generated.json)<br/>Luhn, ABA, IBAN mod-97 (odd spacing, line breaks), masked partials, phones, dates,<br/>street addresses with city/state/postcode, coordinates, organisations,<br/>SWIFT / FIX / ISO 20022 / key=value fields"]
+  T --> G["virtual spaces at glued digit/letter boundaries"]
+  G --> C["Stage 2 · Token classifier, int8 ONNX<br/>batched overlapping windows (stride 64)<br/>OpenMed-Small today · redactd-small (distilled) when it meets the targets"]
+  G --> D["Stage 3 · GLiNER-PII, int8 ONNX (Thorough)<br/>overlapping chunks, batched"]
+  A & C & D --> RAW["RAW findings: start, end, type, source, score, fine label, why"]
+  RAW --> F1["trim · drop findings inside existing placeholders"]
+  F1 --> F2["thresholds: per type, and per label for findings nothing else supports<br/>(calibrated on dev sets, bench/calibrate.py)"]
+  F2 --> F3["merge with provenance · validated rule wins the type"]
+  F3 --> F4["precision filters: generic terms · public bodies (ORG only) · reporting periods (DATE only)"]
+  F4 --> F5["propagate: every occurrence of each value + name parts, initials, possessives,<br/>ALL CAPS, e-mails and handles containing a detected name (one pass for all values)"]
+  F5 --> F6["user policy: excluded types · custom terms · allow-list · keep last 4 digits"]
+  F6 --> OUT["Final findings → review → render → leak check"]
 ```
 
-| Mode | Stages | Typical latency (≈700-char email, warm, 2 threads) |
+Stage 4 of the target architecture (an SLM verifier on low-confidence chunks) is not shipped: see section 7.
+
+| Mode | Models | Use |
 |---|---|---|
-| Fast | 1–2 | < 5 ms |
-| Standard | 1–3, 5–6 | ≈ 0.1–1 s |
-| Thorough (default) | 1–6 | ≈ 0.7–0.9 s |
+| Fast | none | Structured identifiers only; instant; no download on device |
+| Standard | token classifier | Names, places and context |
+| Thorough (default) | token classifier + GLiNER-PII | Best recall |
 
-**Why an ensemble.** No single model reached 95% on held-out financial text: OpenMed-Small was strong on direct identifiers (92%) but weak on indirect ones (47%); GLiNER-PII was the reverse (84% / 85%). The union of all four detectors, plus propagation, covers both — see §5.
+Which models a mode runs is configuration (`REDACTD_STANDARD`, `REDACTD_THOROUGH`), not code.
 
-**Output styles** (`redactd/vault.py`, `apps/web/lib/redact.ts`):
+**One rule set, two engines.** `redactd/rules.py` is the only place rules are written. `python -m redactd.rules
+--export` generates `apps/web/lib/rules.generated.json` (rules, word lists, thresholds, label maps), which
+`lib/rules.ts` executes. Patterns follow a portability contract (ASCII classes, no `$`, bounded quantifiers, one
+capture group). `tests/test_rule_parity.py` runs both engines on every fixture and all 2,060 eval documents and
+requires identical rule findings, final findings, rendered output and leak-check result.
 
-| Style | Example | Reversible? |
-|---|---|---|
-| Placeholder | `[NAME_1]` — same value → same placeholder within a document | Yes, with the restore key |
-| Label | `[NAME]` | No |
-| Block | `██████` | No |
+**Output styles** (`redactd/vault.py`, `lib/redact.ts`): `[NAME_1]` placeholders (reversible; the same value gets
+the same placeholder; numbers already present in the document are skipped), `[NAME]` labels, or `██████` blocks.
 
-**Leak check.** Before download, every redacted value (≥3 chars) is searched for in the output. If any survives, the download button is disabled.
+**Leak check.** After rendering, every redacted value is searched for again in the output with the same matching
+rules as propagation. Any hit blocks the download in the UI and fails the CI gate.
 
-## 3. Two-way (reversible) redaction
+## 3. Review experience (`apps/web`)
+
+* `components/Viewer.tsx` + `lib/layout.ts`: monospace soft-wrap into fixed-height rows with exact offsets; only
+  visible rows are in the DOM. Minimap canvas with per-category marks. Side-by-side diff on the same rows.
+* `lib/review.ts`: reducer with a 200-step undo/redo stack. Keyboard: `j`/`k`, `n`, `x`, `Shift+x`, `a`/`Shift+a`,
+  `1`–`9`, `/`, `u`/`Shift+u`, `d`, `e`, `?`.
+* `components/Sidebar.tsx`: bulk actions per category, needs-review queue (lowest confidence first) with a
+  confidence filter, bulk actions per exact value.
+* `lib/presets.ts`: Standard, Share with LLM, Legal production, Analytics. Changing a preset re-runs `finalize()` on
+  the cached raw findings and keeps the user's decisions.
+* `lib/report.ts`: exported report with counts, leak-check result, versions and timestamp; never values.
+* `lib/models.ts`: on-device model files are verified against SHA-256 hashes shipped in the bundle, then cached.
+
+## 4. Two-way (reversible) redaction
 
 ```mermaid
 sequenceDiagram
   participant U as User (browser)
   participant A as redactd API
   participant X as Any downstream tool (e.g. an LLM)
-  U->>A: POST /v1/detect {text}
-  A-->>U: spans (nothing kept server-side)
-  U->>U: review, render "[NAME_1] wired [FIN_ID_2]…"
-  U->>U: encrypt placeholder map with password (AES-GCM, PBKDF2 310k)
+  U->>A: POST /v1/detect {text, mode, raw: true}
+  A-->>U: raw findings (nothing kept server-side)
+  U->>U: finalize with the chosen policy, review, render "[NAME_1] wired [FIN_ID_2]…"
+  U->>U: leak check; encrypt placeholder map with a password
   U->>X: redacted text only
   X-->>U: processed text, still with placeholders
-  U->>U: /restore: unlock key, swap placeholders back
+  U->>U: /restore: unlock key, swap placeholders back (byte-exact)
 ```
 
-The server never sees the placeholder map or the password. Losing the key file or the password means the originals can't be recovered, by design.
-
-## 4. API
+## 5. API
 
 | Endpoint | Purpose |
 |---|---|
-| `GET /health` | Liveness + which modes have warm models |
-| `POST /v1/detect` | `{text, mode, sensitivity}` → spans + per-stage timings (≤200k chars) |
-| `POST /v1/redact` | Same input + `style` → redacted text, placeholder map (placeholder style only), leak count |
-| `POST /v1/jobs`, `GET /v1/jobs/{id}` | Async detection for large documents; the result is deleted once collected or after a 10-minute TTL |
+| `GET /health` | Liveness, warm modes, component versions |
+| `POST /v1/detect` | `{text, mode, sensitivity, raw?, org_allowlist?, drop_nonpersonal_dates?, keep_last4?, custom_terms?, allow_terms?, exclude_types?}` → findings with provenance, timings, versions (≤ 200k chars) |
+| `POST /v1/redact` | Same + `style` → redacted text, placeholder map (placeholder style only), leak count |
+| `POST /v1/jobs` → `GET /v1/jobs/{id}/events` → `GET /v1/jobs/{id}` | Large documents: SSE `progress {stage, pct}` then `done`; the result is delivered once and deleted (TTL 10 min) |
+| `POST /v1/extract` | DOCX, PDF text layer, EML, MSG, CSV/JSON → text, in memory; attachment content only on request |
 
-Safeguards in `apps/api/app/main.py`:
-- The access log records metadata only: method, path, status, timing and a salted client hash.
-- Errors return a generic message that never echoes document text.
-- Rate limiting is per client, and request size is capped (1 M chars).
-- A semaphore limits concurrent model runs.
-- CORS is restricted to the web origin, and responses carry `Cache-Control: no-store`.
+Auth: `Authorization: Bearer rk_…` (SHA-256 hash stored, per-key rate and monthly character quota), or anonymous
+with a stricter per-IP limit. Logs are JSON lines with an allow-listed set of metadata fields (`app/obs.py`).
 
-## 5. Accuracy (from `bench/`, reproducible)
+## 6. Accuracy and performance
 
-The test sets are public synthetic financial datasets: Gretel `synthetic_pii_finance_multilingual` (Apache-2.0) and NVIDIA Nemotron-PII finance domains (CC-BY-4.0).
+The numbers live in generated files so they cannot go stale here:
 
-**Recall** is the share of labelled identifiers caught, label-agnostic. "≥50%" counts an identifier as caught when at least half of its characters are redacted; "≥90%" is the stricter version.
+* `bench/out/report.md` — recall per tier at ≥50% / ≥90% coverage and character precision, raw and policy-adjusted
+  labels side by side, per coarse type, fine label and document type, latency percentiles, leak regression, and
+  the notes on what did not work. Regenerate with `python bench/report.py`.
+* `bench/out/load.md` — API latency percentiles and throughput (`python bench/load_test.py`).
+* `docs/RESULTS.md` — the summary of targets met and not met at the time of the last change.
 
-| Held-out Gretel finance (300 docs never used for tuning) | Direct ≥50% | Direct ≥90% | Indirect ≥50% | Indirect ≥90% |
-|---|---|---|---|---|
-| Rules only | 26.7% | 23.2% | 16.7% | 15.8% |
-| OpenMed-Small only | 91.9% | 83.2% | 46.8% | 40.7% |
-| GLiNER-PII only | 84.1% | 69.8% | 85.5% | 81.5% |
-| **Full pipeline, raw labels** | **98.9%** | 94.2% | 92.6% | 90.9% |
-| **Full pipeline, policy-adjusted labels\*** | **99.6%** | **95.9%** | **98.8%** | **98.0%** |
+## 7. Known gaps
 
-\*`bench/gold_policy.py` removes template placeholders (`[JURISDICTION]`) from any label. For company labels only, it also removes generic phrases ("sales department") and public bodies (ISDA, HMRC, the US Treasury). It drops 21 of 962 direct and 53 of 551 indirect labels.
-
-**Precision.** 35% of redacted characters on Gretel, 74% on Nemotron. The pipeline is deliberately biased towards over-redaction, and the review screen is where users trim it. Part of the Gretel gap is real PII that the dataset left unlabelled.
-
-## 6. Deployment
-
-| Component | Target | Notes |
-|---|---|---|
-| Web app | Vercel or Cloudflare Pages | Must send COOP/COEP headers (set in `next.config.mjs`) for multi-threaded WASM in on-device mode |
-| Model files (on-device mode) | Cloudflare R2 + CDN | Set `NEXT_PUBLIC_MODEL_BASE` |
-| API | Fly.io / Cloud Run, `apps/api/Dockerfile` | 4 vCPU / 8 GB per instance; 1 uvicorn worker per instance, scale horizontally; models baked into the image |
-| Database | Postgres (Neon / Supabase) | `DATABASE_URL=postgresql+psycopg://…`; usage table only |
-| Job store | Redis (Upstash) when running more than one API instance | Same interface as `apps/api/app/jobs.py` |
-
-## 7. Known gaps / next steps
-
-- **Model size for on-device mode (≈370 MB):** compress the embedding matrices, or replace OpenMed with our own smaller DeBERTa. The first training run failed because transformers v5 loads fp16 weights by default; it's fixed and retraining now.
-- **Partial account numbers** ("ending 4471") are redacted but labelled as ADDRESS; this needs a dedicated rule and type.
-- **Over-redaction:** add a precision pass (for example, ignore well-known public institutions and offer an allow-list per user).
-- **Auth, billing and API keys** aren't built yet; the usage table is ready for metering.
-- **The SLM verifier** (Qwen 1.5B via llama.cpp, `bench/slm.py`) is built but not yet benchmarked on the full sets. It's intended to run only on low-confidence chunks.
+* **Precision targets are not met** and raw-label direct recall on Gretel is just under target; see
+  `bench/out/report.md` and its notes for why and for what was tried.
+* **SLM verifier (B5)**: `bench/slm.py` exists but was not benchmarked in this round, so it stays off and is not
+  shipped. It needs several CPU-hours per eval set.
+* **Web app accounts** (Auth.js / Clerk) are not built. API keys and anonymous limits are.
+* **Deliberate obfuscation** (homoglyphs, zero-width characters inside identifiers) is not normalised.
+* **WebGPU**: the int8 models run on WASM; a WebGPU path is wired but needs an fp16 model file to be useful.
+* Deployment is documented (`docs/DEPLOY.md`) but nothing has been provisioned.

@@ -6,6 +6,15 @@ it. Gretel labels no demographics at all and only some dates, places and organis
 unlabelled DATE/ADDRESS findings are roughly half of all "false" characters. Nemotron labels these categories and
 is the better guide to true precision.
 
+**Manual audit of "false positives" (Gretel dev, 100 random findings that the labels do not cover, seed 7).**
+Judged by hand: about 27 are real identifiers the dataset simply does not label (routing and policy numbers, IBAN
+and BIC fragments, LEIs, e-mail addresses, transaction timestamps, ZIP codes, a person's occupation); about 8 are
+debatable (governing-law jurisdictions, "Monday through Friday"); about 65 are genuine over-redaction. Of those 65,
+roughly 30 are GLiNER `occupation`/demographic guesses on ordinary noun phrases ("Corporate Governance Guidelines",
+"industry experts") and roughly 14 are GLiNER `password`/`api key` guesses ("transaction history", "prompts").
+So about a third of the measured false positives are not errors, and two GLiNER labels cause most of the rest. This
+is a small single-rater sample on a dev set: treat it as an indication, not a measurement.
+
 **What did not work, or worked less than hoped**
 
 * *Per-type confidence thresholds (B2).* Calibrated on the dev sets under the stated constraint (keep each type's
