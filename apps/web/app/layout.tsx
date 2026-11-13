@@ -7,6 +7,8 @@ export const metadata: Metadata = {
   title: "redactd — private redaction for financial documents",
   description: "Find and redact personal and financial identifiers in statements, emails, SWIFT messages and tickets. Review every finding. Optionally reversible.",
 };
+// Pages are rendered per request so Next can stamp the CSP nonce (middleware.ts) on its bootstrap scripts.
+export const dynamic = "force-dynamic";
 export const viewport: Viewport = { width: "device-width", initialScale: 1 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

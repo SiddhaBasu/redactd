@@ -13,6 +13,7 @@ import { emptyReview, rejectedKeys, reviewReducer, searchSpans, valueOf } from "
 import { baseName, buildReport, redactedName, reportMarkdown } from "../../lib/report";
 import { SAMPLE_NAME, SAMPLE_TEXT } from "../../lib/sample";
 import { RULES_VERSION } from "../../lib/rules";
+import { hasModel, modelMegabytes } from "../../lib/models";
 import type { DetectMode, OutputStyle, PiiType, ReviewSpan, Span, WorkerResponse } from "../../lib/types";
 import { Viewer, type ViewerHandle } from "../../components/Viewer";
 import { Sidebar } from "../../components/Sidebar";
@@ -28,7 +29,6 @@ const MODES: { id: DetectMode; name: string; note: string }[] = [
   { id: "thorough", name: "Thorough", note: "Adds a second model for the best recall. Recommended." },
 ];
 const BINARY = /\.(docx|pdf|msg)$/i, EMAIL = /\.eml$/i;
-const DEVICE_MODEL_MB = Number(process.env.NEXT_PUBLIC_DEVICE_MODEL_MB || 370);
 
 function download(name: string, data: string, type = "text/plain;charset=utf-8") {
   const url = URL.createObjectURL(new Blob([data], { type }));
@@ -291,7 +291,7 @@ export default function RedactPage() {
             ))}
           </div>
         </fieldset>
-        <DataPanel where={where} onChange={setWhere} serverUp={serverUp} online={online} modelMb={DEVICE_MODEL_MB} />
+        <DataPanel where={where} onChange={setWhere} serverUp={serverUp} online={online} modelMb={mode === "rules" ? 0 : modelMegabytes([hasModel("redactd-small") ? "redactd-small" : "openmed-small", ...(mode === "thorough" ? ["gliner"] : [])])} />
         <PolicyPanel policy={policy} onChange={setPolicy} />
 
         <div className="flex flex-wrap items-center gap-4">

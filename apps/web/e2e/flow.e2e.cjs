@@ -21,7 +21,7 @@ const MODEL_ONLY = ["Priya", "Raman", "Okafor", "Boise"];   // names and places 
   // 1. onboarding sample -> scan
   for (let i = 0; i < 20 && !(await scan.isEnabled()); i++) { await p.getByRole("button", { name: "Try the sample document" }).click().catch(() => {}); await p.waitForTimeout(300); }
   assert.equal(await p.locator("#doc").inputValue(), DOC, "sample equals the fixture");
-  await p.getByRole("radio", { name: new RegExp(`^${mode}`) }).click();
+  await p.getByRole("radiogroup", { name: "Detection mode" }).getByRole("radio", { name: new RegExp(`^${mode}`) }).click();
   const t0 = Date.now();
   await scan.click();
   await p.getByTestId("viewer").waitFor({ timeout: 10 * 60_000 });

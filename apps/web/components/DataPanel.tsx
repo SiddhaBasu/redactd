@@ -6,7 +6,7 @@ export type Where = "server" | "device";
 export function DataPanel({ where, onChange, serverUp, online, modelMb }: { where: Where; onChange: (w: Where) => void; serverUp: boolean | null; online: boolean; modelMb: number }) {
   const opts: { id: Where; title: string; lines: string[] }[] = [
     { id: "server", title: "On redactd servers", lines: ["Fastest, nothing to download.", "Sent over HTTPS, processed in memory, then discarded. Never stored, never logged, never used for training, never shown to a hosted AI model."] },
-    { id: "device", title: "On this device only", lines: [`One-time model download (about ${modelMb} MB), then works offline.`, "The document never leaves this browser tab."] },
+    { id: "device", title: "On this device only", lines: [modelMb ? `One-time model download (about ${modelMb} MB for this mode), then works offline.` : "No download needed for Fast mode. Works offline.", "The document never leaves this browser tab."] },
   ];
   return (
     <fieldset>

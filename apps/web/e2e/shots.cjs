@@ -14,7 +14,7 @@ const BASE = process.env.BASE_URL || "http://127.0.0.1:3000", OUT = path.join(__
     const scan = p.getByRole("button", { name: "Scan for sensitive data" });
     for (let i = 0; i < 20 && !(await scan.isEnabled()); i++) { await p.getByRole("button", { name: "Try the sample document" }).click().catch(() => {}); await p.waitForTimeout(300); }
     await shot("2-input");
-    await p.getByRole("radio", { name: new RegExp(`^${mode}`) }).click(); await scan.click();
+    await p.getByRole("radiogroup", { name: "Detection mode" }).getByRole("radio", { name: new RegExp(`^${mode}`) }).click(); await scan.click();
     await p.getByText("Leak check passed").waitFor({ timeout: 10 * 60_000 });
     await p.getByTestId("viewer").focus(); await p.keyboard.press("j"); await p.keyboard.press("j");
     await p.getByRole("heading", { name: "Review" }).scrollIntoViewIfNeeded(); await p.waitForTimeout(300);
