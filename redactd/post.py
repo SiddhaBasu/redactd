@@ -50,6 +50,16 @@ def trim_bounds(text: str, s: int, e: int) -> tuple[int, int]:
     while e > s and text[e - 1] in TRIM_CHARS: e -= 1
     return s, e
 
+def snap_digits(text: str, s: int, e: int) -> tuple[int, int]:
+    """A finding that cuts a run of digits in half is widened to the whole run. Otherwise the redacted half can
+    reappear in clear elsewhere once its neighbouring digits are replaced (the leak check found this on held-out
+    data), and the half left visible usually identifies the number anyway."""
+    if s < e and _is_digit(text[s]):
+        while s > 0 and _is_digit(text[s - 1]): s -= 1
+    if s < e and _is_digit(text[e - 1]):
+        while e < len(text) and _is_digit(text[e]): e += 1
+    return s, e
+
 def occurrences(text: str, v: str) -> list[tuple[int, int]]:
     """Every place `v` occurs as a value. Letters-only values must not be glued to other letters ("Art" does not
     match inside "Article"); short numeric values must not be glued to other digits. Longer values that contain
@@ -343,6 +353,7 @@ def finalize(text: str, raw: list[Span], o: Options | None = None) -> list[Span]
     for sp in raw:
         s, e = trim_bounds(text, sp.start, sp.end)
         if e <= s or not above_threshold(sp, o): continue
+        if sp.source not in ("manual", "custom"): s, e = snap_digits(text, s, e)
         kept.append(Span(s, e, sp.type, sp.source, sp.score, sp.label, list(sp.why), list(sp.sources)))
     kept = drop_unsupported(outside_placeholders(text, kept), o)
     merged = [sp for sp in merge_spans(text, kept) if passes_filters(text, sp, o, allow)]

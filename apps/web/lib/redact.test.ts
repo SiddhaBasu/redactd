@@ -112,3 +112,13 @@ test("vault: seal, open, wrong password, tampering", async () => {
   assert.ok(passwordStrength("password123").score <= 1);
   assert.ok(passwordStrength("correct horse battery staple").score >= 3);
 });
+
+test("leak check ignores our own placeholders; partial digit findings are widened", () => {
+  const t = "Header ORG: Northgate.";
+  const r = render(t, finalize(t, [sp(t, "ORG", "ORG")]));
+  assert.ok(r.output.includes("[ORG_1]")); assert.deepEqual(leakCheck(r.output, Object.values(r.vault)), []);
+  const u = "ref 55664471 and ref 77884471 end";
+  const fin = finalize(u, [sp(u, "4471", "ADDRESS"), { ...sp(u, "7788", "ADDRESS") }]);
+  const out = render(u, fin).output;
+  assert.ok(!/4471|7788|5566/.test(out), out); assert.deepEqual(leakCheck(out, fin.map((s) => u.slice(s.start, s.end))), []);
+});

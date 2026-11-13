@@ -23,6 +23,13 @@ export function trimBounds(text: string, s: number, e: number): [number, number]
   return [s, e];
 }
 
+/** A finding that cuts a run of digits in half is widened to the whole run (mirrors post.snap_digits). */
+export function snapDigits(text: string, s: number, e: number): [number, number] {
+  if (s < e && isDigit(text[s])) while (s > 0 && isDigit(text[s - 1])) s--;
+  if (s < e && isDigit(text[e - 1])) while (e < text.length && isDigit(text[e])) e++;
+  return [s, e];
+}
+
 /** Every place `v` occurs as a value. Letters-only values must not be glued to other letters ("Art" does not match
  *  inside "Article"); short numeric values must not be glued to other digits. Longer values that contain digits
  *  match anywhere, so identifiers glued to text (SWIFT/FIX fields) are still caught. */
@@ -333,8 +340,9 @@ export function finalize(text: string, raw: Span[], opts: Partial<Options> = {})
   const allow = new Set(o.allowTerms.filter((t) => normTerm(t)).map(normTerm));
   const kept: Span[] = [];
   for (const sp of raw) {
-    const [s, e] = trimBounds(text, sp.start, sp.end);
+    let [s, e] = trimBounds(text, sp.start, sp.end);
     if (e <= s || !aboveThreshold(sp, o)) continue;
+    if (sp.source !== "manual" && sp.source !== "custom") [s, e] = snapDigits(text, s, e);
     kept.push(mk(s, e, sp.type, sp.source, sp.score ?? null, sp.label, [...(sp.why ?? [])], [...(sp.sources ?? [])]));
   }
   const merged = mergeSpans(text, dropUnsupported(outsidePlaceholders(text, kept), o)).filter((sp) => passesFilters(text, sp, o, allow));
@@ -385,6 +393,10 @@ export function restore(text: string, vault: Record<string, string>): string {
 export function leakCheck(output: string, values: string[], kept: [number, number][] = []): string[] {
   const vals = [...new Set(values)].filter((v) => v.length >= 3).sort();
   const leaks = new Set<string>();
+  // a value that matches inside one of OUR replacement tokens ("ORG" inside "[ORG_1]") is not a leak
+  const toks: [number, number][] = [];
+  for (const m of output.matchAll(/\[[A-Z][A-Z_]*(?:_[0-9a-f]+)?\]/g)) toks.push([m.index!, m.index! + m[0].length]);
+  kept = [...kept, ...toks].sort((x, y) => x[0] - y[0] || x[1] - y[1]);
   let ki = 0;   // kept regions are sorted by start; matches arrive sorted by start
   for (const [a, b, k] of occurrencesMany(output, vals)) {
     while (ki < kept.length && kept[ki][1] <= a) ki++;

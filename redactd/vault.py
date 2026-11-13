@@ -11,6 +11,7 @@ restore(): redacted_or_processed_text + vault -> original values put back
 Mirrored by apps/web/lib/redact.ts (render/restore/leakCheck) and apps/web/lib/vault.ts (sealing, WebCrypto).
 """
 import hmac, hashlib, json, re, base64, os
+from bisect import bisect_right
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from .post import Span, merge_spans, propagate_spans, occurrences, occurrences_many, PLACEHOLDER  # noqa: F401
 
@@ -54,7 +55,16 @@ def leak_check(redacted, vault):
     """Verify no redacted value survives in the output (the step most tools skip). Uses the same occurrence
     test as propagation: 'Art' inside 'Article' is not a leak, 'Art' on its own is."""
     vals = sorted({v for v in vault.values() if len(v) >= 3})
-    return sorted({vals[k] for _, _, k in occurrences_many(redacted, vals)})
+    # a value that matches inside one of OUR replacement tokens ("ORG" inside "[ORG_1]") is not a leak
+    toks = [m.span() for m in REPLACEMENT.finditer(redacted)]
+    starts = [a for a, _ in toks]
+    def inside(a, b):
+        i = bisect_right(starts, a) - 1
+        return i >= 0 and b <= toks[i][1]
+    return sorted({vals[k] for a, b, k in occurrences_many(redacted, vals) if not inside(a, b)})
+
+# Replacement tokens render() produces: "[NAME_1]", "[NAME_1f3a9c2e]" (HMAC) and "[NAME]" (label style).
+REPLACEMENT = re.compile(r"\[[A-Z][A-Z_]*(?:_[0-9a-f]+)?\]", re.ASCII)
 
 def seal(vault, key: bytes):
     n = os.urandom(12)
