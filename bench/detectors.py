@@ -81,3 +81,29 @@ def union(*fs):
     def f(text):
         return [p for g in fs for p in g(text)]
     return f
+
+
+def org_rules():
+    return regex_rules.detect_org
+
+GLINER_ORG = ["bank", "financial institution", "insurance company", "company", "organization", "investment fund", "brokerage firm"]
+def gliner_org(name="knowledgator/gliner-pii-base-v1.0", threshold=0.2):
+    from gliner import GLiNER
+    m = GLiNER.from_pretrained(name)
+    def f(text):
+        return [(off + e["start"], off + e["end"], "ORG") for off, ch in chunks(text, 1500)
+                for e in m.predict_entities(ch, GLINER_ORG, threshold=threshold)]
+    return f
+
+_GLUE = re.compile(r"(?<=\d)(?=[A-Za-z])|(?<=[a-z])(?=\d)")
+def split_glued(f):
+    """Insert spaces where digits touch letters (SWIFT/FIX fields), run detector, map offsets back."""
+    def g(text):
+        cuts = [m.start() for m in _GLUE.finditer(text)]
+        if not cuts: return f(text)
+        new, mp, last = [], [], 0
+        for c in cuts:
+            new.append(text[last:c]); mp += range(last, c); new.append(" "); mp.append(c); last = c
+        new.append(text[last:]); mp += range(last, len(text)); mp.append(len(text))
+        return [(mp[s], mp[e - 1] + 1 if e > 0 else 0, t) for s, e, t in f("".join(new)) if e > s]
+    return g

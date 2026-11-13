@@ -19,6 +19,9 @@ DET = {
     "openmed_small+regex+slm_verify": lambda: __import__("slm").SLMDetector(mode="verify", threads=int(os.environ.get("THREADS", 4)),
         first_stage=detectors.union(detectors.openmed("Small-44M"), detectors.regex())),
     "openmed_small+regex": lambda: detectors.union(detectors.openmed("Small-44M"), detectors.regex()),
+    "org_rules": detectors.org_rules,
+    "gliner_org": detectors.gliner_org,
+    "openmed_small_split": lambda: detectors.split_glued(detectors.openmed("Small-44M")),
     "gliner+regex": lambda: detectors.union(detectors.gliner("knowledgator/gliner-pii-base-v1.0"), detectors.regex()),
 }
 f = DET[name]()

@@ -1,0 +1,2 @@
+{"detector": "regex", "eval": "eval_gretel_fin_holdout", "docs": 300, "direct_recall50": 0.2672, "direct_recall90": 0.2318, "direct_n": 962, "indirect_recall50": 0.167, "indirect_recall90": 0.1579, "indirect_n": 551, "char_precision": 0.2801, "cpu_threads": 1,
+{"detector": "org_rules", "eval": "eval_gretel_fin_holdout", "docs": 300, "direct_recall50": 0.0073, "direct_recall90": 0.0062, "direct_n": 962, "indirect_recall50": 0.4483, "indirect_recall90": 0.4011, "indirect_n": 551, "char_precision": 0.602, "cpu_threads"

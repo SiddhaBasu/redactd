@@ -57,3 +57,16 @@ def detect(text):
             if s < 0 or (val and not val(m.group(g))): continue
             out.append((s, e, t))
     return out
+
+# --- Organisation rules (financial institutions, companies) ---
+ORG_SUFFIX = (r"Bank|Bancorp|Banking|Credit Union|Savings|Trust|Insurance(?: Company)?|Assurance|Capital|Partners|"
+              r"Holdings?|Group|Fund|Funds|Investments?|Securities|Financial|Finance|Asset Management|Advisors|"
+              r"Inc\.?|Incorporated|LLC|L\.L\.C\.|Ltd\.?|Limited|PLC|plc|Corp\.?|Corporation|Co\.|Company|GmbH|AG|S\.A\.|N\.V\.|LLP|LP|"
+              r"Institute|University|College|Hospital|Clinic|Physical Therapy|Healthcare")
+ORG_RX = re.compile(
+    rf"\b(?:The\s)?(?:[A-Z][\w&'.-]*\s(?:(?:of|the|and|&|for|de)\s)*){{0,5}}(?:{ORG_SUFFIX})\b(?:,?\s(?:Inc\.?|Ltd\.?|LLC|N\.A\.|PLC))?"
+    rf"|\b(?:Bank|Banco|Banque|Caisse) (?:of|de|du|des|di) (?:the )?[A-Z][\w]*(?:\s[A-Z][\w]*){{0,3}}"
+    rf"|\b[A-Z][A-Z&.' -]{{2,40}}\b(?:BANK|INSURANCE COMPANY|LTD\.?|LLC|INC\.?|CORP\.?|PLC)\b")
+
+def detect_org(text):
+    return [(m.start(), m.end(), "ORG") for m in ORG_RX.finditer(text) if len(m.group().split()) >= 2 or m.group().isupper()]
