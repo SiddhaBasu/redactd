@@ -36,8 +36,12 @@ for f in tokenizer.json tokenizer_config.json gliner_config.json special_tokens_
   dl "$HF/knowledgator/gliner-pii-base-v1.0/resolve/main/$f" "$G/$f"; done
 dl "$HF/knowledgator/gliner-pii-base-v1.0/resolve/main/onnx/model_quint8.onnx" "$G/onnx/model_quint8.onnx"
 [ -s $G/config.json ] || echo '{"model_type":"deberta-v2"}' > $G/config.json
-mkdir -p models
-dl "$HF/Qwen/Qwen2.5-1.5B-Instruct-GGUF/resolve/main/qwen2.5-1.5b-instruct-q4_k_m.gguf" models/qwen2.5-1.5b-q4_k_m.gguf
+# Optional (1.1 GB): small LLM used only by bench/slm.py experiments. Enable with WITH_SLM=1.
+if [ "${WITH_SLM:-0}" = "1" ]; then
+  mkdir -p models
+  dl "$HF/Qwen/Qwen2.5-1.5B-Instruct-GGUF/resolve/main/qwen2.5-1.5b-instruct-q4_k_m.gguf" models/qwen2.5-1.5b-q4_k_m.gguf
+  pip install -q llama-cpp-python --extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cpu --only-binary llama-cpp-python
+fi
 
 # 5. Web app deps (+ copies ORT wasm into public/ via postinstall) and model symlink
 (cd apps/web && npm install --silent && ln -sfn ../../../browser/models public/models)

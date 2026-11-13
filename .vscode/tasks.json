@@ -1,0 +1,14 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    { "label": "redactd: setup (first time)", "type": "shell", "command": "bash scripts/setup.sh", "problemMatcher": [] },
+    { "label": "redactd: API (port 8000)", "type": "shell", "isBackground": true,
+      "command": "../../.venv/bin/uvicorn app.main:app --port 8000 --reload --reload-dir app --reload-dir ../../redactd",
+      "options": { "cwd": "${workspaceFolder}/apps/api" }, "problemMatcher": [] },
+    { "label": "redactd: web (port 3000)", "type": "shell", "isBackground": true,
+      "command": "npm run dev", "options": { "cwd": "${workspaceFolder}/apps/web" }, "problemMatcher": [] },
+    { "label": "redactd: run app", "dependsOn": ["redactd: API (port 8000)", "redactd: web (port 3000)"], "problemMatcher": [] },
+    { "label": "redactd: tests", "type": "shell",
+      "command": "(cd apps/api && ../../.venv/bin/python -m pytest -q tests) && (cd apps/web && npm test)", "problemMatcher": [] }
+  ]
+}
