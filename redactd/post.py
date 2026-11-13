@@ -300,6 +300,27 @@ def keep_last4(text: str, spans: list[Span]) -> list[Span]:
     return out
 
 # ---------------------------------------------------------------- the whole post-processing chain
+def close_leaks(text: str, spans: list[Span], o: Options, allow: frozenset) -> list[Span]:
+    """Zero-leak invariant: after every filter has run, any value that is still being redacted must be redacted at
+    ALL of its occurrences. (A propagated occurrence can be lost when it was merged into a longer finding that a
+    precision filter then dropped.) Uncovered occurrences are added back; nothing is removed."""
+    for _ in range(2):
+        vals: list[str] = []; types: dict[str, Span] = {}
+        for sp in spans:
+            v = text[sp.start:sp.end]
+            if len(v) >= 3 and v not in types: types[v] = sp; vals.append(v)
+        if not vals: return spans
+        starts = [sp.start for sp in spans]; extra = []
+        for a, b, k in occurrences_many(text, vals):
+            i = bisect_right(starts, a) - 1
+            if i >= 0 and spans[i].end >= b: continue
+            src = types[vals[k]]
+            extra.append(Span(a, b, src.type, "propagated", None, src.label, ["same value as another finding"], ["propagated"]))
+        extra = outside_placeholders(text, extra)
+        if not extra: return spans
+        spans = merge_spans(text, list(spans) + extra)
+    return spans
+
 PLACEHOLDER = re.compile(r"\[[A-Z_]+_[0-9a-f]+\]", re.ASCII)
 
 def outside_placeholders(text: str, spans: list[Span]) -> list[Span]:
@@ -326,6 +347,7 @@ def finalize(text: str, raw: list[Span], o: Options | None = None) -> list[Span]
     kept = drop_unsupported(outside_placeholders(text, kept), o)
     merged = [sp for sp in merge_spans(text, kept) if passes_filters(text, sp, o, allow)]
     out = [sp for sp in outside_placeholders(text, propagate_spans(text, merged)) if passes_filters(text, sp, o, allow)]
+    out = close_leaks(text, out, o, allow)
     out = apply_terms(text, out, o.custom_terms, o.allow_terms)
     if o.keep_last4: out = keep_last4(text, out)
     res = []

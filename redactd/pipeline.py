@@ -26,6 +26,14 @@ class Pipeline:
                  distilled_dir: str | None = None, modes: dict | None = None):
         self.dirs = {"openmed": openmed_dir, "gliner": gliner_dir, "distilled": distilled_dir}
         self.threads = threads; self.modes = modes or _modes_from_env(); self._models: dict = {}
+        # The distilled model replaces OpenMed in Standard wherever its files are deployed (it beats OpenMed on every
+        # held-out set, see bench/out/report.md), unless REDACTD_STANDARD says otherwise. Its weights are built by
+        # scripts/train_distilled.sh and are not in git, so a checkout without them falls back to OpenMed.
+        if modes is None and os.getenv("REDACTD_STANDARD") is None and self.has("distilled"): self.modes["standard"] = ["distilled"]
+
+    def has(self, name: str) -> bool:
+        d = self.dirs.get(name)
+        return bool(d) and os.path.exists(os.path.join(d, "onnx")) and os.path.exists(os.path.join(d, "tokenizer.json"))
 
     @classmethod
     def from_env(cls, threads: int | None = None):

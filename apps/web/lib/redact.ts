@@ -302,6 +302,31 @@ function outsidePlaceholders(text: string, spans: Span[]): Span[] {
   });
 }
 
+/** Zero-leak invariant: any value still being redacted after all filters is redacted at ALL of its occurrences.
+ *  Uncovered occurrences are added back; nothing is removed. */
+function closeLeaks(text: string, spans: Span[]): Span[] {
+  for (let round = 0; round < 2; round++) {
+    const vals: string[] = [], types = new Map<string, Span>();
+    for (const sp of spans) {
+      const v = text.slice(sp.start, sp.end);
+      if (v.length >= 3 && !types.has(v)) { types.set(v, sp); vals.push(v); }
+    }
+    if (!vals.length) return spans;
+    let extra: Span[] = [];
+    for (const [a, b, k] of occurrencesMany(text, vals)) {
+      let lo = 0, hi = spans.length;
+      while (lo < hi) { const mid = (lo + hi) >> 1; if (spans[mid].start <= a) lo = mid + 1; else hi = mid; }
+      if (lo > 0 && spans[lo - 1].end >= b) continue;
+      const src = types.get(vals[k])!;
+      extra.push(mk(a, b, src.type, "propagated", null, src.label, ["same value as another finding"], ["propagated"]));
+    }
+    extra = outsidePlaceholders(text, extra);
+    if (!extra.length) return spans;
+    spans = mergeSpans(text, [...spans, ...extra]);
+  }
+  return spans;
+}
+
 // ---------------------------------------------------------------- the whole post-processing chain
 export function finalize(text: string, raw: Span[], opts: Partial<Options> = {}): Span[] {
   const o: Options = { ...DEFAULT_OPTIONS, ...opts };
@@ -314,6 +339,7 @@ export function finalize(text: string, raw: Span[], opts: Partial<Options> = {})
   }
   const merged = mergeSpans(text, dropUnsupported(outsidePlaceholders(text, kept), o)).filter((sp) => passesFilters(text, sp, o, allow));
   let out = outsidePlaceholders(text, propagate(text, merged)).filter((sp) => passesFilters(text, sp, o, allow));
+  out = closeLeaks(text, out);
   out = applyTerms(text, out, o.customTerms, o.allowTerms);
   if (o.keepLast4) out = keepLast4(text, out);
   const res: Span[] = [];

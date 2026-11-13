@@ -1,5 +1,28 @@
 {
  "models": {
+  "redactd-small": {
+   "kind": "token-classifier",
+   "licence": "MIT (microsoft/deberta-v3-xsmall) + our weights",
+   "megabytes": 95.3,
+   "files": {
+    "config.json": {
+     "sha256": "d5803f0926d57da81ed3184816de2270804f2eee0fedf6da85793d0a1872c9e9",
+     "bytes": 1813
+    },
+    "tokenizer.json": {
+     "sha256": "13e4e0e42d27ab0713dfbb8f9d2680f146bf6043b6f5de70d0ad8c31b014a28e",
+     "bytes": 8339975
+    },
+    "tokenizer_config.json": {
+     "sha256": "ec3c0d2aba6bc40accd1340bc849d65e3a6c239a6cffc6971cb28e3cb0ffa190",
+     "bytes": 646
+    },
+    "onnx/model_quantized.onnx": {
+     "sha256": "17d15c59b059d0754daf088b4b12adc13571148da6225ebcb9d9c3589d24e545",
+     "bytes": 86973188
+    }
+   }
+  },
   "openmed-small": {
    "kind": "token-classifier",
    "licence": "Apache-2.0 (OpenMed)",
@@ -59,5 +82,5 @@
    }
   }
  },
- "version": "35f834d3171e"
+ "version": "891627dc007c"
 }
