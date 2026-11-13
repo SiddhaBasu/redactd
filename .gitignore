@@ -14,8 +14,8 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
-lib64/
+/lib/
+/lib64/
 parts/
 sdist/
 var/
@@ -235,3 +235,9 @@ apps/web/tsconfig.tsbuildinfo
 apps/web/public/ort/
 apps/web/public/ort-gliner/
 apps/api/redactd.db
+bench/out/raw_*
+bench/out/report_gate_*
+bench/out/report_baseline.json
+bench/out/report_a1.*
+apps/api/*.db
+apps/web/test-results/

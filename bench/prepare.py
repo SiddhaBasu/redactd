@@ -37,10 +37,10 @@ def dump(rows, path):
 nt = [r for r in nemotron("test") if r["spans"]]
 fin_unstr = [r for r in nt if r["domain"] in FIN and r["fmt"] == "unstructured" and len(r["text"]) < 4000]
 random.shuffle(fin_unstr)
-dump(fin_unstr[:300], "data/processed/eval_nemotron_fin.jsonl")
+dump(fin_unstr[:300], "data/eval/eval_nemotron_fin.jsonl")
 gf = [r for r in gretel_fin("test") if r["spans"] and len(r["text"]) < 4000]
 random.shuffle(gf)
-dump(gf[:200], "data/processed/eval_gretel_fin.jsonl")
+dump(gf[:200], "data/eval/eval_gretel_fin.jsonl")
 
 # --- TRAIN set (for DeBERTa fine-tune): Nemotron train only (Gretel kept as out-of-distribution test) ---
 ntr = [r for r in nemotron("train") if r["spans"] and len(r["text"]) < 3000]

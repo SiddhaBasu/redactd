@@ -26,7 +26,7 @@ DET = {
 }
 f = DET[name]()
 for s in sets:
-    rows = [json.loads(l) for l in open(f"{ROOT}/data/processed/{s}.jsonl")]
+    rows = [json.loads(l) for l in open(f"{ROOT}/data/eval/{s}.jsonl")]
     if limit: rows = rows[:limit]
     per, preds_all, t0 = [], [], time.time()
     for r in rows:

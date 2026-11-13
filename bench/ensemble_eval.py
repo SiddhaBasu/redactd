@@ -6,7 +6,7 @@ from score import score_doc, aggregate
 from redactd.vault import propagate, merge
 ROOT = os.path.join(os.path.dirname(__file__), "..")
 ev, names = sys.argv[1], sys.argv[2].split(",")
-rows = {json.loads(l)["id"]: json.loads(l) for l in open(f"{ROOT}/data/processed/{ev}.jsonl")}
+rows = {json.loads(l)["id"]: json.loads(l) for l in open(f"{ROOT}/data/eval/{ev}.jsonl")}
 if "--policy" in sys.argv:
     from gold_policy import excluded
     for r in rows.values(): r["spans"] = [g for g in r["spans"] if not excluded(r["text"][g["start"]:g["end"]], g["label"])]

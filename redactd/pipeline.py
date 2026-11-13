@@ -1,76 +1,75 @@
-"""The detection pipeline: rules -> models -> merge -> propagate. Same stages as the browser worker."""
-from __future__ import annotations
-import time
-from dataclasses import dataclass, asdict
-from . import rules
-from .vault import merge, propagate
+"""The detection pipeline: rules -> models -> finalize (merge, filters, propagate). Same stages as the browser worker.
 
-@dataclass
-class Span:
-    start: int
-    end: int
-    type: str
-    source: str
-    score: float | None = None
+    Pipeline.detect(text, mode) -> (list[Span], timings)
+
+mode: 'rules' | 'standard' | 'thorough'. Which models each mode runs is data (MODES below), so swapping the
+Standard model for the distilled one is a one-line change. Models load lazily and are shared across requests.
+"""
+from __future__ import annotations
+import os, time
+from . import rules
+from .post import Span, Options, finalize, spans_json, trim_bounds  # noqa: F401  (re-exported)
+
+MODEL_NAMES = {"openmed": "OpenMed", "gliner": "GLiNER", "distilled": "redactd-small"}
+DEFAULT_MODES = {"rules": [], "standard": ["openmed"], "thorough": ["openmed", "gliner"]}
+
+def _modes_from_env():
+    """REDACTD_STANDARD / REDACTD_THOROUGH = comma-separated model names override the defaults."""
+    m = {k: list(v) for k, v in DEFAULT_MODES.items()}
+    for k in ("standard", "thorough"):
+        v = os.getenv(f"REDACTD_{k.upper()}")
+        if v is not None: m[k] = [x for x in v.split(",") if x]
+    return m
 
 class Pipeline:
-    """mode: 'rules' | 'standard' (+OpenMed) | 'thorough' (+GLiNER). Models load lazily and are shared."""
-    def __init__(self, openmed_dir: str | None, gliner_dir: str | None, threads: int = 0):
-        self.openmed_dir, self.gliner_dir, self.threads = openmed_dir, gliner_dir, threads
-        self._openmed = self._gliner = None
+    def __init__(self, openmed_dir: str | None = None, gliner_dir: str | None = None, threads: int = 0,
+                 distilled_dir: str | None = None, modes: dict | None = None):
+        self.dirs = {"openmed": openmed_dir, "gliner": gliner_dir, "distilled": distilled_dir}
+        self.threads = threads; self.modes = modes or _modes_from_env(); self._models: dict = {}
 
-    @property
-    def openmed(self):
-        if self._openmed is None:
-            from .models import OpenMedOnnx
-            self._openmed = OpenMedOnnx(self.openmed_dir, self.threads)
-        return self._openmed
+    @classmethod
+    def from_env(cls, threads: int | None = None):
+        root = os.path.join(os.path.dirname(__file__), "..")
+        return cls(os.getenv("OPENMED_DIR", os.path.join(root, "browser/models/openmed-small")),
+                   os.getenv("GLINER_DIR", os.path.join(root, "browser/models/gliner")),
+                   int(os.getenv("MODEL_THREADS", "0")) if threads is None else threads,
+                   os.getenv("DISTILLED_DIR", os.path.join(root, "browser/models/redactd-small")))
 
-    @property
-    def gliner(self):
-        if self._gliner is None:
-            from .models import GlinerOnnx
-            self._gliner = GlinerOnnx(self.gliner_dir)
-        return self._gliner
+    def model(self, name: str):
+        if name not in self._models:
+            from .models import TokenClassifierOnnx, GlinerOnnx
+            d = self.dirs[name]
+            self._models[name] = GlinerOnnx(d, self.threads) if name == "gliner" else TokenClassifierOnnx(d, self.threads)
+        return self._models[name]
 
     def warm(self, mode: str):
-        if mode in ("standard", "thorough"): self.openmed
-        if mode == "thorough": self.gliner
+        for n in self.modes[mode]: self.model(n)
 
-    def detect(self, text: str, mode: str = "thorough", sensitivity: float = 0.35) -> tuple[list[Span], dict]:
+    def versions(self) -> dict:
+        return {"rules": rules.RULES_VERSION, **{n: os.path.basename(os.path.normpath(self.dirs[n] or "")) for ns in self.modes.values() for n in ns}}
+
+    def detect_raw(self, text: str, mode: str = "thorough", sensitivity: float = 0.35, progress=None) -> tuple[list[Span], dict]:
+        """Unmerged findings from every stage (used by detect() and by bench/calibrate.py)."""
         t0 = time.perf_counter(); timings = {}
-        raw = [Span(s, e, t, "rules") for s, e, t in rules.detect(text) + rules.detect_org(text)]
+        raw = [Span(s, e, t, "rules", None, rid, [rules.WHY[rid]], ["rules"]) for s, e, t, rid in rules.detect_detailed(text)]
         timings["rules_ms"] = (time.perf_counter() - t0) * 1000
-        if mode in ("standard", "thorough"):
-            t = time.perf_counter()
-            raw += [Span(s, e, ty, "openmed", sc) for s, e, ty, sc in self.openmed(text, sensitivity)]
-            timings["openmed_ms"] = (time.perf_counter() - t) * 1000
-        if mode == "thorough":
-            t = time.perf_counter()
-            raw += [Span(s, e, ty, "gliner", sc) for s, e, ty, sc in self.gliner(text, sensitivity)]
-            timings["gliner_ms"] = (time.perf_counter() - t) * 1000
-        # merge overlapping spans, then redact every other occurrence of each value (consistency)
-        raw = [x for x in (trim(text, sp) for sp in raw) if x.end > x.start]
-        merged = propagate(text, merge([(s.start, s.end, s.type) for s in raw]))
-        src = sorted(raw, key=lambda s: s.start)
-        out = []
-        for s, e, t in merged:
-            contrib = [x for x in src if x.start < e and x.end > s]
-            rule = next((x for x in contrib if x.source == "rules"), None)  # validated rules win on type
-            t = rule.type if rule else t
-            out.append(Span(s, e, t, contrib[0].source if contrib else "propagated",
-                            max((x.score or 0 for x in contrib), default=None) or None))
-        out = [x for x in (trim(text, sp) for sp in out) if x.end > x.start]
+        names = self.modes[mode]
+        for k, name in enumerate(names):
+            t = time.perf_counter(); disp = MODEL_NAMES[name]
+            cb = (lambda f, k=k, disp=disp: progress(f"Scanning with {disp}", 100 * (k + f) / len(names))) if progress else None
+            for sp in self.model(name)(text, sensitivity, cb):
+                raw.append(Span(sp.start, sp.end, sp.type, name, sp.score, sp.label, [f"{disp}: {sp.label.replace('_', ' ')} {sp.score:.2f}"], [name]))
+            timings[f"{name}_ms"] = (time.perf_counter() - t) * 1000
+        return raw, timings
+
+    def detect(self, text: str, mode: str = "thorough", sensitivity: float = 0.35, options: Options | None = None,
+               progress=None) -> tuple[list[Span], dict]:
+        t0 = time.perf_counter()
+        raw, timings = self.detect_raw(text, mode, sensitivity, progress)
+        if progress: progress("Merging findings", 99)
+        t = time.perf_counter()
+        o = options or Options(sensitivity=sensitivity)
+        out = finalize(text, raw, o)
+        timings["finalize_ms"] = (time.perf_counter() - t) * 1000
         timings["total_ms"] = (time.perf_counter() - t0) * 1000
         return out, timings
-
-def trim(text: str, sp: Span) -> Span:
-    """Tokenizer offsets can include the leading space or trailing punctuation; strip them."""
-    s, e = sp.start, sp.end
-    while s < e and (text[s].isspace() or text[s] in ",;:"): s += 1
-    while e > s and (text[e - 1].isspace() or text[e - 1] in ",;:"): e -= 1
-    sp.start, sp.end = s, e
-    return sp
-
-def spans_json(spans):
-    return [asdict(s) for s in spans]

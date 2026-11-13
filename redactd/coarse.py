@@ -5,7 +5,7 @@ GROUPS = {
     "ADDRESS": ["street_address", "postcode", "city", "county", "state", "country", "coordinate", "local_latlng"],
     "GOV_ID": ["ssn", "passport_number", "driver_license_number", "certificate_license_number", "tax_id",
                "medical_record_number", "health_plan_beneficiary_number", "biometric_identifier",
-               "license_plate", "vehicle_identifier"],
+               "license_plate", "vehicle_identifier", "national_id"],
     "FIN_ID": ["account_number", "credit_debit_card", "credit_card_number", "credit_card_security_code", "cvv",
                "bank_routing_number", "iban", "bban", "swift_bic", "swift_bic_code", "account_pin", "pin",
                "customer_id", "employee_id", "unique_id"],

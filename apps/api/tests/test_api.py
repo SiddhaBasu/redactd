@@ -10,6 +10,8 @@ MUST = ["Priya", "Raman", "priya.raman@northgate-mail.com", "0049821774471", "02
         "Royal Bank of Canada", "4111 1111 1111 1111", "555-0199", "123-45-6789", "Okafor", "Boise"]
 
 def client():
+    from app import main, limits
+    main.limiter = limits.MemoryRateLimiter()     # each test starts with a clean rate-limit window
     return TestClient(app)
 
 def test_health():

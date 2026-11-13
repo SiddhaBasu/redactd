@@ -11,7 +11,7 @@ DIRECT = {
     "email", "phone_number", "fax_number", "street_address", "url",
     # government / personal ids
     "ssn", "passport_number", "driver_license_number", "certificate_license_number", "tax_id",
-    "medical_record_number", "health_plan_beneficiary_number", "biometric_identifier",
+    "medical_record_number", "health_plan_beneficiary_number", "biometric_identifier", "national_id",
     "date_of_birth", "license_plate", "vehicle_identifier",
     # financial ids
     "account_number", "credit_debit_card", "credit_card_number", "credit_card_security_code", "cvv",
