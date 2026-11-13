@@ -1,0 +1,8 @@
+fastapi>=0.115
+uvicorn[standard]>=0.30
+sqlalchemy>=2.0
+psycopg[binary]>=3.2      # Postgres in production (DATABASE_URL=postgresql+psycopg://...)
+onnxruntime>=1.20
+tokenizers>=0.20
+numpy>=2.0
+gliner>=0.2.30            # GLiNER ONNX path (pulls torch CPU; see Dockerfile)

@@ -3,14 +3,16 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { TYPE_INFO } from "../../lib/labels";
 import { leakCheck, mergeSpans, propagate, render } from "../../lib/redact";
 import { sealVault } from "../../lib/vault";
+import { detectOnServer, serverHealth } from "../../lib/api";
 import type { DetectMode, OutputStyle, PiiType, ReviewSpan, Span, WorkerResponse } from "../../lib/types";
 
 const MAX_BYTES = 1_000_000;
 const MODES: { id: DetectMode; name: string; note: string }[] = [
-  { id: "rules", name: "Fast", note: "Pattern rules only · instant · structured IDs" },
-  { id: "standard", name: "Standard", note: "+ OpenMed model · ~170 MB one-time download" },
-  { id: "thorough", name: "Thorough", note: "+ GLiNER-PII · ~370 MB total · best recall" },
+  { id: "rules", name: "Fast", note: "Pattern rules only · structured IDs" },
+  { id: "standard", name: "Standard", note: "+ OpenMed model · names, places, context" },
+  { id: "thorough", name: "Thorough", note: "+ GLiNER-PII · best recall (recommended)" },
 ];
+type Where = "server" | "device";
 
 function download(name: string, data: string, type = "text/plain") {
   const url = URL.createObjectURL(new Blob([data], { type }));
@@ -22,6 +24,8 @@ export default function RedactPage() {
   const [text, setText] = useState("");
   const [fileName, setFileName] = useState("document.txt");
   const [mode, setMode] = useState<DetectMode>("thorough");
+  const [where, setWhere] = useState<Where>("server");
+  const [serverUp, setServerUp] = useState<boolean | null>(null);
   const [sensitivity, setSensitivity] = useState(0.35);
   const [spans, setSpans] = useState<ReviewSpan[] | null>(null);
   const [progress, setProgress] = useState<{ stage: string; pct: number } | null>(null);
@@ -35,19 +39,30 @@ export default function RedactPage() {
   const viewer = useRef<HTMLDivElement>(null);
 
   useEffect(() => () => worker.current?.terminate(), []);
+  useEffect(() => { serverHealth().then((h) => setServerUp(!!h)); }, []);
 
-  function scan() {
+  function accept(raw: Span[], ms: number) {
+    const all = propagate(text, mergeSpans(raw));
+    setSpans(all.map((s, id) => ({ ...s, id, accepted: true })));
+    setElapsed(ms); setProgress(null);
+  }
+
+  async function scan() {
     setError(null); setSpans(null); setElapsed(null);
+    if (where === "server") {
+      const t0 = performance.now();
+      try {
+        const r = await detectOnServer(text, mode, sensitivity, (stage, pct) => setProgress({ stage, pct }));
+        accept(r.spans, performance.now() - t0);
+      } catch (e) { setError(e instanceof Error ? e.message : String(e)); setProgress(null); }
+      return;
+    }
     worker.current ??= new Worker(new URL("../../workers/detect.worker.ts", import.meta.url), { type: "module" });
     worker.current.onmessage = (e: MessageEvent<WorkerResponse>) => {
       const m = e.data;
       if (m.kind === "progress") setProgress({ stage: m.stage, pct: m.pct });
       else if (m.kind === "error") { setError(m.message); setProgress(null); }
-      else {
-        const all = propagate(text, mergeSpans(m.spans as Span[]));
-        setSpans(all.map((s, id) => ({ ...s, id, accepted: true })));
-        setElapsed(m.ms); setProgress(null);
-      }
+      else accept(m.spans as Span[], m.ms);
     };
     worker.current.postMessage({ kind: "detect", text, mode, sensitivity });
   }
@@ -141,6 +156,21 @@ export default function RedactPage() {
             </button>
           ))}
         </div>
+        <div className="flex flex-wrap items-center gap-2 text-sm">
+          <span className="muted">Process</span>
+          {(["server", "device"] as Where[]).map((w) => (
+            <button key={w} type="button" onClick={() => setWhere(w)}
+              className={`rounded-full border px-3 py-1 ${where === w ? "border-teal-600 bg-teal-50 text-teal-900 dark:bg-teal-950 dark:text-teal-100" : ""}`}
+              style={where === w ? undefined : { borderColor: "var(--border)" }}>
+              {w === "server" ? "On redactd servers" : "On this device only"}
+            </button>
+          ))}
+          <span className="text-xs muted">
+            {where === "server"
+              ? serverUp === false ? "⚠ server unreachable — switch to on-device" : "Encrypted in transit · processed in memory · never stored or logged"
+              : "Nothing leaves your browser · one-time model download (up to ~370 MB)"}
+          </span>
+        </div>
         <div className="flex flex-wrap items-center gap-4">
           <label className="flex items-center gap-2 text-sm">
             Sensitivity
@@ -223,7 +253,7 @@ export default function RedactPage() {
             </button>
             {style === "placeholder" && (
               <>
-                <input type="password" className="input w-56" placeholder="Password for restore key (8+ chars)"
+                <input type="password" className="input w-64" placeholder="Password for restore key (8+ chars)"
                   value={password} onChange={(e) => setPassword(e.target.value)} />
                 <button className="btn" disabled={password.length < 8} onClick={downloadKey}>Download restore key</button>
                 <span className="text-xs muted">Encrypted in your browser. We never see it.</span>

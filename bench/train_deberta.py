@@ -37,7 +37,7 @@ def encode(r):
 
 data = [x for r in rows for x in encode(r)]
 print("windows", len(data), flush=True)
-model = AutoModelForTokenClassification.from_pretrained(BASE, num_labels=len(labels),
+model = AutoModelForTokenClassification.from_pretrained(BASE, num_labels=len(labels), dtype=torch.float32,
             id2label=dict(enumerate(labels)), label2id=l2i)
 opt = torch.optim.AdamW(model.parameters(), lr=LR, weight_decay=0.01)
 steps = int(len(data) / BS * EPOCHS)
@@ -52,6 +52,8 @@ while step < steps:
         att = (ids != tok.pad_token_id).long()
         lab = torch.tensor([x[1] + [-100] * (L - len(x[1])) for x in b])
         loss = model(input_ids=ids, attention_mask=att, labels=lab).loss
+        if not torch.isfinite(loss):
+            raise SystemExit(f'non-finite loss at step {step}; aborting (check dtype / LR)')
         loss.backward(); torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
         opt.step(); sch.step(); opt.zero_grad(); step += 1
         if step % 25 == 0:
