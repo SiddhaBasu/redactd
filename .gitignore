@@ -216,3 +216,15 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# redactd bench artifacts
+data/raw/
+data/processed/
+models/
+bench/out/*.jsonl
+browser/node_modules/
+browser/models/
+browser/ort/
+browser/dist/
+browser/sample.txt
+bench/out/preds_*
