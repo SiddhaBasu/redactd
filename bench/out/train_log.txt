@@ -24,3 +24,6 @@ Notes:
 - UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
 - MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
 step 25/993 loss 1.1658 elapsed 2.1m eta 82.9m
+step 50/993 loss 0.3364 elapsed 4.1m eta 77.0m
+step 75/993 loss 0.1278 elapsed 6.0m eta 73.6m
+step 100/993 loss 0.1780 elapsed 7.9m eta 70.5m
