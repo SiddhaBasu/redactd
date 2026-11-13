@@ -6,9 +6,9 @@
    "docs": 300,
    "chars": 419736,
    "raw": {
-    "char_precision": 33.248954712608935,
+    "char_precision": 32.87799168181705,
     "direct_n": 962,
-    "direct_r50": 99.37629937629937,
+    "direct_r50": 99.27234927234927,
     "direct_r90": 98.12889812889813,
     "indirect_n": 551,
     "indirect_r50": 96.18874773139746,
@@ -32,7 +32,7 @@
       },
       "ADDRESS": {
        "n": 244,
-       "r50": 98.36065573770492,
+       "r50": 97.95081967213115,
        "r90": 97.1311475409836
       },
       "FIN_ID": {
@@ -79,7 +79,7 @@
       },
       "direct:street_address": {
        "n": 240,
-       "r50": 98.33333333333333,
+       "r50": 97.91666666666667,
        "r90": 97.08333333333333
       },
       "direct:bban": {
@@ -246,7 +246,7 @@
       },
       "Health Insurance Claim Form": {
        "n": 65,
-       "r50": 98.46153846153847,
+       "r50": 96.92307692307692,
        "r90": 96.92307692307692
       },
       "Financial Risk Assessment": {
@@ -509,44 +509,44 @@
     },
     "precision_by_pred": {
      "ORG": {
-      "pred_chars": 11584,
-      "precision": 55.35220994475138
+      "pred_chars": 11612,
+      "precision": 55.21012745435756
      },
      "tier:indirect": {
-      "pred_chars": 39316,
-      "precision": 21.871502696103367
+      "pred_chars": 39611,
+      "precision": 21.68084622958269
      },
      "ADDRESS": {
-      "pred_chars": 14882,
-      "precision": 46.37817497648165
+      "pred_chars": 14898,
+      "precision": 46.34179084440864
      },
      "tier:direct": {
-      "pred_chars": 40088,
-      "precision": 44.40730393135103
+      "pred_chars": 40695,
+      "precision": 43.77687676618749
      },
      "DEMOGRAPHIC": {
-      "pred_chars": 19077,
-      "precision": 3.0141007495937515
+      "pred_chars": 19343,
+      "precision": 2.9209533164452255
      },
      "NAME": {
-      "pred_chars": 8648,
-      "precision": 75.21970397779833
+      "pred_chars": 8610,
+      "precision": 75.52845528455285
      },
      "SECRET": {
-      "pred_chars": 6182,
-      "precision": 4.949854416046587
+      "pred_chars": 6382,
+      "precision": 4.982764023816985
      },
      "FIN_ID": {
-      "pred_chars": 2750,
-      "precision": 42.10909090909091
+      "pred_chars": 2765,
+      "precision": 41.88065099457504
      },
      "CONTACT": {
-      "pred_chars": 6775,
-      "precision": 32.7380073800738
+      "pred_chars": 7189,
+      "precision": 30.866601752677703
      },
      "DATE": {
-      "pred_chars": 8655,
-      "precision": 18.625072212593878
+      "pred_chars": 8656,
+      "precision": 18.622920517560075
      },
      "NETWORK": {
       "pred_chars": 644,
@@ -559,9 +559,9 @@
     }
    },
    "policy": {
-    "char_precision": 32.157070172787265,
+    "char_precision": 31.78716409732772,
     "direct_n": 939,
-    "direct_r50": 99.89350372736955,
+    "direct_r50": 99.78700745473908,
     "direct_r90": 99.57401490947817,
     "indirect_n": 497,
     "indirect_r50": 98.59154929577464,
@@ -585,7 +585,7 @@
       },
       "ADDRESS": {
        "n": 238,
-       "r50": 99.5798319327731,
+       "r50": 99.15966386554622,
        "r90": 98.73949579831933
       },
       "FIN_ID": {
@@ -632,7 +632,7 @@
       },
       "direct:street_address": {
        "n": 234,
-       "r50": 99.57264957264957,
+       "r50": 99.14529914529915,
        "r90": 98.71794871794872
       },
       "direct:bban": {
@@ -799,7 +799,7 @@
       },
       "Health Insurance Claim Form": {
        "n": 64,
-       "r50": 98.4375,
+       "r50": 96.875,
        "r90": 96.875
       },
       "Financial Risk Assessment": {
@@ -1057,44 +1057,44 @@
     },
     "precision_by_pred": {
      "ORG": {
-      "pred_chars": 11584,
-      "precision": 52.01139502762431
+      "pred_chars": 11612,
+      "precision": 51.87736823975198
      },
      "tier:indirect": {
-      "pred_chars": 39316,
-      "precision": 20.26910163800997
+      "pred_chars": 39611,
+      "precision": 20.12067355027644
      },
      "ADDRESS": {
-      "pred_chars": 14882,
-      "precision": 46.27066254535681
+      "pred_chars": 14898,
+      "precision": 46.17398308497785
      },
      "tier:direct": {
-      "pred_chars": 40088,
-      "precision": 43.81610456994612
+      "pred_chars": 40695,
+      "precision": 43.14289224720481
      },
      "DEMOGRAPHIC": {
-      "pred_chars": 19077,
-      "precision": 1.7403155632436966
+      "pred_chars": 19343,
+      "precision": 1.7267228454738148
      },
      "NAME": {
-      "pred_chars": 8648,
-      "precision": 75.06938020351527
+      "pred_chars": 8610,
+      "precision": 75.37746806039489
      },
      "SECRET": {
-      "pred_chars": 6182,
-      "precision": 4.852798447104497
+      "pred_chars": 6382,
+      "precision": 4.700720777185835
      },
      "FIN_ID": {
-      "pred_chars": 2750,
-      "precision": 42.10909090909091
+      "pred_chars": 2765,
+      "precision": 41.88065099457504
      },
      "CONTACT": {
-      "pred_chars": 6775,
-      "precision": 29.756457564575644
+      "pred_chars": 7189,
+      "precision": 28.05675337320907
      },
      "DATE": {
-      "pred_chars": 8655,
-      "precision": 18.625072212593878
+      "pred_chars": 8656,
+      "precision": 18.622920517560075
      },
      "NETWORK": {
       "pred_chars": 644,
@@ -1107,29 +1107,29 @@
     }
    },
    "latency_ms": {
-    "p50": 145.70146499954717,
-    "p95": 553.6012399998071,
-    "p99": 634.4661109997105,
-    "mean": 170.59231557670805,
-    "per_1k_chars": 121.92829462569904,
+    "p50": 146.35624999937136,
+    "p95": 537.0229949994609,
+    "p99": 682.0960399991236,
+    "mean": 165.97384233663738,
+    "per_1k_chars": 118.62731026404981,
     "stage_share": {
-     "rules_ms": 0.007811843588399443,
-     "distilled_ms": 0.9845900293859328,
-     "finalize_ms": 0.007558032956968225
+     "rules_ms": 0.007678357778599496,
+     "distilled_ms": 0.9847916430219831,
+     "finalize_ms": 0.007488976691420256
     }
    },
-   "wall_s": 25.95417547225952,
+   "wall_s": 25.150392770767212,
    "leak_check_failures": 0,
-   "gold_direct_in_output": 4,
+   "gold_direct_in_output": 3,
    "gold_direct_values": 773,
-   "docs_with_gold_direct_in_output": 4
+   "docs_with_gold_direct_in_output": 3
   },
   "eval_fin_holdout2": {
    "role": "held-out",
    "docs": 300,
    "chars": 428381,
    "raw": {
-    "char_precision": 34.814091826371396,
+    "char_precision": 34.61820947984157,
     "direct_n": 902,
     "direct_r50": 99.1130820399113,
     "direct_r90": 98.22616407982261,
@@ -1632,44 +1632,44 @@
     },
     "precision_by_pred": {
      "DEMOGRAPHIC": {
-      "pred_chars": 15892,
-      "precision": 3.8258243141203123
+      "pred_chars": 16137,
+      "precision": 3.7677387370638904
      },
      "tier:indirect": {
-      "pred_chars": 35528,
-      "precision": 25.1407340689034
+      "pred_chars": 35762,
+      "precision": 24.987416811140317
      },
      "SECRET": {
-      "pred_chars": 6218,
-      "precision": 2.7983274364747506
+      "pred_chars": 6445,
+      "precision": 2.699767261442979
      },
      "tier:direct": {
-      "pred_chars": 40289,
-      "precision": 43.34433716399017
+      "pred_chars": 40484,
+      "precision": 43.12567928070349
      },
      "CONTACT": {
-      "pred_chars": 6924,
-      "precision": 21.577123050259964
+      "pred_chars": 6940,
+      "precision": 21.527377521613833
      },
      "FIN_ID": {
-      "pred_chars": 2604,
-      "precision": 41.16743471582181
+      "pred_chars": 2591,
+      "precision": 41.373986877653415
      },
      "ADDRESS": {
-      "pred_chars": 15420,
-      "precision": 52.5875486381323
+      "pred_chars": 15441,
+      "precision": 52.51602875461434
      },
      "NAME": {
-      "pred_chars": 8380,
-      "precision": 71.67064439140812
+      "pred_chars": 8324,
+      "precision": 72.1047573282076
      },
      "DATE": {
       "pred_chars": 7902,
       "precision": 24.51278157428499
      },
      "ORG": {
-      "pred_chars": 11734,
-      "precision": 54.431566388273396
+      "pred_chars": 11723,
+      "precision": 54.51676192100998
      },
      "NETWORK": {
       "pred_chars": 442,
@@ -1682,7 +1682,7 @@
     }
    },
    "policy": {
-    "char_precision": 34.32871255786961,
+    "char_precision": 34.13556120976838,
     "direct_n": 886,
     "direct_r50": 99.66139954853273,
     "direct_r90": 98.9841986455982,
@@ -2185,44 +2185,44 @@
     },
     "precision_by_pred": {
      "DEMOGRAPHIC": {
-      "pred_chars": 15892,
-      "precision": 3.0707274100176187
+      "pred_chars": 16137,
+      "precision": 3.0241060915907543
      },
      "tier:indirect": {
-      "pred_chars": 35528,
-      "precision": 24.597500562936276
+      "pred_chars": 35762,
+      "precision": 24.44773782226945
      },
      "SECRET": {
-      "pred_chars": 6218,
-      "precision": 2.7983274364747506
+      "pred_chars": 6445,
+      "precision": 2.699767261442979
      },
      "tier:direct": {
-      "pred_chars": 40289,
-      "precision": 42.909975427536054
+      "pred_chars": 40484,
+      "precision": 42.693409742120345
      },
      "CONTACT": {
-      "pred_chars": 6924,
-      "precision": 19.4685153090699
+      "pred_chars": 6940,
+      "precision": 19.423631123919307
      },
      "FIN_ID": {
-      "pred_chars": 2604,
-      "precision": 41.16743471582181
+      "pred_chars": 2591,
+      "precision": 41.373986877653415
      },
      "ADDRESS": {
-      "pred_chars": 15420,
-      "precision": 52.43839169909209
+      "pred_chars": 15441,
+      "precision": 52.367074671329576
      },
      "NAME": {
-      "pred_chars": 8380,
-      "precision": 71.59904534606206
+      "pred_chars": 8324,
+      "precision": 72.03267659778952
      },
      "DATE": {
       "pred_chars": 7902,
       "precision": 24.51278157428499
      },
      "ORG": {
-      "pred_chars": 11734,
-      "precision": 53.809442645304244
+      "pred_chars": 11723,
+      "precision": 53.89405442292929
      },
      "NETWORK": {
       "pred_chars": 442,
@@ -2235,18 +2235,18 @@
     }
    },
    "latency_ms": {
-    "p50": 156.65088599962473,
-    "p95": 529.5394089998808,
-    "p99": 655.5203119996804,
-    "mean": 167.23382283668798,
-    "per_1k_chars": 117.1157144014473,
+    "p50": 159.65000999949552,
+    "p95": 552.0243310002115,
+    "p99": 602.6487489998544,
+    "mean": 167.6072303699948,
+    "per_1k_chars": 117.37721586858062,
     "stage_share": {
-     "rules_ms": 0.00794548266302675,
-     "distilled_ms": 0.9844720088357026,
-     "finalize_ms": 0.007543079435763157
+     "rules_ms": 0.007948335564627998,
+     "distilled_ms": 0.9841870762328236,
+     "finalize_ms": 0.007824136367803644
     }
    },
-   "wall_s": 25.290424823760986,
+   "wall_s": 25.391773462295532,
    "leak_check_failures": 0,
    "gold_direct_in_output": 3,
    "gold_direct_values": 720,
@@ -2257,13 +2257,13 @@
    "docs": 300,
    "chars": 326311,
    "raw": {
-    "char_precision": 78.05735430157262,
+    "char_precision": 77.68503743709341,
     "direct_n": 1768,
     "direct_r50": 99.8868778280543,
     "direct_r90": 99.83031674208145,
     "indirect_n": 1006,
     "indirect_r50": 93.53876739562624,
-    "indirect_r90": 93.24055666003976,
+    "indirect_r90": 93.3399602385686,
     "by": {
      "coarse": {
       "FIN_ID": {
@@ -2309,7 +2309,7 @@
       "DEMOGRAPHIC": {
        "n": 176,
        "r50": 84.0909090909091,
-       "r90": 82.38636363636364
+       "r90": 82.95454545454545
       },
       "NETWORK": {
        "n": 28,
@@ -2466,7 +2466,7 @@
       "indirect:occupation": {
        "n": 94,
        "r50": 77.65957446808511,
-       "r90": 74.46808510638297
+       "r90": 75.53191489361703
       },
       "direct:http_cookie": {
        "n": 8,
@@ -3183,7 +3183,7 @@
       "Income Verification Form": {
        "n": 10,
        "r50": 100.0,
-       "r90": 90.0
+       "r90": 100.0
       },
       "Affidavit of Title": {
        "n": 31,
@@ -3530,44 +3530,44 @@
     },
     "precision_by_pred": {
      "FIN_ID": {
-      "pred_chars": 6487,
-      "precision": 95.5141051333436
+      "pred_chars": 6483,
+      "precision": 95.49591238624093
      },
      "tier:direct": {
-      "pred_chars": 30126,
-      "precision": 92.29901082121755
+      "pred_chars": 30127,
+      "precision": 92.1996879875195
      },
      "DATE": {
-      "pred_chars": 4855,
-      "precision": 85.41709577754892
+      "pred_chars": 4879,
+      "precision": 84.9969255995081
      },
      "tier:indirect": {
-      "pred_chars": 18519,
-      "precision": 54.88957287110535
+      "pred_chars": 18755,
+      "precision": 54.36950146627566
      },
      "NAME": {
-      "pred_chars": 4033,
-      "precision": 86.31291842301016
+      "pred_chars": 4007,
+      "precision": 86.14923883204392
      },
      "CONTACT": {
       "pred_chars": 11781,
       "precision": 99.02385196502844
      },
      "ORG": {
-      "pred_chars": 6926,
-      "precision": 59.7458850707479
+      "pred_chars": 6946,
+      "precision": 59.80420385833573
      },
      "SECRET": {
-      "pred_chars": 2336,
-      "precision": 65.96746575342466
-     },
-     "ADDRESS": {
-      "pred_chars": 3807,
-      "precision": 86.20961386918833
+      "pred_chars": 2360,
+      "precision": 65.50847457627118
      },
      "DEMOGRAPHIC": {
-      "pred_chars": 6738,
-      "precision": 27.901454437518552
+      "pred_chars": 6930,
+      "precision": 27.35930735930736
+     },
+     "ADDRESS": {
+      "pred_chars": 3814,
+      "precision": 86.05138961719979
      },
      "GOV_ID": {
       "pred_chars": 1159,
@@ -3580,13 +3580,13 @@
     }
    },
    "policy": {
-    "char_precision": 78.01212868742934,
+    "char_precision": 77.6400310952907,
     "direct_n": 1768,
     "direct_r50": 99.8868778280543,
     "direct_r90": 99.83031674208145,
     "indirect_n": 968,
     "indirect_r50": 97.2107438016529,
-    "indirect_r90": 96.90082644628099,
+    "indirect_r90": 97.00413223140495,
     "by": {
      "coarse": {
       "FIN_ID": {
@@ -3632,7 +3632,7 @@
       "DEMOGRAPHIC": {
        "n": 165,
        "r50": 89.6969696969697,
-       "r90": 87.87878787878788
+       "r90": 88.48484848484848
       },
       "NETWORK": {
        "n": 28,
@@ -3789,7 +3789,7 @@
       "indirect:occupation": {
        "n": 85,
        "r50": 85.88235294117646,
-       "r90": 82.3529411764706
+       "r90": 83.52941176470588
       },
       "direct:http_cookie": {
        "n": 8,
@@ -4506,7 +4506,7 @@
       "Income Verification Form": {
        "n": 10,
        "r50": 100.0,
-       "r90": 90.0
+       "r90": 100.0
       },
       "Affidavit of Title": {
        "n": 31,
@@ -4853,44 +4853,44 @@
     },
     "precision_by_pred": {
      "FIN_ID": {
-      "pred_chars": 6487,
-      "precision": 95.5141051333436
+      "pred_chars": 6483,
+      "precision": 95.49591238624093
      },
      "tier:direct": {
-      "pred_chars": 30126,
-      "precision": 92.27909446989311
+      "pred_chars": 30127,
+      "precision": 92.17977229727487
      },
      "DATE": {
-      "pred_chars": 4855,
-      "precision": 85.0875386199794
+      "pred_chars": 4879,
+      "precision": 84.66898954703832
      },
      "tier:indirect": {
-      "pred_chars": 18519,
-      "precision": 54.80317511744695
+      "pred_chars": 18755,
+      "precision": 54.28419088243135
      },
      "NAME": {
-      "pred_chars": 4033,
-      "precision": 86.31291842301016
+      "pred_chars": 4007,
+      "precision": 86.14923883204392
      },
      "CONTACT": {
       "pred_chars": 11781,
       "precision": 99.02385196502844
      },
      "ORG": {
-      "pred_chars": 6926,
-      "precision": 59.7458850707479
+      "pred_chars": 6946,
+      "precision": 59.80420385833573
      },
      "SECRET": {
-      "pred_chars": 2336,
-      "precision": 65.96746575342466
-     },
-     "ADDRESS": {
-      "pred_chars": 3807,
-      "precision": 86.05200945626477
+      "pred_chars": 2360,
+      "precision": 65.50847457627118
      },
      "DEMOGRAPHIC": {
-      "pred_chars": 6738,
-      "precision": 27.901454437518552
+      "pred_chars": 6930,
+      "precision": 27.35930735930736
+     },
+     "ADDRESS": {
+      "pred_chars": 3814,
+      "precision": 85.89407446250655
      },
      "GOV_ID": {
       "pred_chars": 1159,
@@ -4903,18 +4903,18 @@
     }
    },
    "latency_ms": {
-    "p50": 96.88860999995086,
-    "p95": 569.325165999544,
-    "p99": 634.6271430002162,
-    "mean": 150.60938882998622,
-    "per_1k_chars": 138.46550269220427,
+    "p50": 100.31533900018985,
+    "p95": 568.6022230001981,
+    "p99": 635.1233400000638,
+    "mean": 151.28905006001332,
+    "per_1k_chars": 139.0903617040308,
     "stage_share": {
-     "rules_ms": 0.0068817759287772675,
-     "distilled_ms": 0.9880381898014068,
-     "finalize_ms": 0.005036861198330577
+     "rules_ms": 0.006869425863275264,
+     "distilled_ms": 0.9881138030413225,
+     "finalize_ms": 0.004974848695467022
     }
    },
-   "wall_s": 22.725793600082397,
+   "wall_s": 22.810044527053833,
    "leak_check_failures": 0,
    "gold_direct_in_output": 2,
    "gold_direct_values": 1287,
@@ -4925,7 +4925,7 @@
    "docs": 300,
    "chars": 66378,
    "raw": {
-    "char_precision": 75.9420017831167,
+    "char_precision": 75.67213727965587,
     "direct_n": 1130,
     "direct_r50": 100.0,
     "direct_r90": 99.73451327433628,
@@ -6352,28 +6352,28 @@
       "precision": 68.05059114654935
      },
      "tier:indirect": {
-      "pred_chars": 6498,
-      "precision": 40.16620498614959
+      "pred_chars": 6579,
+      "precision": 39.79328165374677
      },
      "DEMOGRAPHIC": {
-      "pred_chars": 2467,
+      "pred_chars": 2540,
       "precision": 0.0
      },
      "GOV_ID": {
-      "pred_chars": 2979,
-      "precision": 98.79154078549848
+      "pred_chars": 2984,
+      "precision": 98.79356568364611
      },
      "tier:direct": {
-      "pred_chars": 14813,
-      "precision": 91.63572537635861
+      "pred_chars": 14808,
+      "precision": 91.61264181523501
      },
      "FIN_ID": {
-      "pred_chars": 2833,
-      "precision": 96.57606777267914
+      "pred_chars": 2832,
+      "precision": 96.5042372881356
      },
      "SECRET": {
-      "pred_chars": 651,
-      "precision": 29.032258064516128
+      "pred_chars": 650,
+      "precision": 28.76923076923077
      },
      "ADDRESS": {
       "pred_chars": 3205,
@@ -6384,12 +6384,12 @@
       "precision": 97.29453802960694
      },
      "NAME": {
-      "pred_chars": 2553,
-      "precision": 89.34586760673717
+      "pred_chars": 2545,
+      "precision": 89.31237721021611
      },
      "ORG": {
-      "pred_chars": 394,
-      "precision": 34.263959390862944
+      "pred_chars": 402,
+      "precision": 35.57213930348259
      },
      "NETWORK": {
       "pred_chars": 633,
@@ -6398,7 +6398,7 @@
     }
    },
    "policy": {
-    "char_precision": 75.9420017831167,
+    "char_precision": 75.67213727965587,
     "direct_n": 1130,
     "direct_r50": 100.0,
     "direct_r90": 99.73451327433628,
@@ -7825,28 +7825,28 @@
       "precision": 68.05059114654935
      },
      "tier:indirect": {
-      "pred_chars": 6498,
-      "precision": 40.16620498614959
+      "pred_chars": 6579,
+      "precision": 39.79328165374677
      },
      "DEMOGRAPHIC": {
-      "pred_chars": 2467,
+      "pred_chars": 2540,
       "precision": 0.0
      },
      "GOV_ID": {
-      "pred_chars": 2979,
-      "precision": 98.79154078549848
+      "pred_chars": 2984,
+      "precision": 98.79356568364611
      },
      "tier:direct": {
-      "pred_chars": 14813,
-      "precision": 91.63572537635861
+      "pred_chars": 14808,
+      "precision": 91.61264181523501
      },
      "FIN_ID": {
-      "pred_chars": 2833,
-      "precision": 96.57606777267914
+      "pred_chars": 2832,
+      "precision": 96.5042372881356
      },
      "SECRET": {
-      "pred_chars": 651,
-      "precision": 29.032258064516128
+      "pred_chars": 650,
+      "precision": 28.76923076923077
      },
      "ADDRESS": {
       "pred_chars": 3205,
@@ -7857,12 +7857,12 @@
       "precision": 97.29453802960694
      },
      "NAME": {
-      "pred_chars": 2553,
-      "precision": 89.34586760673717
+      "pred_chars": 2545,
+      "precision": 89.31237721021611
      },
      "ORG": {
-      "pred_chars": 394,
-      "precision": 34.263959390862944
+      "pred_chars": 402,
+      "precision": 35.57213930348259
      },
      "NETWORK": {
       "pred_chars": 633,
@@ -7871,18 +7871,18 @@
     }
    },
    "latency_ms": {
-    "p50": 19.65992700024799,
-    "p95": 57.7955140006452,
-    "p99": 88.730346000375,
-    "mean": 23.398863173312446,
-    "per_1k_chars": 105.75279387739512,
+    "p50": 19.732253000256605,
+    "p95": 53.90240799988533,
+    "p99": 91.42041099948983,
+    "mean": 23.469415893344678,
+    "per_1k_chars": 106.0716618157131,
     "stage_share": {
-     "rules_ms": 0.01161273454499835,
-     "distilled_ms": 0.9765454479889143,
-     "finalize_ms": 0.01161275890509291
+     "rules_ms": 0.011221043926144625,
+     "distilled_ms": 0.9766508502321092,
+     "finalize_ms": 0.011876532475492118
     }
    },
-   "wall_s": 3.5398426055908203,
+   "wall_s": 3.5705599784851074,
    "leak_check_failures": 0,
    "gold_direct_in_output": 0,
    "gold_direct_values": 1130,
@@ -7893,7 +7893,7 @@
    "docs": 160,
    "chars": 23621,
    "raw": {
-    "char_precision": 74.89910580042732,
+    "char_precision": 74.65099771275337,
     "direct_n": 600,
     "direct_r50": 100.0,
     "direct_r90": 100.0,
@@ -8147,24 +8147,24 @@
     },
     "precision_by_pred": {
      "NAME": {
-      "pred_chars": 2686,
-      "precision": 87.0439314966493
+      "pred_chars": 2615,
+      "precision": 87.87762906309752
      },
      "tier:direct": {
-      "pred_chars": 10896,
-      "precision": 79.22173274596182
+      "pred_chars": 10918,
+      "precision": 79.06209928558344
      },
      "DEMOGRAPHIC": {
-      "pred_chars": 614,
+      "pred_chars": 632,
       "precision": 0.0
      },
      "tier:indirect": {
-      "pred_chars": 1741,
-      "precision": 47.84606547960942
+      "pred_chars": 1761,
+      "precision": 47.30266893810335
      },
      "FIN_ID": {
-      "pred_chars": 3248,
-      "precision": 82.35837438423646
+      "pred_chars": 3358,
+      "precision": 81.83442525312687
      },
      "DATE": {
       "pred_chars": 654,
@@ -8175,25 +8175,25 @@
       "precision": 97.91340636411059
      },
      "SECRET": {
-      "pred_chars": 1150,
-      "precision": 16.869565217391305
+      "pred_chars": 1130,
+      "precision": 14.247787610619469
      },
      "ADDRESS": {
-      "pred_chars": 1655,
-      "precision": 79.03323262839879
+      "pred_chars": 1658,
+      "precision": 78.89022919179735
      },
      "GOV_ID": {
       "pred_chars": 240,
       "precision": 100.0
      },
      "ORG": {
-      "pred_chars": 473,
-      "precision": 93.65750528541226
+      "pred_chars": 475,
+      "precision": 93.26315789473684
      }
     }
    },
    "policy": {
-    "char_precision": 74.7804067421065,
+    "char_precision": 74.53269185266977,
     "direct_n": 597,
     "direct_r50": 100.0,
     "direct_r90": 100.0,
@@ -8447,24 +8447,24 @@
     },
     "precision_by_pred": {
      "NAME": {
-      "pred_chars": 2686,
-      "precision": 86.48548026805659
+      "pred_chars": 2615,
+      "precision": 87.30401529636711
      },
      "tier:direct": {
-      "pred_chars": 10896,
-      "precision": 79.08406754772393
+      "pred_chars": 10918,
+      "precision": 78.92471148562008
      },
      "DEMOGRAPHIC": {
-      "pred_chars": 614,
+      "pred_chars": 632,
       "precision": 0.0
      },
      "tier:indirect": {
-      "pred_chars": 1741,
-      "precision": 47.84606547960942
+      "pred_chars": 1761,
+      "precision": 47.30266893810335
      },
      "FIN_ID": {
-      "pred_chars": 3248,
-      "precision": 82.35837438423646
+      "pred_chars": 3358,
+      "precision": 81.83442525312687
      },
      "DATE": {
       "pred_chars": 654,
@@ -8475,36 +8475,36 @@
       "precision": 97.91340636411059
      },
      "SECRET": {
-      "pred_chars": 1150,
-      "precision": 16.869565217391305
+      "pred_chars": 1130,
+      "precision": 14.247787610619469
      },
      "ADDRESS": {
-      "pred_chars": 1655,
-      "precision": 79.03323262839879
+      "pred_chars": 1658,
+      "precision": 78.89022919179735
      },
      "GOV_ID": {
       "pred_chars": 240,
       "precision": 100.0
      },
      "ORG": {
-      "pred_chars": 473,
-      "precision": 93.65750528541226
+      "pred_chars": 475,
+      "precision": 93.26315789473684
      }
     }
    },
    "latency_ms": {
-    "p50": 16.280332999485836,
-    "p95": 35.175312999854214,
-    "p99": 43.550457000492315,
-    "mean": 18.26442405626949,
-    "per_1k_chars": 123.71651704005413,
+    "p50": 13.619276999634167,
+    "p95": 34.6529759999612,
+    "p99": 44.52479200062953,
+    "mean": 16.971847950014762,
+    "per_1k_chars": 114.96108005598248,
     "stage_share": {
-     "rules_ms": 0.011587918094172504,
-     "distilled_ms": 0.9723483797094259,
-     "finalize_ms": 0.015772058720696158
+     "rules_ms": 0.011122546175605786,
+     "distilled_ms": 0.9724288527596332,
+     "finalize_ms": 0.016169702811294578
     }
    },
-   "wall_s": 1.4881596565246582,
+   "wall_s": 1.387284755706787,
    "leak_check_failures": 0,
    "gold_direct_in_output": 0,
    "gold_direct_values": 592,
@@ -8515,7 +8515,7 @@
    "docs": 200,
    "chars": 296331,
    "raw": {
-    "char_precision": 35.9539377378745,
+    "char_precision": 35.626426333500945,
     "direct_n": 690,
     "direct_r50": 99.1304347826087,
     "direct_r90": 98.55072463768116,
@@ -9002,58 +9002,58 @@
      "tpl": {}
     },
     "precision_by_pred": {
-     "DEMOGRAPHIC": {
-      "pred_chars": 12702,
-      "precision": 2.141395055896709
-     },
-     "tier:indirect": {
-      "pred_chars": 25793,
-      "precision": 23.448222385918662
-     },
      "NAME": {
-      "pred_chars": 5185,
-      "precision": 79.24783027965285
+      "pred_chars": 5164,
+      "precision": 79.82184353214562
      },
      "tier:direct": {
-      "pred_chars": 25442,
-      "precision": 48.63218300448078
+      "pred_chars": 25759,
+      "precision": 48.08416475794868
      },
      "DATE": {
-      "pred_chars": 5156,
-      "precision": 23.81691233514352
+      "pred_chars": 5143,
+      "precision": 23.87711452459654
+     },
+     "tier:indirect": {
+      "pred_chars": 25947,
+      "precision": 23.25895093845146
+     },
+     "DEMOGRAPHIC": {
+      "pred_chars": 12897,
+      "precision": 2.1012638598123594
      },
      "ADDRESS": {
-      "pred_chars": 9540,
-      "precision": 59.42348008385744
+      "pred_chars": 9535,
+      "precision": 59.45464079706345
      },
      "FIN_ID": {
-      "pred_chars": 1787,
-      "precision": 31.561275881365418
+      "pred_chars": 1763,
+      "precision": 31.990924560408395
      },
      "ORG": {
-      "pred_chars": 7935,
-      "precision": 57.315689981096405
+      "pred_chars": 7907,
+      "precision": 57.36689009738207
      },
      "CONTACT": {
-      "pred_chars": 3506,
-      "precision": 39.161437535653164
+      "pred_chars": 3658,
+      "precision": 37.53417167851285
      },
      "SECRET": {
-      "pred_chars": 4841,
-      "precision": 5.060937822763892
+      "pred_chars": 5057,
+      "precision": 4.844769626260629
      },
      "NETWORK": {
       "pred_chars": 356,
       "precision": 64.88764044943821
      },
      "GOV_ID": {
-      "pred_chars": 227,
-      "precision": 80.1762114537445
+      "pred_chars": 226,
+      "precision": 80.53097345132744
      }
     }
    },
    "policy": {
-    "char_precision": 34.22269932663219,
+    "char_precision": 33.91095810931033,
     "direct_n": 674,
     "direct_r50": 99.40652818991099,
     "direct_r90": 99.10979228486647,
@@ -9540,69 +9540,69 @@
      "tpl": {}
     },
     "precision_by_pred": {
-     "DEMOGRAPHIC": {
-      "pred_chars": 12702,
-      "precision": 1.8579751220280272
-     },
-     "tier:indirect": {
-      "pred_chars": 25793,
-      "precision": 21.408909394021634
-     },
      "NAME": {
-      "pred_chars": 5185,
-      "precision": 77.45419479267116
+      "pred_chars": 5164,
+      "precision": 78.02091402013943
      },
      "tier:direct": {
-      "pred_chars": 25442,
-      "precision": 47.21326939705998
+      "pred_chars": 25759,
+      "precision": 46.682712838231296
      },
      "DATE": {
-      "pred_chars": 5156,
-      "precision": 23.81691233514352
+      "pred_chars": 5143,
+      "precision": 23.87711452459654
+     },
+     "tier:indirect": {
+      "pred_chars": 25947,
+      "precision": 21.231741627163064
+     },
+     "DEMOGRAPHIC": {
+      "pred_chars": 12897,
+      "precision": 1.8221291773280608
      },
      "ADDRESS": {
-      "pred_chars": 9540,
-      "precision": 59.339622641509436
+      "pred_chars": 9535,
+      "precision": 59.37073938122706
      },
      "FIN_ID": {
-      "pred_chars": 1787,
-      "precision": 31.561275881365418
+      "pred_chars": 1763,
+      "precision": 31.990924560408395
      },
      "ORG": {
-      "pred_chars": 7935,
-      "precision": 51.140516698172654
+      "pred_chars": 7907,
+      "precision": 51.169849500442645
      },
      "CONTACT": {
-      "pred_chars": 3506,
-      "precision": 31.74557900741586
+      "pred_chars": 3658,
+      "precision": 30.42646254784035
      },
      "SECRET": {
-      "pred_chars": 4841,
-      "precision": 5.060937822763892
+      "pred_chars": 5057,
+      "precision": 4.844769626260629
      },
      "NETWORK": {
       "pred_chars": 356,
       "precision": 64.88764044943821
      },
      "GOV_ID": {
-      "pred_chars": 227,
-      "precision": 80.1762114537445
+      "pred_chars": 226,
+      "precision": 80.53097345132744
      }
     }
    },
    "latency_ms": {
-    "p50": 153.29117399960523,
-    "p95": 549.674707000122,
-    "p99": 738.8960420003059,
-    "mean": 173.19268051498057,
-    "per_1k_chars": 116.89136844608262,
+    "p50": 162.26311399987026,
+    "p95": 581.8629989998954,
+    "p99": 666.0818909995214,
+    "mean": 179.31056519504182,
+    "per_1k_chars": 121.02045698562878,
     "stage_share": {
-     "rules_ms": 0.007841654312311748,
-     "distilled_ms": 0.984690127018645,
-     "finalize_ms": 0.007430385777224077
+     "rules_ms": 0.007797634419967911,
+     "distilled_ms": 0.9845689726535186,
+     "finalize_ms": 0.00759459708065028
     }
    },
-   "wall_s": 17.475999355316162,
+   "wall_s": 18.025440216064453,
    "leak_check_failures": 0,
    "gold_direct_in_output": 3,
    "gold_direct_values": 513,
@@ -9613,7 +9613,7 @@
    "docs": 300,
    "chars": 184527,
    "raw": {
-    "char_precision": 74.54398667911295,
+    "char_precision": 74.50075642965204,
     "direct_n": 1412,
     "direct_r50": 99.92917847025495,
     "direct_r90": 99.92917847025495,
@@ -9986,28 +9986,28 @@
     },
     "precision_by_pred": {
      "SECRET": {
-      "pred_chars": 2895,
-      "precision": 58.998272884283246
+      "pred_chars": 2917,
+      "precision": 58.72471717517998
      },
      "tier:direct": {
-      "pred_chars": 25601,
-      "precision": 89.69180891371431
+      "pred_chars": 25603,
+      "precision": 89.63012147014022
      },
      "NETWORK": {
       "pred_chars": 949,
       "precision": 94.94204425711276
      },
      "ORG": {
-      "pred_chars": 3164,
-      "precision": 77.40202275600505
+      "pred_chars": 3178,
+      "precision": 77.50157331655129
      },
      "tier:indirect": {
-      "pred_chars": 14036,
-      "precision": 46.91507552009119
+      "pred_chars": 14057,
+      "precision": 46.944582770150106
      },
      "DEMOGRAPHIC": {
-      "pred_chars": 8273,
-      "precision": 21.479511664450623
+      "pred_chars": 8280,
+      "precision": 21.46135265700483
      },
      "CONTACT": {
       "pred_chars": 9068,
@@ -10018,12 +10018,12 @@
       "precision": 83.9557812966836
      },
      "FIN_ID": {
-      "pred_chars": 5181,
-      "precision": 97.27851766068326
+      "pred_chars": 5176,
+      "precision": 97.2758887171561
      },
      "NAME": {
-      "pred_chars": 3090,
-      "precision": 80.71197411003236
+      "pred_chars": 3075,
+      "precision": 80.65040650406505
      },
      "GOV_ID": {
       "pred_chars": 1071,
@@ -10036,7 +10036,7 @@
     }
    },
    "policy": {
-    "char_precision": 74.52380351691602,
+    "char_precision": 74.48058497226424,
     "direct_n": 1412,
     "direct_r50": 99.92917847025495,
     "direct_r90": 99.92917847025495,
@@ -10409,28 +10409,28 @@
     },
     "precision_by_pred": {
      "SECRET": {
-      "pred_chars": 2895,
-      "precision": 58.998272884283246
+      "pred_chars": 2917,
+      "precision": 58.72471717517998
      },
      "tier:direct": {
-      "pred_chars": 25601,
-      "precision": 89.69180891371431
+      "pred_chars": 25603,
+      "precision": 89.63012147014022
      },
      "NETWORK": {
       "pred_chars": 949,
       "precision": 94.94204425711276
      },
      "ORG": {
-      "pred_chars": 3164,
-      "precision": 77.40202275600505
+      "pred_chars": 3178,
+      "precision": 77.50157331655129
      },
      "tier:indirect": {
-      "pred_chars": 14036,
-      "precision": 46.858079224850385
+      "pred_chars": 14057,
+      "precision": 46.88767162267909
      },
      "DEMOGRAPHIC": {
-      "pred_chars": 8273,
-      "precision": 21.479511664450623
+      "pred_chars": 8280,
+      "precision": 21.46135265700483
      },
      "CONTACT": {
       "pred_chars": 9068,
@@ -10441,12 +10441,12 @@
       "precision": 83.9557812966836
      },
      "FIN_ID": {
-      "pred_chars": 5181,
-      "precision": 97.27851766068326
+      "pred_chars": 5176,
+      "precision": 97.2758887171561
      },
      "NAME": {
-      "pred_chars": 3090,
-      "precision": 80.71197411003236
+      "pred_chars": 3075,
+      "precision": 80.65040650406505
      },
      "GOV_ID": {
       "pred_chars": 1071,
@@ -10459,18 +10459,18 @@
     }
    },
    "latency_ms": {
-    "p50": 39.34860099980142,
-    "p95": 98.41248999964591,
-    "p99": 156.10920600011013,
-    "mean": 46.8892016433559,
-    "per_1k_chars": 76.2314484764114,
+    "p50": 38.803374000053736,
+    "p95": 104.91753299993434,
+    "p99": 129.11459899987676,
+    "mean": 46.22197098334558,
+    "per_1k_chars": 75.14667932066133,
     "stage_share": {
-     "rules_ms": 0.013824580798074441,
-     "distilled_ms": 0.9744859172664356,
-     "finalize_ms": 0.011548350459696613
+     "rules_ms": 0.01289766419171309,
+     "distilled_ms": 0.9756650132807158,
+     "finalize_ms": 0.011305617052527495
     }
    },
-   "wall_s": 7.169886112213135,
+   "wall_s": 7.064033269882202,
    "leak_check_failures": 0,
    "gold_direct_in_output": 1,
    "gold_direct_values": 1270,
@@ -10481,12 +10481,12 @@
    "docs": 200,
    "chars": 206302,
    "raw": {
-    "char_precision": 72.97271482696043,
+    "char_precision": 72.77573296103566,
     "direct_n": 1093,
     "direct_r50": 99.72552607502287,
     "direct_r90": 99.45105215004574,
     "indirect_n": 604,
-    "indirect_r50": 94.5364238410596,
+    "indirect_r50": 94.86754966887418,
     "indirect_r90": 92.21854304635761,
     "by": {
      "coarse": {
@@ -10527,7 +10527,7 @@
       },
       "DEMOGRAPHIC": {
        "n": 98,
-       "r50": 85.71428571428571,
+       "r50": 87.75510204081633,
        "r90": 82.65306122448979
       },
       "NETWORK": {
@@ -10644,7 +10644,7 @@
       },
       "indirect:occupation": {
        "n": 29,
-       "r50": 58.62068965517241,
+       "r50": 65.51724137931035,
        "r90": 58.62068965517241
       },
       "indirect:employment_status": {
@@ -11416,7 +11416,7 @@
       },
       "Trade Authorization": {
        "n": 26,
-       "r50": 88.46153846153847,
+       "r50": 96.15384615384616,
        "r90": 88.46153846153847
       },
       "Banking Solutions": {
@@ -11614,36 +11614,36 @@
     },
     "precision_by_pred": {
      "NAME": {
-      "pred_chars": 2244,
-      "precision": 88.72549019607843
+      "pred_chars": 2225,
+      "precision": 89.30337078651685
      },
      "tier:direct": {
-      "pred_chars": 18324,
-      "precision": 88.92163283125954
+      "pred_chars": 18322,
+      "precision": 88.9095076956664
      },
      "CONTACT": {
       "pred_chars": 6271,
       "precision": 96.8745016743741
      },
      "DATE": {
-      "pred_chars": 3327,
-      "precision": 87.19567177637511
+      "pred_chars": 3347,
+      "precision": 86.67463400059755
      },
      "tier:indirect": {
-      "pred_chars": 13085,
-      "precision": 50.638135269392436
+      "pred_chars": 13194,
+      "precision": 50.37138093072609
      },
      "FIN_ID": {
-      "pred_chars": 4175,
-      "precision": 94.73053892215569
+      "pred_chars": 4176,
+      "precision": 94.70785440613027
      },
      "ORG": {
-      "pred_chars": 4945,
-      "precision": 58.74620829120324
+      "pred_chars": 4942,
+      "precision": 58.78186968838527
      },
      "DEMOGRAPHIC": {
-      "pred_chars": 4813,
-      "precision": 17.037190941200915
+      "pred_chars": 4905,
+      "precision": 17.125382262996943
      },
      "ADDRESS": {
       "pred_chars": 2466,
@@ -11654,8 +11654,8 @@
       "precision": 97.51184834123222
      },
      "SECRET": {
-      "pred_chars": 1969,
-      "precision": 56.47536820721178
+      "pred_chars": 1985,
+      "precision": 56.02015113350126
      },
      "NETWORK": {
       "pred_chars": 355,
@@ -11664,7 +11664,7 @@
     }
    },
    "policy": {
-    "char_precision": 72.78168677767519,
+    "char_precision": 72.53458560731058,
     "direct_n": 1093,
     "direct_r50": 99.72552607502287,
     "direct_r90": 99.45105215004574,
@@ -12797,36 +12797,36 @@
     },
     "precision_by_pred": {
      "NAME": {
-      "pred_chars": 2244,
-      "precision": 88.72549019607843
+      "pred_chars": 2225,
+      "precision": 89.30337078651685
      },
      "tier:direct": {
-      "pred_chars": 18324,
-      "precision": 88.85614494651823
+      "pred_chars": 18322,
+      "precision": 88.8440126623731
      },
      "CONTACT": {
       "pred_chars": 6271,
       "precision": 96.8745016743741
      },
      "DATE": {
-      "pred_chars": 3327,
-      "precision": 85.873159002104
+      "pred_chars": 3347,
+      "precision": 85.3600239020018
      },
      "tier:indirect": {
-      "pred_chars": 13085,
-      "precision": 50.27130301872373
+      "pred_chars": 13194,
+      "precision": 49.88631195998181
      },
      "FIN_ID": {
-      "pred_chars": 4175,
-      "precision": 94.73053892215569
+      "pred_chars": 4176,
+      "precision": 94.70785440613027
      },
      "ORG": {
-      "pred_chars": 4945,
-      "precision": 58.74620829120324
+      "pred_chars": 4942,
+      "precision": 58.78186968838527
      },
      "DEMOGRAPHIC": {
-      "pred_chars": 4813,
-      "precision": 16.95408269270725
+      "pred_chars": 4905,
+      "precision": 16.717635066258918
      },
      "ADDRESS": {
       "pred_chars": 2466,
@@ -12837,8 +12837,8 @@
       "precision": 97.51184834123222
      },
      "SECRET": {
-      "pred_chars": 1969,
-      "precision": 56.47536820721178
+      "pred_chars": 1985,
+      "precision": 56.02015113350126
      },
      "NETWORK": {
       "pred_chars": 355,
@@ -12847,27 +12847,27 @@
     }
    },
    "latency_ms": {
-    "p50": 89.61516399995162,
-    "p95": 551.0402210002212,
-    "p99": 705.5155250000098,
-    "mean": 138.88198554005157,
-    "per_1k_chars": 134.63949505099473,
+    "p50": 85.20012600001792,
+    "p95": 546.9918819999293,
+    "p99": 572.0006559995454,
+    "mean": 132.4634695700115,
+    "per_1k_chars": 128.4170483756934,
     "stage_share": {
-     "rules_ms": 0.00716276244268807,
-     "distilled_ms": 0.9876295577981195,
-     "finalize_ms": 0.0051599597836406025
+     "rules_ms": 0.007219738756000524,
+     "distilled_ms": 0.9875609580863371,
+     "finalize_ms": 0.0051719849796406335
     }
    },
-   "wall_s": 14.0103759765625,
+   "wall_s": 13.387973308563232,
    "leak_check_failures": 0,
    "gold_direct_in_output": 1,
    "gold_direct_values": 824,
    "docs_with_gold_direct_in_output": 1
   }
  },
- "generated": "2026-11-13 17:40 UTC",
+ "generated": "2026-11-13 18:02 UTC",
  "limit": 0,
- "total_wall_s": 119.37088060379028,
+ "total_wall_s": 118.63727331161499,
  "workers": 2,
  "threads_per_worker": 1
 }

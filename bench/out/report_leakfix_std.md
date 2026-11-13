@@ -1,6 +1,6 @@
 # redactd benchmark report
 
-Generated 2026-11-13 17:40 UTC · mode **standard** · shipped `redactd.pipeline.Pipeline` · 2 worker processes × 1 thread · total wall time 2.0 min
+Generated 2026-11-13 18:02 UTC · mode **standard** · shipped `redactd.pipeline.Pipeline` · 2 worker processes × 1 thread · total wall time 2.0 min
 
 Recall = share of gold identifiers with ≥50% / ≥90% of their characters redacted. Precision = share of redacted characters that fall inside a gold span (Gretel leaves real PII unlabelled, so its precision understates reality). *Raw* uses dataset labels as-is; *policy* removes gold spans that are template placeholders and, for organisation labels only, generic phrases and public bodies (`bench/gold_policy.py`).
 
@@ -10,14 +10,14 @@ Recall = share of gold identifiers with ≥50% / ≥90% of their characters reda
 
 | Set | Role | Docs | Direct ≥50 raw | Direct ≥90 raw | Indirect ≥50 raw | Indirect ≥90 raw | Prec raw | Direct ≥50 pol | Direct ≥90 pol | Indirect ≥50 pol | Indirect ≥90 pol | Prec pol |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| eval_gretel_fin_holdout | held-out | 300 | 99.4 | 98.1 | 96.2 | 94.0 | 33.2 | 99.9 | 99.6 | 98.6 | 97.6 | 32.2 |
-| eval_fin_holdout2 | held-out | 300 | 99.1 | 98.2 | 92.4 | 91.0 | 34.8 | 99.7 | 99.0 | 95.3 | 94.0 | 34.3 |
-| eval_nemotron_fin_structured | held-out | 300 | 99.9 | 99.8 | 93.5 | 93.2 | 78.1 | 99.9 | 99.8 | 97.2 | 96.9 | 78.0 |
-| eval_gretel_en | held-out | 300 | 100.0 | 99.7 | 100.0 | 99.2 | 75.9 | 100.0 | 99.7 | 100.0 | 99.2 | 75.9 |
-| eval_adversarial | regression | 160 | 100.0 | 100.0 | 100.0 | 100.0 | 74.9 | 100.0 | 100.0 | 100.0 | 100.0 | 74.8 |
-| eval_gretel_fin | dev | 200 | 99.1 | 98.6 | 97.0 | 95.4 | 36.0 | 99.4 | 99.1 | 99.7 | 99.1 | 34.2 |
+| eval_gretel_fin_holdout | held-out | 300 | 99.3 | 98.1 | 96.2 | 94.0 | 32.9 | 99.8 | 99.6 | 98.6 | 97.6 | 31.8 |
+| eval_fin_holdout2 | held-out | 300 | 99.1 | 98.2 | 92.4 | 91.0 | 34.6 | 99.7 | 99.0 | 95.3 | 94.0 | 34.1 |
+| eval_nemotron_fin_structured | held-out | 300 | 99.9 | 99.8 | 93.5 | 93.3 | 77.7 | 99.9 | 99.8 | 97.2 | 97.0 | 77.6 |
+| eval_gretel_en | held-out | 300 | 100.0 | 99.7 | 100.0 | 99.2 | 75.7 | 100.0 | 99.7 | 100.0 | 99.2 | 75.7 |
+| eval_adversarial | regression | 160 | 100.0 | 100.0 | 100.0 | 100.0 | 74.7 | 100.0 | 100.0 | 100.0 | 100.0 | 74.5 |
+| eval_gretel_fin | dev | 200 | 99.1 | 98.6 | 97.0 | 95.4 | 35.6 | 99.4 | 99.1 | 99.7 | 99.1 | 33.9 |
 | eval_nemotron_fin | dev | 300 | 99.9 | 99.9 | 97.4 | 97.1 | 74.5 | 99.9 | 99.9 | 98.5 | 98.2 | 74.5 |
-| dev_nemotron_fin_structured | dev | 200 | 99.7 | 99.5 | 94.5 | 92.2 | 73.0 | 99.7 | 99.5 | 98.4 | 97.5 | 72.8 |
+| dev_nemotron_fin_structured | dev | 200 | 99.7 | 99.5 | 94.9 | 92.2 | 72.8 | 99.7 | 99.5 | 98.4 | 97.5 | 72.5 |
 
 ## Leak regression (A3)
 
@@ -25,7 +25,7 @@ Recall = share of gold identifiers with ≥50% / ≥90% of their characters reda
 
 | Set | leak_check failures | Gold direct values still in output | of | Docs affected |
 |---|---:|---:|---:|---:|
-| eval_gretel_fin_holdout | 0 | 4 | 773 | 4 / 300 |
+| eval_gretel_fin_holdout | 0 | 3 | 773 | 3 / 300 |
 | eval_fin_holdout2 | 0 | 3 | 720 | 3 / 300 |
 | eval_nemotron_fin_structured | 0 | 2 | 1287 | 2 / 300 |
 | eval_gretel_en | 0 | 0 | 1130 | 0 / 300 |
@@ -38,14 +38,14 @@ Recall = share of gold identifiers with ≥50% / ≥90% of their characters reda
 
 | Set | mean chars | p50 ms | p95 ms | p99 ms | ms / 1k chars | stage share |
 |---|---:|---:|---:|---:|---:|---|
-| eval_gretel_fin_holdout | 1399 | 146 | 554 | 634 | 122 | rules 1%, distilled 98%, finalize 1% |
-| eval_fin_holdout2 | 1427 | 157 | 530 | 656 | 117 | rules 1%, distilled 98%, finalize 1% |
-| eval_nemotron_fin_structured | 1087 | 97 | 569 | 635 | 138 | rules 1%, distilled 99%, finalize 1% |
-| eval_gretel_en | 221 | 20 | 58 | 89 | 106 | rules 1%, distilled 98%, finalize 1% |
-| eval_adversarial | 147 | 16 | 35 | 44 | 124 | rules 1%, distilled 97%, finalize 2% |
-| eval_gretel_fin | 1481 | 153 | 550 | 739 | 117 | rules 1%, distilled 98%, finalize 1% |
-| eval_nemotron_fin | 615 | 39 | 98 | 156 | 76 | rules 1%, distilled 97%, finalize 1% |
-| dev_nemotron_fin_structured | 1031 | 90 | 551 | 706 | 135 | rules 1%, distilled 99%, finalize 1% |
+| eval_gretel_fin_holdout | 1399 | 146 | 537 | 682 | 119 | rules 1%, distilled 98%, finalize 1% |
+| eval_fin_holdout2 | 1427 | 160 | 552 | 603 | 117 | rules 1%, distilled 98%, finalize 1% |
+| eval_nemotron_fin_structured | 1087 | 100 | 569 | 635 | 139 | rules 1%, distilled 99%, finalize 0% |
+| eval_gretel_en | 221 | 20 | 54 | 91 | 106 | rules 1%, distilled 98%, finalize 1% |
+| eval_adversarial | 147 | 14 | 35 | 45 | 115 | rules 1%, distilled 97%, finalize 2% |
+| eval_gretel_fin | 1481 | 162 | 582 | 666 | 121 | rules 1%, distilled 98%, finalize 1% |
+| eval_nemotron_fin | 615 | 39 | 105 | 129 | 75 | rules 1%, distilled 98%, finalize 1% |
+| dev_nemotron_fin_structured | 1031 | 85 | 547 | 572 | 128 | rules 1%, distilled 99%, finalize 1% |
 
 ## eval_gretel_fin_holdout (held-out)
 
@@ -55,7 +55,7 @@ Recall = share of gold identifiers with ≥50% / ≥90% of their characters reda
 |---|---:|---:|---:|
 | NAME | 439 | 100.0 | 98.9 |
 | ORG | 437 | 95.9 | 93.4 |
-| ADDRESS | 244 | 98.4 | 97.1 |
+| ADDRESS | 244 | 98.0 | 97.1 |
 | DATE | 130 | 97.7 | 96.9 |
 | CONTACT | 125 | 98.4 | 95.2 |
 | FIN_ID | 94 | 100.0 | 100.0 |
@@ -69,7 +69,7 @@ Recall = share of gold identifiers with ≥50% / ≥90% of their characters reda
 |---|---:|---:|---:|
 | indirect:company | 437 | 95.9 | 93.4 |
 | direct:name | 406 | 100.0 | 98.8 |
-| direct:street_address | 240 | 98.3 | 97.1 |
+| direct:street_address | 240 | 97.9 | 97.1 |
 | indirect:date | 85 | 98.8 | 97.6 |
 | direct:phone_number | 81 | 97.5 | 96.3 |
 | direct:email | 44 | 100.0 | 93.2 |
@@ -105,7 +105,7 @@ Recall = share of gold identifiers with ≥50% / ≥90% of their characters reda
 | CSV | 89 | 100.0 | 100.0 |
 | IT support ticket | 74 | 98.6 | 97.3 |
 | Loan Application | 73 | 100.0 | 98.6 |
-| Health Insurance Claim Form | 65 | 98.5 | 96.9 |
+| Health Insurance Claim Form | 65 | 96.9 | 96.9 |
 | Business Plan | 61 | 93.4 | 93.4 |
 | ISDA Definition | 61 | 95.1 | 86.9 |
 | Insurance Claim Form | 48 | 97.9 | 97.9 |
@@ -131,16 +131,16 @@ Recall = share of gold identifiers with ≥50% / ≥90% of their characters reda
 
 | predicted | chars | precision |
 |---|---:|---:|
-| tier:direct | 40088 | 43.8 |
-| tier:indirect | 39316 | 20.3 |
-| DEMOGRAPHIC | 19077 | 1.7 |
-| ADDRESS | 14882 | 46.3 |
-| ORG | 11584 | 52.0 |
-| DATE | 8655 | 18.6 |
-| NAME | 8648 | 75.1 |
-| CONTACT | 6775 | 29.8 |
-| SECRET | 6182 | 4.9 |
-| FIN_ID | 2750 | 42.1 |
+| tier:direct | 40695 | 43.1 |
+| tier:indirect | 39611 | 20.1 |
+| DEMOGRAPHIC | 19343 | 1.7 |
+| ADDRESS | 14898 | 46.2 |
+| ORG | 11612 | 51.9 |
+| DATE | 8656 | 18.6 |
+| NAME | 8610 | 75.4 |
+| CONTACT | 7189 | 28.1 |
+| SECRET | 6382 | 4.7 |
+| FIN_ID | 2765 | 41.9 |
 | NETWORK | 644 | 87.3 |
 | GOV_ID | 207 | 72.9 |
 
@@ -228,16 +228,16 @@ Recall = share of gold identifiers with ≥50% / ≥90% of their characters reda
 
 | predicted | chars | precision |
 |---|---:|---:|
-| tier:direct | 40289 | 42.9 |
-| tier:indirect | 35528 | 24.6 |
-| DEMOGRAPHIC | 15892 | 3.1 |
-| ADDRESS | 15420 | 52.4 |
-| ORG | 11734 | 53.8 |
-| NAME | 8380 | 71.6 |
+| tier:direct | 40484 | 42.7 |
+| tier:indirect | 35762 | 24.4 |
+| DEMOGRAPHIC | 16137 | 3.0 |
+| ADDRESS | 15441 | 52.4 |
+| ORG | 11723 | 53.9 |
+| NAME | 8324 | 72.0 |
 | DATE | 7902 | 24.5 |
-| CONTACT | 6924 | 19.5 |
-| SECRET | 6218 | 2.8 |
-| FIN_ID | 2604 | 41.2 |
+| CONTACT | 6940 | 19.4 |
+| SECRET | 6445 | 2.7 |
+| FIN_ID | 2591 | 41.4 |
 | NETWORK | 442 | 91.9 |
 | GOV_ID | 301 | 67.1 |
 
@@ -253,7 +253,7 @@ Recall = share of gold identifiers with ≥50% / ≥90% of their characters reda
 | CONTACT | 348 | 99.7 | 99.7 |
 | ADDRESS | 322 | 95.0 | 94.7 |
 | ORG | 225 | 100.0 | 100.0 |
-| DEMOGRAPHIC | 176 | 84.1 | 82.4 |
+| DEMOGRAPHIC | 176 | 84.1 | 83.0 |
 | GOV_ID | 130 | 100.0 | 100.0 |
 | SECRET | 47 | 100.0 | 100.0 |
 | NETWORK | 28 | 100.0 | 100.0 |
@@ -271,7 +271,7 @@ Recall = share of gold identifiers with ≥50% / ≥90% of their characters reda
 | direct:customer_id | 110 | 100.0 | 100.0 |
 | direct:credit_debit_card | 102 | 100.0 | 100.0 |
 | direct:street_address | 95 | 98.9 | 97.9 |
-| indirect:occupation | 94 | 77.7 | 74.5 |
+| indirect:occupation | 94 | 77.7 | 75.5 |
 | direct:url | 83 | 100.0 | 100.0 |
 | direct:bank_routing_number | 75 | 100.0 | 100.0 |
 | direct:phone_number | 71 | 100.0 | 100.0 |
@@ -351,16 +351,16 @@ Recall = share of gold identifiers with ≥50% / ≥90% of their characters reda
 
 | predicted | chars | precision |
 |---|---:|---:|
-| tier:direct | 30126 | 92.3 |
-| tier:indirect | 18519 | 54.8 |
+| tier:direct | 30127 | 92.2 |
+| tier:indirect | 18755 | 54.3 |
 | CONTACT | 11781 | 99.0 |
-| ORG | 6926 | 59.7 |
-| DEMOGRAPHIC | 6738 | 27.9 |
-| FIN_ID | 6487 | 95.5 |
-| DATE | 4855 | 85.1 |
-| NAME | 4033 | 86.3 |
-| ADDRESS | 3807 | 86.1 |
-| SECRET | 2336 | 66.0 |
+| ORG | 6946 | 59.8 |
+| DEMOGRAPHIC | 6930 | 27.4 |
+| FIN_ID | 6483 | 95.5 |
+| DATE | 4879 | 84.7 |
+| NAME | 4007 | 86.1 |
+| ADDRESS | 3814 | 85.9 |
+| SECRET | 2360 | 65.5 |
 | GOV_ID | 1159 | 97.6 |
 | NETWORK | 523 | 97.3 |
 
@@ -456,18 +456,18 @@ Recall = share of gold identifiers with ≥50% / ≥90% of their characters reda
 
 | predicted | chars | precision |
 |---|---:|---:|
-| tier:direct | 14813 | 91.6 |
-| tier:indirect | 6498 | 40.2 |
+| tier:direct | 14808 | 91.6 |
+| tier:indirect | 6579 | 39.8 |
 | DATE | 3637 | 68.1 |
 | ADDRESS | 3205 | 91.5 |
-| GOV_ID | 2979 | 98.8 |
-| FIN_ID | 2833 | 96.6 |
-| NAME | 2553 | 89.3 |
-| DEMOGRAPHIC | 2467 | 0.0 |
+| GOV_ID | 2984 | 98.8 |
+| FIN_ID | 2832 | 96.5 |
+| NAME | 2545 | 89.3 |
+| DEMOGRAPHIC | 2540 | 0.0 |
 | CONTACT | 1959 | 97.3 |
-| SECRET | 651 | 29.0 |
+| SECRET | 650 | 28.8 |
 | NETWORK | 633 | 92.7 |
-| ORG | 394 | 34.3 |
+| ORG | 402 | 35.6 |
 
 ## eval_adversarial (regression)
 
@@ -542,16 +542,16 @@ Recall = share of gold identifiers with ≥50% / ≥90% of their characters reda
 
 | predicted | chars | precision |
 |---|---:|---:|
-| tier:direct | 10896 | 79.1 |
-| FIN_ID | 3248 | 82.4 |
-| NAME | 2686 | 86.5 |
+| tier:direct | 10918 | 78.9 |
+| FIN_ID | 3358 | 81.8 |
+| NAME | 2615 | 87.3 |
 | CONTACT | 1917 | 97.9 |
-| tier:indirect | 1741 | 47.8 |
-| ADDRESS | 1655 | 79.0 |
-| SECRET | 1150 | 16.9 |
+| tier:indirect | 1761 | 47.3 |
+| ADDRESS | 1658 | 78.9 |
+| SECRET | 1130 | 14.2 |
 | DATE | 654 | 59.6 |
-| DEMOGRAPHIC | 614 | 0.0 |
-| ORG | 473 | 93.7 |
+| DEMOGRAPHIC | 632 | 0.0 |
+| ORG | 475 | 93.3 |
 | GOV_ID | 240 | 100.0 |
 
 ## eval_gretel_fin (dev)
@@ -638,18 +638,18 @@ Recall = share of gold identifiers with ≥50% / ≥90% of their characters reda
 
 | predicted | chars | precision |
 |---|---:|---:|
-| tier:indirect | 25793 | 21.4 |
-| tier:direct | 25442 | 47.2 |
-| DEMOGRAPHIC | 12702 | 1.9 |
-| ADDRESS | 9540 | 59.3 |
-| ORG | 7935 | 51.1 |
-| NAME | 5185 | 77.5 |
-| DATE | 5156 | 23.8 |
-| SECRET | 4841 | 5.1 |
-| CONTACT | 3506 | 31.7 |
-| FIN_ID | 1787 | 31.6 |
+| tier:indirect | 25947 | 21.2 |
+| tier:direct | 25759 | 46.7 |
+| DEMOGRAPHIC | 12897 | 1.8 |
+| ADDRESS | 9535 | 59.4 |
+| ORG | 7907 | 51.2 |
+| NAME | 5164 | 78.0 |
+| DATE | 5143 | 23.9 |
+| SECRET | 5057 | 4.8 |
+| CONTACT | 3658 | 30.4 |
+| FIN_ID | 1763 | 32.0 |
 | NETWORK | 356 | 64.9 |
-| GOV_ID | 227 | 80.2 |
+| GOV_ID | 226 | 80.5 |
 
 ## eval_nemotron_fin (dev)
 
@@ -743,15 +743,15 @@ Recall = share of gold identifiers with ≥50% / ≥90% of their characters reda
 
 | predicted | chars | precision |
 |---|---:|---:|
-| tier:direct | 25601 | 89.7 |
-| tier:indirect | 14036 | 46.9 |
+| tier:direct | 25603 | 89.6 |
+| tier:indirect | 14057 | 46.9 |
 | CONTACT | 9068 | 99.2 |
-| DEMOGRAPHIC | 8273 | 21.5 |
-| FIN_ID | 5181 | 97.3 |
+| DEMOGRAPHIC | 8280 | 21.5 |
+| FIN_ID | 5176 | 97.3 |
 | ADDRESS | 3347 | 84.0 |
-| ORG | 3164 | 77.4 |
-| NAME | 3090 | 80.7 |
-| SECRET | 2895 | 59.0 |
+| ORG | 3178 | 77.5 |
+| NAME | 3075 | 80.7 |
+| SECRET | 2917 | 58.7 |
 | DATE | 2599 | 90.5 |
 | GOV_ID | 1071 | 94.3 |
 | NETWORK | 949 | 94.9 |
@@ -769,7 +769,7 @@ Recall = share of gold identifiers with ≥50% / ≥90% of their characters reda
 | CONTACT | 171 | 100.0 | 100.0 |
 | ORG | 135 | 99.3 | 99.3 |
 | GOV_ID | 98 | 100.0 | 100.0 |
-| DEMOGRAPHIC | 98 | 85.7 | 82.7 |
+| DEMOGRAPHIC | 98 | 87.8 | 82.7 |
 | SECRET | 25 | 100.0 | 88.0 |
 | NETWORK | 19 | 100.0 | 100.0 |
 
@@ -791,7 +791,7 @@ Recall = share of gold identifiers with ≥50% / ≥90% of their characters reda
 | indirect:country | 35 | 100.0 | 100.0 |
 | direct:phone_number | 31 | 100.0 | 100.0 |
 | direct:date_of_birth | 30 | 100.0 | 100.0 |
-| indirect:occupation | 29 | 58.6 | 58.6 |
+| indirect:occupation | 29 | 65.5 | 58.6 |
 | indirect:time | 28 | 100.0 | 100.0 |
 | indirect:state | 28 | 89.3 | 89.3 |
 | direct:ssn | 27 | 100.0 | 100.0 |
@@ -840,7 +840,7 @@ Recall = share of gold identifiers with ≥50% / ≥90% of their characters reda
 | Affidavit of No Unpaid Assessments | 32 | 96.9 | 96.9 |
 | Investment Strategy | 29 | 100.0 | 100.0 |
 | Credit Policy Document | 27 | 100.0 | 100.0 |
-| Trade Authorization | 26 | 88.5 | 88.5 |
+| Trade Authorization | 26 | 96.2 | 88.5 |
 | Medical Records Release Form | 25 | 100.0 | 100.0 |
 | Investment Policy Statement | 24 | 100.0 | 100.0 |
 | Investment Objectives | 22 | 100.0 | 100.0 |
@@ -866,16 +866,16 @@ Recall = share of gold identifiers with ≥50% / ≥90% of their characters reda
 
 | predicted | chars | precision |
 |---|---:|---:|
-| tier:direct | 18324 | 88.9 |
-| tier:indirect | 13085 | 50.3 |
+| tier:direct | 18322 | 88.8 |
+| tier:indirect | 13194 | 49.9 |
 | CONTACT | 6271 | 96.9 |
-| ORG | 4945 | 58.7 |
-| DEMOGRAPHIC | 4813 | 17.0 |
-| FIN_ID | 4175 | 94.7 |
-| DATE | 3327 | 85.9 |
+| ORG | 4942 | 58.8 |
+| DEMOGRAPHIC | 4905 | 16.7 |
+| FIN_ID | 4176 | 94.7 |
+| DATE | 3347 | 85.4 |
 | ADDRESS | 2466 | 80.1 |
-| NAME | 2244 | 88.7 |
-| SECRET | 1969 | 56.5 |
+| NAME | 2225 | 89.3 |
+| SECRET | 1985 | 56.0 |
 | GOV_ID | 844 | 97.5 |
 | NETWORK | 355 | 98.6 |
 

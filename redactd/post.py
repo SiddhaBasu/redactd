@@ -51,13 +51,15 @@ def trim_bounds(text: str, s: int, e: int) -> tuple[int, int]:
     return s, e
 
 def snap_digits(text: str, s: int, e: int) -> tuple[int, int]:
-    """A finding that cuts a run of digits in half is widened to the whole run. Otherwise the redacted half can
-    reappear in clear elsewhere once its neighbouring digits are replaced (the leak check found this on held-out
-    data), and the half left visible usually identifies the number anyway."""
-    if s < e and _is_digit(text[s]):
-        while s > 0 and _is_digit(text[s - 1]): s -= 1
-    if s < e and _is_digit(text[e - 1]):
-        while e < len(text) and _is_digit(text[e]): e += 1
+    """A finding that cuts a run of digits, or a run of letters, in half is widened to the whole run (each class on
+    its own, so "75Corona" stays two runs). Otherwise the redacted part can reappear in clear elsewhere once its
+    neighbours are replaced (the leak check found both cases), and the part left visible usually gives it away."""
+    if s < e:
+        for same in (_is_digit, _is_letter):
+            if same(text[s]):
+                while s > 0 and same(text[s - 1]): s -= 1
+            if same(text[e - 1]):
+                while e < len(text) and same(text[e]): e += 1
     return s, e
 
 def occurrences(text: str, v: str) -> list[tuple[int, int]]:

@@ -37,3 +37,15 @@ def test_manual_selections_are_not_widened():
     t = "acct 0049821774471"
     fin = finalize(t, [Span(5, 9, "FIN_ID", "manual", None, "manual", [], ["manual"])])
     assert [(s.start, s.end) for s in fin] == [(5, 9)]
+
+def test_partial_word_findings_are_widened_too():
+    # same failure with letters: "TIC" found inside "SEMANTIC"; elsewhere "TIC" sat between two redacted runs
+    t = "type SEMANTIC and 4471TIC9921 end"
+    out, leaks = run(t, [sp(t, "TIC", "SECRET"), sp(t, "4471", "FIN_ID"), sp(t, "9921", "FIN_ID")])
+    assert leaks == [] and "SEMANTIC" not in out and "4471" not in out   # the redacted value is now the whole word
+
+def test_glued_letter_and_digit_runs_stay_separate():
+    from redactd.post import snap_digits
+    t = "amt 041316.75Corona Requena"
+    assert snap_digits(t, 13, 19) == (13, 19)          # "Corona" is not widened into the digits
+    assert snap_digits(t, 15, 18) == (13, 19)          # "ron" inside "Corona" is

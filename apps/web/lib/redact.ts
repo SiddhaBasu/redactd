@@ -23,10 +23,14 @@ export function trimBounds(text: string, s: number, e: number): [number, number]
   return [s, e];
 }
 
-/** A finding that cuts a run of digits in half is widened to the whole run (mirrors post.snap_digits). */
+/** A finding that cuts a run of digits, or a run of letters, is widened to the whole run (mirrors post.snap_digits). */
 export function snapDigits(text: string, s: number, e: number): [number, number] {
-  if (s < e && isDigit(text[s])) while (s > 0 && isDigit(text[s - 1])) s--;
-  if (s < e && isDigit(text[e - 1])) while (e < text.length && isDigit(text[e])) e++;
+  if (s < e) {
+    for (const same of [isDigit, isLetter]) {
+      if (same(text[s])) while (s > 0 && same(text[s - 1])) s--;
+      if (same(text[e - 1])) while (e < text.length && same(text[e])) e++;
+    }
+  }
   return [s, e];
 }
 
