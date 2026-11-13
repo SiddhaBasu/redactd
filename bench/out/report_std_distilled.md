@@ -1,6 +1,6 @@
 # redactd benchmark report
 
-Generated 2026-11-13 17:06 UTC · mode **standard** · shipped `redactd.pipeline.Pipeline` · 4 worker processes × 1 thread · total wall time 1.1 min
+Generated 2026-11-13 17:10 UTC · mode **standard** · shipped `redactd.pipeline.Pipeline` · 4 worker processes × 1 thread · total wall time 1.2 min
 
 Recall = share of gold identifiers with ≥50% / ≥90% of their characters redacted. Precision = share of redacted characters that fall inside a gold span (Gretel leaves real PII unlabelled, so its precision understates reality). *Raw* uses dataset labels as-is; *policy* removes gold spans that are template placeholders and, for organisation labels only, generic phrases and public bodies (`bench/gold_policy.py`).
 
@@ -38,14 +38,14 @@ Recall = share of gold identifiers with ≥50% / ≥90% of their characters reda
 
 | Set | mean chars | p50 ms | p95 ms | p99 ms | ms / 1k chars | stage share |
 |---|---:|---:|---:|---:|---:|---|
-| eval_gretel_fin_holdout | 1399 | 159 | 638 | 697 | 134 | rules 1%, distilled 99%, finalize 1% |
-| eval_fin_holdout2 | 1427 | 173 | 587 | 677 | 126 | rules 1%, distilled 99%, finalize 1% |
-| eval_nemotron_fin_structured | 1087 | 107 | 658 | 773 | 155 | rules 1%, distilled 99%, finalize 0% |
-| eval_gretel_en | 221 | 21 | 57 | 109 | 114 | rules 1%, distilled 98%, finalize 1% |
-| eval_adversarial | 147 | 17 | 42 | 48 | 131 | rules 1%, distilled 98%, finalize 1% |
-| eval_gretel_fin | 1481 | 164 | 641 | 743 | 126 | rules 1%, distilled 99%, finalize 1% |
-| eval_nemotron_fin | 615 | 40 | 105 | 151 | 78 | rules 1%, distilled 98%, finalize 1% |
-| dev_nemotron_fin_structured | 1031 | 94 | 626 | 739 | 146 | rules 1%, distilled 99%, finalize 0% |
+| eval_gretel_fin_holdout | 1399 | 168 | 698 | 854 | 141 | rules 1%, distilled 99%, finalize 1% |
+| eval_fin_holdout2 | 1427 | 190 | 615 | 846 | 145 | rules 1%, distilled 98%, finalize 1% |
+| eval_nemotron_fin_structured | 1087 | 113 | 691 | 804 | 164 | rules 1%, distilled 99%, finalize 0% |
+| eval_gretel_en | 221 | 20 | 58 | 113 | 113 | rules 1%, distilled 98%, finalize 1% |
+| eval_adversarial | 147 | 19 | 48 | 61 | 150 | rules 1%, distilled 97%, finalize 2% |
+| eval_gretel_fin | 1481 | 170 | 628 | 750 | 127 | rules 1%, distilled 99%, finalize 1% |
+| eval_nemotron_fin | 615 | 39 | 99 | 149 | 77 | rules 1%, distilled 98%, finalize 1% |
+| dev_nemotron_fin_structured | 1031 | 96 | 655 | 794 | 149 | rules 1%, distilled 99%, finalize 1% |
 
 ## eval_gretel_fin_holdout (held-out)
 
@@ -228,7 +228,7 @@ Recall = share of gold identifiers with ≥50% / ≥90% of their characters reda
 
 | predicted | chars | precision |
 |---|---:|---:|
-| tier:direct | 40141 | 43.1 |
+| tier:direct | 40143 | 43.1 |
 | tier:indirect | 35542 | 24.6 |
 | DEMOGRAPHIC | 15892 | 3.1 |
 | ADDRESS | 15325 | 52.8 |
@@ -236,7 +236,7 @@ Recall = share of gold identifiers with ≥50% / ≥90% of their characters reda
 | NAME | 8404 | 71.4 |
 | DATE | 7916 | 24.5 |
 | CONTACT | 7013 | 19.2 |
-| SECRET | 6015 | 2.9 |
+| SECRET | 6017 | 2.9 |
 | FIN_ID | 2638 | 40.5 |
 | NETWORK | 442 | 91.9 |
 | GOV_ID | 304 | 67.4 |
