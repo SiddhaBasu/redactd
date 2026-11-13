@@ -7,6 +7,9 @@ from redactd.vault import propagate, merge
 ROOT = os.path.join(os.path.dirname(__file__), "..")
 ev, names = sys.argv[1], sys.argv[2].split(",")
 rows = {json.loads(l)["id"]: json.loads(l) for l in open(f"{ROOT}/data/processed/{ev}.jsonl")}
+if "--policy" in sys.argv:
+    from gold_policy import excluded
+    for r in rows.values(): r["spans"] = [g for g in r["spans"] if not excluded(r["text"][g["start"]:g["end"]], g["label"])]
 preds = collections.defaultdict(list)
 for n in names:
     for l in open(f"{ROOT}/bench/out/preds_{n}_{ev}.jsonl"):
@@ -22,5 +25,5 @@ for i, r in rows.items():
         for s, e, *_ in p: m[s:e] = True
         for g in r["spans"]:
             if m[g["start"]:g["end"]].mean() < 0.5: miss[(g["tier"], g["label"])] += 1
-print(json.dumps({"combo": "+".join(names), "prop": "--prop" in sys.argv, **aggregate(per)}))
+print(json.dumps({"combo": "+".join(names), "prop": "--prop" in sys.argv, "policy": "--policy" in sys.argv, **aggregate(per)}))
 if miss: print(miss.most_common(15))

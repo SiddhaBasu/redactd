@@ -1,0 +1,63 @@
+windows 5296
+Loading weights:   0%|          | 0/102 [00:00<?, ?it/s]Loading weights: 100%|██████████| 102/102 [00:00<00:00, 11327.25it/s]
+[transformers] [1mDebertaV2ForTokenClassification LOAD REPORT[0m from: microsoft/deberta-v3-small
+Key                                     | Status     | 
+----------------------------------------+------------+-
+lm_predictions.lm_head.LayerNorm.bias   | UNEXPECTED | 
+lm_predictions.lm_head.bias             | UNEXPECTED | 
+lm_predictions.lm_head.LayerNorm.weight | UNEXPECTED | 
+mask_predictions.LayerNorm.bias         | UNEXPECTED | 
+mask_predictions.classifier.weight      | UNEXPECTED | 
+lm_predictions.lm_head.dense.bias       | UNEXPECTED | 
+lm_predictions.lm_head.dense.weight     | UNEXPECTED | 
+mask_predictions.dense.weight           | UNEXPECTED | 
+mask_predictions.dense.bias             | UNEXPECTED | 
+mask_predictions.classifier.bias        | UNEXPECTED | 
+mask_predictions.LayerNorm.weight       | UNEXPECTED | 
+classifier.weight                       | MISSING    | 
+classifier.bias                         | MISSING    | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+step 25/993 loss nan elapsed 1.5m eta 56.8m
+step 50/993 loss nan elapsed 3.6m eta 68.4m
+step 75/993 loss nan elapsed 5.2m eta 64.2m
+step 100/993 loss nan elapsed 6.6m eta 58.9m
+step 125/993 loss nan elapsed 8.0m eta 55.5m
+step 150/993 loss nan elapsed 9.4m eta 52.7m
+step 175/993 loss nan elapsed 10.8m eta 50.4m
+step 200/993 loss nan elapsed 12.2m eta 48.3m
+step 225/993 loss nan elapsed 13.6m eta 46.3m
+step 250/993 loss nan elapsed 14.9m eta 44.3m
+step 275/993 loss nan elapsed 16.3m eta 42.6m
+step 300/993 loss nan elapsed 17.7m eta 40.8m
+step 325/993 loss nan elapsed 19.0m eta 39.1m
+step 350/993 loss nan elapsed 20.4m eta 37.5m
+step 375/993 loss nan elapsed 21.9m eta 36.0m
+step 400/993 loss nan elapsed 23.3m eta 34.5m
+step 425/993 loss nan elapsed 24.6m eta 32.9m
+step 450/993 loss nan elapsed 26.0m eta 31.4m
+step 475/993 loss nan elapsed 27.4m eta 29.9m
+step 500/993 loss nan elapsed 28.9m eta 28.5m
+step 525/993 loss nan elapsed 30.3m eta 27.0m
+step 550/993 loss nan elapsed 31.7m eta 25.6m
+step 575/993 loss nan elapsed 33.1m eta 24.1m
+step 600/993 loss nan elapsed 34.5m eta 22.6m
+step 625/993 loss nan elapsed 35.9m eta 21.2m
+step 650/993 loss nan elapsed 37.3m eta 19.7m
+step 675/993 loss nan elapsed 38.7m eta 18.2m
+step 700/993 loss nan elapsed 40.2m eta 16.8m
+step 725/993 loss nan elapsed 41.6m eta 15.4m
+step 750/993 loss nan elapsed 43.4m eta 14.1m
+step 775/993 loss nan elapsed 44.9m eta 12.6m
+step 800/993 loss nan elapsed 46.4m eta 11.2m
+step 825/993 loss nan elapsed 48.8m eta 9.9m
+step 850/993 loss nan elapsed 50.3m eta 8.5m
+step 875/993 loss nan elapsed 51.7m eta 7.0m
+step 900/993 loss nan elapsed 53.2m eta 5.5m
+step 925/993 loss nan elapsed 54.7m eta 4.0m
+step 950/993 loss nan elapsed 56.2m eta 2.5m
+step 975/993 loss nan elapsed 57.5m eta 1.1m
+Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00,  2.06it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00,  2.05it/s]
+saved /home/user/redactd/bench/../models/deberta-v3-small-pii-fin train_minutes 58.473533916473386
