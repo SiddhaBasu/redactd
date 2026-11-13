@@ -18,6 +18,9 @@ def test_health():
     with client() as c:
         assert c.get("/health").json()["status"] == "ok"
 
+HAVE_MODELS = os.path.exists(os.path.join(os.path.dirname(__file__), "../../../browser/models/openmed-small/onnx/model_quantized.onnx"))
+
+@__import__("pytest").mark.skipif(not HAVE_MODELS, reason="ONNX models not built (run scripts/setup.sh); covered by the benchmark-gate CI job")
 def test_redact_standard_removes_all_identifiers():
     with client() as c:
         r = c.post("/v1/redact", json={"text": DOC, "mode": "standard"}).json()

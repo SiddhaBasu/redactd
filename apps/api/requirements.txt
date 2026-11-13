@@ -2,7 +2,7 @@ fastapi>=0.115
 uvicorn[standard]>=0.30
 sqlalchemy>=2.0
 alembic>=1.13
-psycopg[binary]>=3.2      # Postgres in production (DATABASE_URL=postgresql+psycopg://...)
+pg8000>=1.31             # Postgres in production (DATABASE_URL=postgresql+pg8000://...). BSD-3; psycopg is LGPL, so it is not used
 redis>=5.0                # shared job store + rate limiter when REDIS_URL is set
 onnxruntime>=1.20
 tokenizers>=0.20

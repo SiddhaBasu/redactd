@@ -8,10 +8,14 @@ COPY apps/api/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 COPY redactd/ redactd/
 COPY apps/api/app/ apps/api/app/
+COPY apps/api/alembic/ apps/api/alembic/
+COPY apps/api/alembic.ini apps/api/alembic.ini
 # Models are baked into the image (or mount a volume / fetch from object storage at start)
 COPY browser/models/openmed-small/ /models/openmed-small/
 COPY browser/models/gliner/ /models/gliner/
-ENV OPENMED_DIR=/models/openmed-small GLINER_DIR=/models/gliner
+# The distilled model is optional: copied when present (see docs/DEPLOY.md, REDACTD_STANDARD=distilled)
+COPY browser/models/redactd-smal[l]/ /models/redactd-small/
+ENV OPENMED_DIR=/models/openmed-small GLINER_DIR=/models/gliner DISTILLED_DIR=/models/redactd-small
 RUN useradd -r app && chown -R app /srv
 USER app
 WORKDIR /srv/apps/api

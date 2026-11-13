@@ -209,3 +209,16 @@ def test_raw_mode_returns_unmerged_findings_for_local_post_processing(c):
     from redactd.post import Span, finalize
     again = finalize(DOC, [Span(**s) for s in raw["spans"]])
     assert [(s.start, s.end, s.type) for s in again] == [(s["start"], s["end"], s["type"]) for s in fin["spans"]]
+
+def test_alembic_migrations_build_the_same_schema_as_the_models(tmp_path):
+    import subprocess, sqlalchemy as sa
+    url = f"sqlite:///{tmp_path}/m.db"; api = os.path.join(os.path.dirname(__file__), "..")
+    env = {**os.environ, "DATABASE_URL": url, "PRELOAD_MODES": ""}
+    subprocess.run([sys.executable, "-m", "alembic", "upgrade", "head"], cwd=api, env=env, check=True, capture_output=True)
+    insp = sa.inspect(sa.create_engine(url))
+    assert {"usage_events", "api_keys", "alembic_version"} <= set(insp.get_table_names())
+    for table in (db.UsageEvent.__table__, db.ApiKey.__table__):
+        assert {c["name"] for c in insp.get_columns(table.name)} == {c.name for c in table.columns}, table.name
+    cols = {c["name"] for t in ("usage_events", "api_keys") for c in insp.get_columns(t)}
+    assert not cols & {"text", "content", "value", "values", "spans", "document", "key"}, "no column may hold content or a clear-text key"
+    subprocess.run([sys.executable, "-m", "alembic", "downgrade", "base"], cwd=api, env=env, check=True, capture_output=True)

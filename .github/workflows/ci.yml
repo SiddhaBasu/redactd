@@ -1,0 +1,87 @@
+name: ci
+on:
+  push: { branches: [main, "claude/**"] }
+  pull_request:
+  deployment_status:
+permissions: { contents: read }
+concurrency: { group: "ci-${{ github.ref }}", cancel-in-progress: true }
+
+jobs:
+  web:
+    if: github.event_name != 'deployment_status'
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: apps/web } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm, cache-dependency-path: apps/web/package-lock.json }
+      - run: npm ci
+      - name: Typecheck
+        run: npx tsc --noEmit
+      - name: Unit tests (rules, post-processing, vault, layout, reducer, presets, report)
+        run: npm test
+      - name: Build (includes Next lint + type validation)
+        run: npx next build
+
+  python:
+    if: github.event_name != 'deployment_status'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12", cache: pip }
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm, cache-dependency-path: apps/web/package-lock.json }
+      - run: cd apps/web && npm ci
+      - name: Install (no torch, no models; model-dependent tests skip themselves)
+        run: pip install fastapi "uvicorn[standard]" sqlalchemy alembic redis onnxruntime tokenizers numpy cryptography python-multipart python-docx pypdf olefile -r apps/api/requirements-dev.txt ruff
+      - name: Lint
+        run: ruff check --select E9,F63,F7,F82 redactd apps/api bench scripts tests
+      - name: Generated rule spec is current
+        run: python -m redactd.rules --check
+      - name: Rule parity Python <-> TypeScript on every eval doc (A4) + ReDoS fuzz (E2)
+        run: python -m pytest -q tests
+      - name: API tests (privacy, SSE, Redis stores, API keys, formats, logs, migrations)
+        run: cd apps/api && python -m pytest -q tests
+      - name: Leak regression + recall gate, rules mode, all eval docs (A3)
+        run: python bench/gate.py --mode rules
+      - name: Licence audit of shipped dependencies, models and data (E3)
+        run: pip install -q pg8000 && python scripts/licence_audit.py
+
+  benchmark-gate:
+    if: github.event_name != 'deployment_status'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12", cache: pip }
+      - uses: actions/cache@v4
+        id: models
+        with: { path: browser/models, key: "models-${{ hashFiles('scripts/setup.sh', 'bench/export_onnx.py') }}" }
+      - name: Python deps
+        run: |
+          pip install torch --index-url https://download.pytorch.org/whl/cpu
+          pip install transformers gliner onnx onnxruntime tokenizers numpy sentencepiece cryptography
+      - name: Build ONNX models (cache miss only)
+        if: steps.models.outputs.cache-hit != 'true'
+        run: bash scripts/setup.sh models
+      - name: 50-doc benchmark + leak gate, Thorough (fails if any tier drops > 0.5 points vs bench/baseline.json)
+        run: python bench/gate.py --mode thorough --limit 50
+
+  e2e-preview:
+    # Runs against the Vercel preview once it is deployed. Needs PREVIEW_API_URL to be reachable from the preview.
+    if: github.event_name == 'deployment_status' && github.event.deployment_status.state == 'success'
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: apps/web } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm, cache-dependency-path: apps/web/package-lock.json }
+      - run: npm ci && npm i --no-save playwright && npx playwright install --with-deps chromium
+      - name: Flow (keyboard review, export, restore round trip)
+        run: node e2e/flow.e2e.cjs Fast
+        env: { BASE_URL: "${{ github.event.deployment_status.environment_url }}" }
+      - name: Accessibility (axe) + 1 MB scroll performance
+        run: node e2e/quality.e2e.cjs
+        env: { BASE_URL: "${{ github.event.deployment_status.environment_url }}" }
