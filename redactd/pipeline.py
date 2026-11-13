@@ -29,7 +29,10 @@ class Pipeline:
         # The distilled model replaces OpenMed in Standard wherever its files are deployed (it beats OpenMed on every
         # held-out set, see bench/out/report.md), unless REDACTD_STANDARD says otherwise. Its weights are built by
         # scripts/train_distilled.sh and are not in git, so a checkout without them falls back to OpenMed.
-        if modes is None and os.getenv("REDACTD_STANDARD") is None and self.has("distilled"): self.modes["standard"] = ["distilled"]
+        # Thorough = distilled + GLiNER (higher recall than OpenMed + GLiNER on every held-out tier; owner decision).
+        if modes is None and self.has("distilled"):
+            if os.getenv("REDACTD_STANDARD") is None: self.modes["standard"] = ["distilled"]
+            if os.getenv("REDACTD_THOROUGH") is None: self.modes["thorough"] = ["distilled", "gliner"]
 
     def has(self, name: str) -> bool:
         d = self.dirs.get(name)

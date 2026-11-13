@@ -1,0 +1,13 @@
+# The API image needs only the library, the API code and the int8 model files (see apps/api/Dockerfile).
+**
+!redactd/**
+!apps/api/app/**
+!apps/api/alembic/**
+!apps/api/alembic.ini
+!apps/api/requirements.txt
+!browser/models/redactd-small/config.json
+!browser/models/redactd-small/tokenizer.json
+!browser/models/redactd-small/tokenizer_config.json
+!browser/models/redactd-small/onnx/model_quantized.onnx
+!browser/models/gliner/**
+**/__pycache__

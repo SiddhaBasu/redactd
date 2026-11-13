@@ -5,7 +5,7 @@ ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..")
 
 @dataclass(frozen=True)
 class Settings:
-    openmed_dir: str = os.getenv("OPENMED_DIR", os.path.join(ROOT, "browser/models/openmed-small"))
+    openmed_dir: str = os.getenv("OPENMED_DIR") or os.path.join(ROOT, "browser/models/openmed-small")
     gliner_dir: str = os.getenv("GLINER_DIR", os.path.join(ROOT, "browser/models/gliner"))
     distilled_dir: str = os.getenv("DISTILLED_DIR", os.path.join(ROOT, "browser/models/redactd-small"))
     model_threads: int = int(os.getenv("MODEL_THREADS", "0"))          # 0 = ONNX Runtime default

@@ -1,23 +1,34 @@
-# fly deploy --config apps/api/fly.toml --dockerfile apps/api/Dockerfile   (run from the repo root)
+# Deploy from the repo root:
+#   bash scripts/fetch_models.sh
+#   fly deploy --config apps/api/fly.toml --dockerfile apps/api/Dockerfile .
 app = "redactd-api"
-primary_region = "lhr"
+primary_region = "iad"            # Ashburn, Virginia (US). Documents are processed here, in memory only.
+
+[build]
+  dockerfile = "Dockerfile"
 
 [deploy]
   release_command = "alembic upgrade head"
+  strategy = "immediate"          # one machine; no Redis yet, so in-flight jobs are lost on deploy (users rescan)
 
 [env]
   PRELOAD_MODES = "thorough"
+  REDACTD_STANDARD = "distilled"
+  REDACTD_THOROUGH = "distilled,gliner"
   MODEL_THREADS = "2"
   MAX_CONCURRENT_RUNS = "2"
   LOG_FORMAT = "json"
-# secrets (fly secrets set ...): DATABASE_URL, REDIS_URL, IP_SALT, ALLOWED_ORIGINS
+  ANON_RATE_PER_MINUTE = "20"
+  RATE_PER_MINUTE = "60"
+# Secrets (fly secrets set …, never in this file): DATABASE_URL, IP_SALT, ALLOWED_ORIGINS
+# Later, for more than one machine: REDIS_URL
 
 [http_service]
   internal_port = 8000
   force_https = true
-  auto_stop_machines = "stop"
+  auto_stop_machines = "stop"     # stops when idle (pay only while running); first request after idle waits for a cold start
   auto_start_machines = true
-  min_machines_running = 1
+  min_machines_running = 0
   [http_service.concurrency]
     type = "requests"
     soft_limit = 6
@@ -26,9 +37,9 @@ primary_region = "lhr"
     path = "/health"
     interval = "15s"
     timeout = "5s"
-    grace_period = "60s"
+    grace_period = "90s"
 
 [[vm]]
   cpu_kind = "performance"
-  cpus = 4
-  memory = "8gb"
+  cpus = 2
+  memory = "4gb"                  # measured: ~1 GB resident with both models loaded

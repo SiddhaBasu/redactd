@@ -7,7 +7,7 @@ Privacy rules enforced here:
   * errors never echo document text back
 """
 from __future__ import annotations
-import asyncio, json, logging, sys, threading, time
+import asyncio, json, logging, os, sys, threading, time
 from contextlib import asynccontextmanager
 from typing import Literal
 
@@ -69,11 +69,12 @@ async def guard(request: Request, call_next):
     rid = obs.new_request_id(); request.state.request_id = rid; t0 = time.perf_counter()
     path = request.scope.get("route").path if request.scope.get("route") else request.url.path.split("/jobs/")[0] + ("/jobs/{id}" if "/jobs/" in request.url.path else "")
     def done(resp, client="-", auth="-"):
-        resp.headers["Cache-Control"] = "no-store"; resp.headers["X-Request-Id"] = rid
+        if not request.url.path.startswith("/models/"): resp.headers["Cache-Control"] = "no-store"
+        resp.headers["X-Request-Id"] = rid
         obs.event("request", request_id=rid, method=request.method, path=path, status=resp.status_code,
                   ms=round((time.perf_counter() - t0) * 1000, 1), client=client, auth=auth)
         return resp
-    if request.method == "OPTIONS" or request.url.path == "/health":
+    if request.method == "OPTIONS" or request.url.path == "/health" or request.url.path.startswith("/models/"):
         return done(await call_next(request))
     who = await run_in_threadpool(_identify, request)
     if isinstance(who, JSONResponse): return done(who)
@@ -213,6 +214,26 @@ async def job_events(jid: str):
             if j["status"] == "error": yield "event: failed\ndata: {}\n\n"; return
             await asyncio.sleep(0.25)
     return StreamingResponse(stream(), media_type="text/event-stream", headers={"X-Accel-Buffering": "no", "Connection": "keep-alive"})
+
+# ---------- model files for on-device mode (task D7) ----------
+# The image already contains the int8 model files, so the API serves them to browsers that choose on-device mode
+# (no separate model CDN needed). Only the files listed in the web app's integrity manifest exist here; the browser
+# verifies every file's SHA-256 before use. Cross-origin headers are required because the web app is
+# cross-origin isolated (COEP: require-corp).
+MODEL_FILES = {"redactd-small": settings.distilled_dir, "gliner": settings.gliner_dir}
+MODEL_EXT = (".json", ".onnx")
+
+@app.get("/models/{model}/{path:path}")
+def model_file(model: str, path: str, request: Request):
+    from fastapi.responses import FileResponse
+    base = MODEL_FILES.get(model)
+    if not base or not path.endswith(MODEL_EXT) or ".." in path.split("/"): raise HTTPException(404, "not found")
+    full = os.path.realpath(os.path.join(base, path))
+    if not full.startswith(os.path.realpath(base) + os.sep) or not os.path.isfile(full): raise HTTPException(404, "not found")
+    origin = request.headers.get("origin", "")
+    headers = {"Cache-Control": "public, max-age=31536000, immutable", "Cross-Origin-Resource-Policy": "cross-origin"}
+    if origin in settings.allowed_origins: headers["Access-Control-Allow-Origin"] = origin
+    return FileResponse(full, media_type="application/octet-stream", headers=headers)
 
 @app.post("/v1/extract")
 async def extract_file(request: Request, file: UploadFile = File(...), include_attachments: bool = Form(False)):

@@ -222,3 +222,13 @@ def test_alembic_migrations_build_the_same_schema_as_the_models(tmp_path):
     cols = {c["name"] for t in ("usage_events", "api_keys") for c in insp.get_columns(t)}
     assert not cols & {"text", "content", "value", "values", "spans", "document", "key"}, "no column may hold content or a clear-text key"
     subprocess.run([sys.executable, "-m", "alembic", "downgrade", "base"], cwd=api, env=env, check=True, capture_output=True)
+
+def test_model_files_are_served_only_from_the_allow_list(c):
+    from app.main import MODEL_FILES
+    if not os.path.isfile(os.path.join(MODEL_FILES["gliner"], "gliner_config.json")): pytest.skip("models not built")
+    r = c.get("/models/gliner/gliner_config.json", headers={"Origin": "http://localhost:3000"})
+    assert r.status_code == 200 and r.headers["cross-origin-resource-policy"] == "cross-origin"
+    assert r.headers["access-control-allow-origin"] == "http://localhost:3000" and "immutable" in r.headers["cache-control"]
+    for bad in ("/models/gliner/../../app/main.py", "/models/gliner/%2e%2e/%2e%2e/etc/passwd", "/models/openmed-small/config.json",
+                "/models/gliner/onnx/model_quint8.onnx.bak", "/models/nope/config.json"):
+        assert c.get(bad).status_code == 404, bad
