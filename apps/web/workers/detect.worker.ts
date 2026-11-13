@@ -4,7 +4,7 @@
 import { AutoTokenizer, AutoModelForTokenClassification, env, type PreTrainedTokenizer, type PreTrainedModel, type Tensor } from "@huggingface/transformers";
 import { env as xenv } from "@xenova/transformers";
 import { Gliner } from "gliner";
-import { detectRules } from "../lib/rules";
+import { detectRules, RULES_VERSION } from "../lib/rules";
 import { FINE_TO_COARSE, GLINER_LABELS } from "../lib/labels";
 import type { PiiType, Span, WorkerRequest, WorkerResponse } from "../lib/types";
 
@@ -85,17 +85,18 @@ async function runOpenMed(text: string, sensitivity: number): Promise<Span[]> {
       const ex = Array.from(row, (v) => Math.exp(v - mx));
       const sum = ex.reduce((a, b) => a + b, 0);
       const pPii = 1 - ex[oIdx] / sum;
-      let type: PiiType | null = null;
+      let type: PiiType | null = null, fine = "";
       if (pPii >= sensitivity) {
         let best = -1, bi = -1;
         for (let k = 0; k < nl; k++) if (k !== oIdx && ex[k] > best) { best = ex[k]; bi = k; }
-        type = FINE_TO_COARSE[id2label[bi].replace(/^[BI]-/, "")] ?? "FIN_ID";
+        fine = id2label[bi].replace(/^[BI]-/, "");
+        type = FINE_TO_COARSE[fine] ?? "FIN_ID";
       }
       if (type && cur && cur.type === type && off + o[0] - cur.end <= 1) {
         cur.end = off + o[1]; cur.score = Math.max(cur.score ?? 0, pPii);
       } else {
         if (cur) out.push(cur);
-        cur = type ? { start: off + o[0], end: off + o[1], type, source: "openmed", score: pPii } : null;
+        cur = type ? { start: off + o[0], end: off + o[1], type, source: "openmed", score: pPii, label: fine, why: [`OpenMed: ${fine.replace(/_/g, " ")} ${pPii.toFixed(2)}`], sources: ["openmed"] } : null;
       }
     }
     if (cur) out.push(cur);
@@ -124,7 +125,7 @@ async function runGliner(text: string, threshold: number): Promise<Span[]> {
   for (let c = 0; c < parts.length; c++) {
     const [off, chunk] = parts[c];
     const [res] = await gliner.inference({ texts: [chunk], entities: labels, threshold, flatNer: true });
-    for (const e of res) out.push({ start: off + e.start, end: off + e.end, type: GLINER_LABELS[e.label], source: "gliner", score: e.score });
+    for (const e of res) out.push({ start: off + e.start, end: off + e.end, type: GLINER_LABELS[e.label], source: "gliner", score: e.score, label: e.label, why: [`GLiNER: ${e.label} ${e.score.toFixed(2)}`], sources: ["gliner"] });
     post({ kind: "progress", stage: "Scanning with GLiNER-PII", pct: 70 + (28 * (c + 1)) / parts.length });
   }
   return out;
@@ -138,7 +139,7 @@ self.onmessage = async (ev: MessageEvent<WorkerRequest>) => {
     let spans: Span[] = detectRules(text);
     if (mode !== "rules") spans = spans.concat(await runOpenMed(text, sensitivity));
     if (mode === "thorough") spans = spans.concat(await runGliner(text, Math.max(0.15, sensitivity - 0.2)));
-    post({ kind: "result", spans, ms: performance.now() - t0 });
+    post({ kind: "result", spans, ms: performance.now() - t0, versions: { rules: RULES_VERSION, ...(mode !== "rules" ? { openmed: "openmed-small" } : {}), ...(mode === "thorough" ? { gliner: "gliner-pii-base" } : {}) } });
   } catch (e) {
     post({ kind: "error", message: e instanceof Error ? e.message : String(e) });
   }

@@ -1,267 +1,400 @@
 "use client";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { TYPE_INFO } from "../../lib/labels";
-import { leakCheck, mergeSpans, propagate, render } from "../../lib/redact";
-import { sealVault } from "../../lib/vault";
-import { detectOnServer, serverHealth } from "../../lib/api";
+// The workspace: add a document -> scan -> review every finding -> export a redacted copy (+ optional restore key).
+// Detection returns raw findings (from the API or the on-device worker); the policy is always applied here in the
+// browser by lib/redact.ts finalize(), so presets, custom terms and the allow-list never leave the device and can
+// be changed after a scan without sending the document again.
+import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
+import { TYPE_INFO, TYPES } from "../../lib/labels";
+import { finalize, leakCheck, render, replacementsFor } from "../../lib/redact";
+import { sealVault, passwordStrength } from "../../lib/vault";
+import { detectOnServer, extractOnServer, serverHealth } from "../../lib/api";
+import { DEFAULT_POLICY, loadPolicy, optionsFor, presetById, savePolicy, styleFor, type UserPolicy } from "../../lib/presets";
+import { emptyReview, rejectedKeys, reviewReducer, searchSpans, valueOf } from "../../lib/review";
+import { baseName, buildReport, redactedName, reportMarkdown } from "../../lib/report";
+import { SAMPLE_NAME, SAMPLE_TEXT } from "../../lib/sample";
+import { RULES_VERSION } from "../../lib/rules";
 import type { DetectMode, OutputStyle, PiiType, ReviewSpan, Span, WorkerResponse } from "../../lib/types";
+import { Viewer, type ViewerHandle } from "../../components/Viewer";
+import { Sidebar } from "../../components/Sidebar";
+import { PolicyPanel } from "../../components/PolicyPanel";
+import { DataPanel, type Where } from "../../components/DataPanel";
+import { ShortcutOverlay } from "../../components/Shortcuts";
+import { Progress, Segmented, Steps } from "../../components/ui";
 
 const MAX_BYTES = 1_000_000;
 const MODES: { id: DetectMode; name: string; note: string }[] = [
-  { id: "rules", name: "Fast", note: "Pattern rules only · structured IDs" },
-  { id: "standard", name: "Standard", note: "+ OpenMed model · names, places, context" },
-  { id: "thorough", name: "Thorough", note: "+ GLiNER-PII · best recall (recommended)" },
+  { id: "rules", name: "Fast", note: "Pattern rules with checksums. Structured identifiers only." },
+  { id: "standard", name: "Standard", note: "Rules plus a compact model: names, places, context." },
+  { id: "thorough", name: "Thorough", note: "Adds a second model for the best recall. Recommended." },
 ];
-type Where = "server" | "device";
+const BINARY = /\.(docx|pdf|msg)$/i, EMAIL = /\.eml$/i;
+const DEVICE_MODEL_MB = Number(process.env.NEXT_PUBLIC_DEVICE_MODEL_MB || 370);
 
-function download(name: string, data: string, type = "text/plain") {
+function download(name: string, data: string, type = "text/plain;charset=utf-8") {
   const url = URL.createObjectURL(new Blob([data], { type }));
-  Object.assign(document.createElement("a"), { href: url, download: name }).click();
-  URL.revokeObjectURL(url);
+  const a = Object.assign(document.createElement("a"), { href: url, download: name });
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
+const typing = (t: EventTarget | null) => t instanceof HTMLElement && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName));
 
 export default function RedactPage() {
+  // ---- document + settings
   const [text, setText] = useState("");
   const [fileName, setFileName] = useState("document.txt");
   const [mode, setMode] = useState<DetectMode>("thorough");
   const [where, setWhere] = useState<Where>("server");
+  const [policy, setPolicyState] = useState<UserPolicy>(DEFAULT_POLICY);
   const [serverUp, setServerUp] = useState<boolean | null>(null);
-  const [sensitivity, setSensitivity] = useState(0.35);
-  const [spans, setSpans] = useState<ReviewSpan[] | null>(null);
+  const [online, setOnline] = useState(true);
+  const [dragging, setDragging] = useState(false);
+  const [attach, setAttach] = useState<{ file: File; count: number } | null>(null);
+  // ---- scan
   const [progress, setProgress] = useState<{ stage: string; pct: number } | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [elapsed, setElapsed] = useState<number | null>(null);
-  const [style, setStyle] = useState<OutputStyle>("placeholder");
-  const [hidden, setHidden] = useState<Set<PiiType>>(new Set());
-  const [password, setPassword] = useState("");
-  const [addType, setAddType] = useState<PiiType>("NAME");
+  const [scan, setScan] = useState<{ raw: Span[]; ms: number; versions: Record<string, string>; where: Where; mode: DetectMode } | null>(null);
+  const abort = useRef<AbortController | null>(null);
   const worker = useRef<Worker | null>(null);
-  const viewer = useRef<HTMLDivElement>(null);
+  // ---- review
+  const [review, dispatch] = useReducer(reviewReducer, emptyReview);
+  const [hidden, setHidden] = useState<Set<PiiType>>(new Set());
+  const [below, setBelow] = useState(0.7);
+  const [filterOn, setFilterOn] = useState(false);
+  const [view, setView] = useState<"review" | "diff">("review");
+  const [addType, setAddType] = useState<PiiType>("NAME");
+  const [search, setSearch] = useState<string | null>(null);
+  const [help, setHelp] = useState(false);
+  const [announce, setAnnounce] = useState("");
+  // ---- output
+  const [styleOverride, setStyleOverride] = useState<OutputStyle | null>(null);
+  const [password, setPassword] = useState("");
+  const [leaks, setLeaks] = useState<string[] | null>([]);
+  const [copied, setCopied] = useState(false);
+  const viewer = useRef<ViewerHandle>(null), searchBox = useRef<HTMLInputElement>(null), exportRef = useRef<HTMLElement>(null);
 
-  useEffect(() => () => worker.current?.terminate(), []);
-  useEffect(() => { serverHealth().then((h) => setServerUp(!!h)); }, []);
+  const style = styleOverride ?? styleFor(policy);
+  const scanned = scan !== null && review.text === text;
+  const spans = scanned ? review.spans : [];
 
-  function accept(raw: Span[], ms: number) {
-    const all = propagate(text, mergeSpans(raw));
-    setSpans(all.map((s, id) => ({ ...s, id, accepted: true })));
-    setElapsed(ms); setProgress(null);
+  useEffect(() => { setPolicyState(loadPolicy()); }, []);
+  useEffect(() => {
+    const ping = () => serverHealth().then((h) => setServerUp(!!h));
+    ping(); setOnline(navigator.onLine);
+    const on = () => { setOnline(true); ping(); }, off = () => setOnline(false);
+    window.addEventListener("online", on); window.addEventListener("offline", off);
+    return () => { window.removeEventListener("online", on); window.removeEventListener("offline", off); worker.current?.terminate(); abort.current?.abort(); };
+  }, []);
+
+  // ---- applying the policy to raw findings (also after a preset / terms change, keeping the user's decisions)
+  const apply = useCallback((raw: Span[], doc: string, pol: UserPolicy, keep?: { rejected: Set<string>; manual: Span[] }) => {
+    const fin = finalize(doc, raw, optionsFor(pol));
+    dispatch({ type: "load", text: doc, spans: fin, rejected: keep?.rejected });
+    if (keep?.manual.length) dispatch({ type: "add", spans: keep.manual });
+  }, []);
+  const setPolicy = useCallback((p: UserPolicy) => {
+    setPolicyState(p); savePolicy(p); setStyleOverride(null);
+    if (scan && review.text === text) apply(scan.raw, text, p, { rejected: rejectedKeys(review), manual: review.spans.filter((s) => s.source === "manual") });
+  }, [scan, review, text, apply]);
+
+  // ---- loading a document
+  const resetDoc = (t: string, name: string) => { setText(t); setFileName(name); setScan(null); setError(null); setAttach(null); setView("review"); };
+  async function onFile(f: File, includeAttachments = false) {
+    setError(null);
+    try {
+      if (BINARY.test(f.name) || (EMAIL.test(f.name) && where === "server")) {
+        if (where !== "server") throw new Error(`${f.name.split(".").pop()?.toUpperCase()} files are converted to text on the server. Switch to “On redactd servers”, or save the file as text first.`);
+        if (f.size > 10_000_000) throw new Error("This file is larger than 10 MB.");
+        setProgress({ stage: "Extracting text", pct: 30 });
+        const r = await extractOnServer(f, includeAttachments);
+        setProgress(null);
+        if (r.text.length > MAX_BYTES) throw new Error(`The extracted text is ${(r.text.length / 1e6).toFixed(2)} MB; the limit is 1 MB.`);
+        resetDoc(r.text, f.name);
+        if (r.attachments > 0 && !r.attachments_included) setAttach({ file: f, count: r.attachments });
+        return;
+      }
+      if (f.size > MAX_BYTES) throw new Error(`This file is ${(f.size / 1e6).toFixed(2)} MB; the limit is 1 MB.`);
+      const t = await f.text();
+      if (t.slice(0, 4000).includes(String.fromCharCode(0))) throw new Error("This looks like a binary file. Supported: text, CSV, JSON, XML, EML, and DOCX / PDF / MSG via the server.");
+      resetDoc(t, f.name);
+    } catch (e) { setProgress(null); setError(e instanceof Error ? e.message : String(e)); }
   }
 
-  async function scan() {
-    setError(null); setSpans(null); setElapsed(null);
+  // ---- scanning
+  async function runScan() {
+    setError(null); setScan(null); setLeaks([]);
+    const doc = text, t0 = performance.now(), opts = optionsFor(policy);
+    const done = (raw: Span[], versions: Record<string, string>) => {
+      setScan({ raw, ms: performance.now() - t0, versions: { ...versions, "rules (browser)": RULES_VERSION }, where, mode });
+      apply(raw, doc, policy); setProgress(null);
+      setAnnounce("Scan complete. Review the findings."); setTimeout(() => viewer.current?.focus(), 50);
+    };
+    setProgress({ stage: where === "server" ? "Sending" : "Starting", pct: 1 });
     if (where === "server") {
-      const t0 = performance.now();
+      abort.current = new AbortController();
       try {
-        const r = await detectOnServer(text, mode, sensitivity, (stage, pct) => setProgress({ stage, pct }));
-        accept(r.spans, performance.now() - t0);
-      } catch (e) { setError(e instanceof Error ? e.message : String(e)); setProgress(null); }
+        const r = await detectOnServer(doc, mode, opts, (stage, pct) => setProgress({ stage, pct }), abort.current.signal);
+        done(r.spans, r.versions ?? {});
+      } catch (e) {
+        setProgress(null);
+        if ((e as Error).name !== "AbortError") setError(navigator.onLine ? (e instanceof TypeError ? "Could not reach the redactd server. Check your connection, or switch to on-device processing." : (e as Error).message) : "You are offline. Switch to on-device processing or reconnect.");
+      }
       return;
     }
     worker.current ??= new Worker(new URL("../../workers/detect.worker.ts", import.meta.url), { type: "module" });
     worker.current.onmessage = (e: MessageEvent<WorkerResponse>) => {
       const m = e.data;
       if (m.kind === "progress") setProgress({ stage: m.stage, pct: m.pct });
-      else if (m.kind === "error") { setError(m.message); setProgress(null); }
-      else accept(m.spans as Span[], m.ms);
+      else if (m.kind === "error") { setError(`On-device detection failed: ${m.message}`); setProgress(null); }
+      else done(m.spans, m.versions ?? {});
     };
-    worker.current.postMessage({ kind: "detect", text, mode, sensitivity });
+    worker.current.onerror = () => { setError("On-device detection could not start in this browser."); setProgress(null); };
+    worker.current.postMessage({ kind: "detect", text: doc, mode, sensitivity: opts.sensitivity });
   }
+  function cancel() { abort.current?.abort(); worker.current?.terminate(); worker.current = null; setProgress(null); }
 
-  async function onFile(f: File) {
-    if (f.size > MAX_BYTES) { setError(`File is ${(f.size / 1e6).toFixed(2)} MB; the limit is 1 MB.`); return; }
-    setText(await f.text()); setFileName(f.name); setSpans(null);
-  }
+  // ---- derived output
+  const accepted = useMemo(() => spans.filter((s) => s.accepted), [spans]);
+  const result = useMemo(() => (scanned ? render(text, accepted, style) : null), [scanned, accepted, text, style]);
+  const replacements = useMemo(() => (scanned ? replacementsFor(text, spans, style) : []), [scanned, text, spans, style]);
+  const sameCount = useMemo(() => { const m = new Map<string, number>(); for (const s of spans) { const v = text.slice(s.start, s.end); m.set(v, (m.get(v) ?? 0) + 1); } return m; }, [spans, text]);
 
-  function addSelection() {
-    const sel = window.getSelection();
-    if (!sel || sel.isCollapsed || !viewer.current || !spans) return;
-    const r = sel.getRangeAt(0);
-    const pre = document.createRange();
-    pre.selectNodeContents(viewer.current);
-    pre.setEnd(r.startContainer, r.startOffset);
-    const start = pre.toString().length, end = start + r.toString().length;
-    if (end <= start || text.slice(start, end) !== r.toString()) return;
-    const next = propagate(text, mergeSpans([...spans.filter((s) => s.accepted), { start, end, type: addType, source: "manual" }]));
-    setSpans(next.map((s, id) => ({ ...s, id, accepted: true })));
-    sel.removeAllRanges();
-  }
-
-  const accepted = useMemo(() => (spans ?? []).filter((s) => s.accepted), [spans]);
-  const result = useMemo(() => (spans ? render(text, accepted, style) : null), [spans, accepted, text, style]);
-  const leaks = useMemo(
-    () => (result ? leakCheck(result.output, accepted.map((s) => text.slice(s.start, s.end))) : []),
-    [result, accepted, text],
-  );
-  const counts = useMemo(() => {
-    const c: Partial<Record<PiiType, { n: number; on: number }>> = {};
-    for (const s of spans ?? []) { const x = (c[s.type] ??= { n: 0, on: 0 }); x.n++; if (s.accepted) x.on++; }
-    return c;
-  }, [spans]);
-
-  const toggleType = (t: PiiType, on: boolean) => setSpans((ss) => ss && ss.map((s) => (s.type === t ? { ...s, accepted: on } : s)));
-  const toggleSpan = (id: number) => setSpans((ss) => ss && ss.map((s) => (s.id === id ? { ...s, accepted: !s.accepted } : s)));
-
-  const segments = useMemo(() => {
-    if (!spans) return null;
-    const out: React.ReactNode[] = [];
-    let last = 0;
+  // leak check: every redacted value is searched for again in the output.
+  useEffect(() => {
+    if (!result) { setLeaks([]); return; }
+    let cancelled = false; setLeaks(null);
+    // regions of the output the user chose to keep (rejected findings) are intentional, not leaks
+    const kept: [number, number][] = []; let delta = 0, k = 0;
+    const acc = accepted;
     for (const s of spans) {
-      if (s.start > last) out.push(text.slice(last, s.start));
-      const info = TYPE_INFO[s.type];
-      const show = !hidden.has(s.type);
-      out.push(
-        <button key={s.id} type="button" onClick={() => toggleSpan(s.id)}
-          title={`${info.label} · ${s.source}${s.score ? ` · ${(s.score * 100).toFixed(0)}%` : ""} — click to ${s.accepted ? "keep" : "redact"}`}
-          className={`rounded px-0.5 ${show ? info.color : ""} ${s.accepted ? "" : "line-through opacity-50"}`}>
-          {text.slice(s.start, s.end)}
-        </button>,
-      );
-      last = s.end;
+      if (s.accepted) { const m = result.marks[k++]; if (m) delta = m[1] - s.end; }
+      else kept.push([s.start + delta, s.end + delta]);
     }
-    out.push(text.slice(last));
-    return out;
-  }, [spans, text, hidden]);
+    // one pass over the output for all values (lib/redact.ts occurrencesMany); deferred so typing and clicks stay instant
+    const h = setTimeout(() => { if (!cancelled) setLeaks(leakCheck(result.output, acc.map((s) => text.slice(s.start, s.end)), kept)); }, 120);
+    return () => { cancelled = true; clearTimeout(h); };
+  }, [result, accepted, spans, text]);
 
+  // ---- review actions
+  const dimFn = useMemo(() => (filterOn ? (s: ReviewSpan) => !(s.score !== null && s.score !== undefined && s.score < below && !(s.sources ?? []).includes("rules")) : undefined), [filterOn, below]);
+  const among = useMemo(() => (dimFn ? (s: ReviewSpan) => !dimFn(s) : undefined), [dimFn]);
+  const focused = review.focus >= 0 ? spans[review.focus] : undefined;
+  const addSelection = () => {
+    const sel = viewer.current?.selection();
+    if (!sel) { setAnnounce("Select some text in the document first."); return; }
+    dispatch({ type: "add", spans: [{ ...sel, type: addType, source: "manual", score: null, label: "manual", why: ["added by you"], sources: ["manual"] }] });
+    window.getSelection()?.removeAllRanges(); setAnnounce(`Added as ${TYPE_INFO[addType].short}.`);
+  };
+  const doSearch = () => {
+    const found = searchSpans(text, search ?? "", addType);
+    if (found.length) { dispatch({ type: "add", spans: found }); setAnnounce(`${found.length} match${found.length === 1 ? "" : "es"} redacted as ${TYPE_INFO[addType].short}.`); setSearch(null); viewer.current?.focus(); }
+    else setAnnounce("No matches.");
+  };
+
+  // ---- keyboard-first review (task D2)
+  useEffect(() => {
+    if (!scanned) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      if (typing(e.target)) { if (e.key === "Escape") { (e.target as HTMLElement).blur(); setSearch(null); viewer.current?.focus(); } return; }
+      if (document.querySelector("[role=dialog]")) return;
+      const k = e.key, f = review.focus;
+      const act = (fn: () => void) => { e.preventDefault(); fn(); };
+      if (k === "j" || k === "ArrowDown") act(() => dispatch({ type: "move", dir: 1, among }));
+      else if (k === "k" || k === "ArrowUp") act(() => dispatch({ type: "move", dir: -1, among }));
+      else if (k === "n") act(() => dispatch({ type: "move", dir: 1, among: (s) => s.score !== null && s.score !== undefined && s.score < below && !(s.sources ?? []).includes("rules") }));
+      else if (k === "x" && f >= 0) act(() => dispatch({ type: "toggle", id: f }));
+      else if (k === "X" && f >= 0) act(() => dispatch({ type: "toggleValue", id: f }));
+      else if (k === "a" && focused) act(() => { dispatch({ type: "setType", piiType: focused.type, accepted: true }); setAnnounce(`All ${TYPE_INFO[focused.type].label} will be redacted.`); });
+      else if (k === "A" && focused) act(() => { dispatch({ type: "setType", piiType: focused.type, accepted: false }); setAnnounce(`All ${TYPE_INFO[focused.type].label} kept.`); });
+      else if (k === "u") act(() => { dispatch({ type: "undo" }); setAnnounce("Undone."); });
+      else if (k === "U") act(() => { dispatch({ type: "redo" }); setAnnounce("Redone."); });
+      else if (k === "/") act(() => { setSearch(""); setTimeout(() => searchBox.current?.focus(), 0); });
+      else if (k === "?") act(() => setHelp(true));
+      else if (k === "d") act(() => setView((v) => (v === "diff" ? "review" : "diff")));
+      else if (k === "e") act(() => { exportRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }); exportRef.current?.querySelector<HTMLElement>("button")?.focus(); });
+      else if (/^[1-9]$/.test(k) && f >= 0 && TYPES[+k - 1]) act(() => dispatch({ type: "retype", id: f, piiType: TYPES[+k - 1] }));
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [scanned, review.focus, focused, among, below]);
+
+  // ---- export
+  const versions = scan?.versions ?? {};
+  const report = () => buildReport({ chars: text.length, fileName, where: scan?.where ?? where, mode: scan?.mode ?? mode, ms: scan?.ms ?? null, versions, presetName: presetById(policy.presetId).name,
+    style, options: optionsFor(policy), spans, leaks: leaks?.length ?? 0 });
+  const strength = passwordStrength(password);
   async function downloadKey() {
-    if (!result || password.length < 8) return;
-    const sealed = await sealVault(result.vault, password);
-    download(fileName.replace(/\.[^.]+$/, "") + ".redactd-key.json", JSON.stringify(sealed), "application/json");
+    if (!result || strength.score < 1) return;
+    download(`${baseName(fileName)}.redactd-key.json`, JSON.stringify(await sealVault(result.vault, password)), "application/json");
+    setAnnounce("Restore key downloaded. Keep it and its password safe.");
   }
+  async function copyOut() {
+    if (!result) return;
+    try { await navigator.clipboard.writeText(result.output); setCopied(true); setAnnounce("Redacted text copied."); setTimeout(() => setCopied(false), 2000); }
+    catch { setError("Copying was blocked by the browser. Use Download instead."); }
+  }
+  const leakFail = !!leaks?.length;
+  const step: 1 | 2 | 3 = !scanned ? 1 : leaks !== null && !leakFail && accepted.length > 0 && review.past.length > 0 ? 3 : 2;
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Redact a document</h1>
-        <p className="text-sm muted">Text files up to 1 MB. Detection runs in this tab — nothing is uploaded.</p>
+    <div className="space-y-5">
+      <div className="flex flex-wrap items-end gap-x-6 gap-y-2">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight">Redact a document</h1>
+          <p className="text-sm muted">Text, CSV, JSON, XML, EML, DOCX and text PDFs up to 1 MB.</p>
+        </div>
+        <div className="sm:ml-auto"><Steps current={step} /></div>
       </div>
+      <p className="sr-only" role="status" aria-live="polite">{announce}</p>
 
-      {/* 1. Input */}
-      <section className="card space-y-4 p-5">
-        <div className="flex flex-wrap items-center gap-3">
-          <label className="btn cursor-pointer">
-            Choose file
-            <input type="file" className="hidden" accept=".txt,.md,.csv,.json,.log,.eml,.xml,text/*"
-              onChange={(e) => e.target.files?.[0] && onFile(e.target.files[0])} />
-          </label>
-          <span className="text-sm muted">or paste below · {text.length.toLocaleString()} characters</span>
+      {/* ------------------------------------------------ 1. input */}
+      <section className="card space-y-5 p-4 sm:p-5" aria-labelledby="h-input">
+        <h2 id="h-input" className="sr-only">Add a document</h2>
+        <div onDragOver={(e) => { e.preventDefault(); setDragging(true); }} onDragLeave={() => setDragging(false)}
+          onDrop={(e) => { e.preventDefault(); setDragging(false); const f = e.dataTransfer.files?.[0]; if (f) onFile(f); }}
+          className="rounded-lg border-2 border-dashed p-3 sm:p-4" style={{ borderColor: dragging ? "var(--accent)" : "var(--border-strong)", background: dragging ? "var(--accent-soft)" : undefined }}>
+          <div className="flex flex-wrap items-center gap-3">
+            <label className="btn cursor-pointer">
+              Choose file
+              <input type="file" className="sr-only" accept=".txt,.md,.csv,.tsv,.json,.jsonl,.log,.eml,.xml,.yaml,.yml,.html,.docx,.pdf,.msg,text/*"
+                onChange={(e) => { const f = e.target.files?.[0]; if (f) onFile(f); e.target.value = ""; }} />
+            </label>
+            <span className="text-sm muted">or drop a file here, or paste below</span>
+            {!text && <button type="button" className="btn btn-sm sm:ml-auto" onClick={() => resetDoc(SAMPLE_TEXT, SAMPLE_NAME)}>Try the sample document</button>}
+            {text && <span className="text-sm sm:ml-auto"><span className="font-medium">{fileName}</span> <span className="muted">· {text.length.toLocaleString("en")} characters</span>{" "}
+              <button type="button" className="btn btn-ghost btn-sm" onClick={() => resetDoc("", "document.txt")}>Clear</button></span>}
+          </div>
+          {text.length > 100_000
+            ? <pre className="mono mt-3 max-h-40 overflow-hidden rounded p-2 text-xs muted" style={{ background: "var(--surface-2)" }} aria-label="Start of the document">{text.slice(0, 1500)}…</pre>
+            : <>
+                <label htmlFor="doc" className="sr-only">Document text</label>
+                <textarea id="doc" className="input mono mt-3 h-40" placeholder="Paste a statement, email, loan note, SWIFT message, ticket…" value={text} spellCheck={false}
+                  onChange={(e) => { setText(e.target.value.slice(0, MAX_BYTES)); setScan(null); }} />
+              </>}
+          {!text && <p className="mt-2 text-xs muted">New here? The sample is a fictional wire-recall email with names, an IBAN, a card number and an SSN. Nothing is uploaded until you press Scan.</p>}
         </div>
-        <textarea className="input mono h-48" placeholder="Paste a statement, email, loan note, ticket…" value={text}
-          onChange={(e) => { setText(e.target.value.slice(0, MAX_BYTES)); setSpans(null); }} />
-        <div className="grid gap-3 sm:grid-cols-3">
-          {MODES.map((m) => (
-            <button key={m.id} type="button" onClick={() => setMode(m.id)}
-              className={`card p-3 text-left text-sm ${mode === m.id ? "ring-2 ring-teal-600" : ""}`}>
-              <div className="font-medium">{m.name}</div>
-              <div className="text-xs muted">{m.note}</div>
-            </button>
-          ))}
-        </div>
-        <div className="flex flex-wrap items-center gap-2 text-sm">
-          <span className="muted">Process</span>
-          {(["server", "device"] as Where[]).map((w) => (
-            <button key={w} type="button" onClick={() => setWhere(w)}
-              className={`rounded-full border px-3 py-1 ${where === w ? "border-teal-600 bg-teal-50 text-teal-900 dark:bg-teal-950 dark:text-teal-100" : ""}`}
-              style={where === w ? undefined : { borderColor: "var(--border)" }}>
-              {w === "server" ? "On redactd servers" : "On this device only"}
-            </button>
-          ))}
-          <span className="text-xs muted">
-            {where === "server"
-              ? serverUp === false ? "⚠ server unreachable — switch to on-device" : "Encrypted in transit · processed in memory · never stored or logged"
-              : "Nothing leaves your browser · one-time model download (up to ~370 MB)"}
-          </span>
-        </div>
-        <div className="flex flex-wrap items-center gap-4">
-          <label className="flex items-center gap-2 text-sm">
-            Sensitivity
-            <input type="range" min={0.2} max={0.9} step={0.05} value={+(1 - sensitivity).toFixed(2)}
-              onChange={(e) => setSensitivity(+(1 - +e.target.value).toFixed(2))} />
-            <span className="muted text-xs">{sensitivity <= 0.3 ? "catch more" : sensitivity >= 0.6 ? "fewer flags" : "balanced"}</span>
-          </label>
-          <button className="btn btn-primary ml-auto" disabled={!text || !!progress} onClick={scan}>
-            {progress ? "Scanning…" : "Scan for sensitive data"}
-          </button>
-        </div>
-        {progress && (
-          <div>
-            <div className="h-2 w-full overflow-hidden rounded bg-stone-200 dark:bg-stone-800">
-              <div className="h-full bg-teal-600 transition-all" style={{ width: `${progress.pct}%` }} />
-            </div>
-            <p className="mt-1 text-xs muted">{progress.stage}</p>
+        {attach && (
+          <div className="alert alert-info flex flex-wrap items-center gap-3" role="status">
+            <span>This email has {attach.count} attachment{attach.count === 1 ? "" : "s"}. Only the file name{attach.count === 1 ? " is" : "s are"} included so far.</span>
+            <button type="button" className="btn btn-sm" onClick={() => onFile(attach.file, true)}>Also read attachment contents</button>
+            <button type="button" className="btn btn-ghost btn-sm" onClick={() => setAttach(null)}>No thanks</button>
           </div>
         )}
-        {error && <p className="text-sm text-red-600">{error}</p>}
+
+        <fieldset>
+          <legend className="label">Detection</legend>
+          <div role="radiogroup" aria-label="Detection mode" className="grid gap-2 sm:grid-cols-3">
+            {MODES.map((m) => (
+              <button key={m.id} type="button" role="radio" aria-checked={mode === m.id} className="choice" onClick={() => setMode(m.id)}>
+                <div className="text-sm font-semibold">{m.name}</div><div className="text-xs muted">{m.note}</div>
+              </button>
+            ))}
+          </div>
+        </fieldset>
+        <DataPanel where={where} onChange={setWhere} serverUp={serverUp} online={online} modelMb={DEVICE_MODEL_MB} />
+        <PolicyPanel policy={policy} onChange={setPolicy} />
+
+        <div className="flex flex-wrap items-center gap-4">
+          <label className="flex items-center gap-2 text-sm" htmlFor="sens">
+            Sensitivity
+            <input id="sens" type="range" min={0.2} max={0.9} step={0.05} value={+(1 - policy.sensitivity).toFixed(2)} onChange={(e) => setPolicyState({ ...policy, sensitivity: +(1 - +e.target.value).toFixed(2) })}
+              aria-valuetext={policy.sensitivity <= 0.3 ? "catch more" : policy.sensitivity >= 0.6 ? "fewer flags" : "balanced"} />
+            <span className="muted text-xs">{policy.sensitivity <= 0.3 ? "catch more" : policy.sensitivity >= 0.6 ? "fewer flags" : "balanced"}</span>
+          </label>
+          <button type="button" className="btn btn-primary ml-auto" disabled={!text.trim() || !!progress} onClick={runScan}>{progress ? "Scanning…" : scanned ? "Scan again" : "Scan for sensitive data"}</button>
+        </div>
+        {progress && <Progress pct={progress.pct} stage={progress.stage} onCancel={cancel} />}
+        {error && <p className="alert alert-danger" role="alert">{error}</p>}
       </section>
 
-      {/* 2. Review */}
-      {spans && (
-        <section className="grid gap-4 lg:grid-cols-[1fr_260px]">
-          <div className="card p-5">
-            <div className="mb-3 flex flex-wrap items-center gap-2 text-sm">
-              <span className="font-medium">Review</span>
-              <span className="muted">{accepted.length} of {spans.length} findings will be redacted · {elapsed && `${(elapsed / 1000).toFixed(1)} s`}</span>
-              <span className="ml-auto flex items-center gap-2">
-                <select className="input w-auto py-1" value={addType} onChange={(e) => setAddType(e.target.value as PiiType)}>
-                  {Object.entries(TYPE_INFO).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
-                </select>
-                <button className="btn py-1" onClick={addSelection}>Redact selection</button>
-              </span>
+      {/* ------------------------------------------------ 2. review */}
+      {scanned && (
+        <section aria-labelledby="h-review" className="space-y-3">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+            <h2 id="h-review" className="text-lg font-semibold">Review</h2>
+            <span className="text-sm muted" data-testid="summary">{accepted.length} of {spans.length} findings will be redacted{scan ? ` · scanned in ${(scan.ms / 1000).toFixed(1)} s` : ""}</span>
+            <div className="flex flex-wrap items-center gap-2 sm:ml-auto">
+              <Segmented label="View" value={view} onChange={setView} options={[{ id: "review", label: "Review" }, { id: "diff", label: "Side by side" }]} />
+              <button type="button" className="btn btn-sm" onClick={() => dispatch({ type: "undo" })} disabled={!review.past.length} aria-label="Undo">Undo</button>
+              <button type="button" className="btn btn-sm" onClick={() => dispatch({ type: "redo" })} disabled={!review.future.length} aria-label="Redo">Redo</button>
+              <button type="button" className="btn btn-sm" onClick={() => setHelp(true)} aria-label="Keyboard shortcuts">? Shortcuts</button>
             </div>
-            <div ref={viewer} className="mono max-h-[60vh] overflow-auto whitespace-pre-wrap break-words text-sm leading-6">{segments}</div>
-            <p className="mt-3 text-xs muted">Click a highlight to keep that text. Select any text and press “Redact selection” to add it.</p>
           </div>
-          <aside className="card h-fit space-y-2 p-4 text-sm">
-            <div className="font-medium">Categories</div>
-            {(Object.keys(TYPE_INFO) as PiiType[]).filter((t) => counts[t]).map((t) => (
-              <div key={t} className="flex items-center gap-2">
-                <input type="checkbox" checked={counts[t]!.on === counts[t]!.n}
-                  onChange={(e) => toggleType(t, e.target.checked)} />
-                <span className={`h-3 w-3 rounded ${TYPE_INFO[t].color}`} />
-                <span className="flex-1">{TYPE_INFO[t].label}</span>
-                <span className="muted text-xs">{counts[t]!.on}/{counts[t]!.n}</span>
-                <button className="text-xs muted underline" onClick={() => setHidden((h) => {
-                  const n = new Set(h); n.has(t) ? n.delete(t) : n.add(t); return n; })}>
-                  {hidden.has(t) ? "show" : "hide"}
-                </button>
-              </div>
-            ))}
-            <p className="pt-2 text-xs muted">Direct identifiers name a person or account on their own. Dates, organisations and demographics can identify someone in combination.</p>
-          </aside>
+          <div className="flex flex-wrap items-center gap-2 text-sm">
+            <label htmlFor="addtype" className="muted">Add as</label>
+            <select id="addtype" className="input w-auto" value={addType} onChange={(e) => setAddType(e.target.value as PiiType)}>
+              {TYPES.map((t) => <option key={t} value={t}>{TYPE_INFO[t].label}</option>)}
+            </select>
+            <button type="button" className="btn btn-sm" onClick={addSelection}>Redact selection</button>
+            {search === null
+              ? <button type="button" className="btn btn-sm" onClick={() => { setSearch(""); setTimeout(() => searchBox.current?.focus(), 0); }}>Search and redact <span className="kbd">/</span></button>
+              : <form className="flex flex-1 items-center gap-2" style={{ minWidth: 220 }} onSubmit={(e) => { e.preventDefault(); doSearch(); }}>
+                  <label htmlFor="search" className="sr-only">Search the document and redact every match</label>
+                  <input id="search" ref={searchBox} className="input" placeholder="Text to redact everywhere…" value={search} onChange={(e) => setSearch(e.target.value)} />
+                  <button type="submit" className="btn btn-sm btn-primary" disabled={search.trim().length < 2}>Redact {search.trim().length >= 2 ? searchSpans(text, search, addType).length : 0} matches</button>
+                  <button type="button" className="btn btn-ghost btn-sm" onClick={() => setSearch(null)}>Close</button>
+                </form>}
+          </div>
+          {view === "diff" && <div className="grid grid-cols-2 text-xs font-semibold muted"><div className="px-3">Original</div><div className="px-3">Redacted output</div></div>}
+          <div className="grid grid-cols-[minmax(0,1fr)] gap-3 lg:grid-cols-[minmax(0,1fr)_300px]">
+            <Viewer ref={viewer} text={text} spans={spans} focus={review.focus} mode={view} replacements={replacements} hidden={hidden} dim={dimFn}
+              onFocus={(id) => dispatch({ type: "focus", id })} onToggle={(id) => dispatch({ type: "toggle", id })} onToggleValue={(id) => dispatch({ type: "toggleValue", id })}
+              onRetype={(id, t) => dispatch({ type: "retype", id, piiType: t })} onRemove={(id) => dispatch({ type: "remove", id })}
+              sameValueCount={(id) => (spans[id] ? sameCount.get(valueOf({ text }, spans[id])) ?? 1 : 1)} />
+            <div className="flex max-h-[640px] min-h-[280px] min-w-0 flex-col lg:h-[min(62vh,640px)]">
+              <Sidebar text={text} spans={spans} focus={review.focus} hidden={hidden} below={below} filterOn={filterOn} onBelow={setBelow} onFilter={setFilterOn}
+                onFocus={(id) => { dispatch({ type: "focus", id }); viewer.current?.scrollToSpan(id); }}
+                onType={(t, on) => dispatch({ type: "setType", piiType: t, accepted: on })} onAll={(on) => dispatch({ type: "setAll", accepted: on })}
+                onHide={(t) => setHidden((h) => { const n = new Set(h); if (n.has(t)) n.delete(t); else n.add(t); return n; })}
+                onValue={(v, on) => dispatch({ type: "setValue", value: v, accepted: on })} />
+            </div>
+          </div>
+          <p className="text-xs muted">Click a highlight to inspect it, click again (or press <span className="kbd">x</span>) to keep or redact it. <span className="kbd">j</span>/<span className="kbd">k</span> move between findings, <span className="kbd">/</span> searches, <span className="kbd">u</span> undoes, <span className="kbd">?</span> lists every shortcut.</p>
         </section>
       )}
 
-      {/* 3. Output */}
-      {result && (
-        <section className="card space-y-4 p-5">
-          <div className="flex flex-wrap items-center gap-4 text-sm">
-            <span className="font-medium">Output</span>
-            {(["placeholder", "label", "block"] as OutputStyle[]).map((s) => (
-              <label key={s} className="flex items-center gap-1">
-                <input type="radio" checked={style === s} onChange={() => setStyle(s)} />
-                {s === "placeholder" ? "Reversible [NAME_1]" : s === "label" ? "Labels [NAME]" : "Blocks ████"}
-              </label>
-            ))}
-            <span className={`ml-auto rounded px-2 py-0.5 text-xs ${leaks.length ? "bg-red-100 text-red-700" : "bg-teal-100 text-teal-800"}`}>
-              {leaks.length ? `${leaks.length} value(s) still present` : "Leak check passed"}
+      {/* ------------------------------------------------ 3. export */}
+      {scanned && result && (
+        <section ref={exportRef} className="card space-y-4 p-4 sm:p-5" aria-labelledby="h-export">
+          <div className="flex flex-wrap items-center gap-3">
+            <h2 id="h-export" className="text-lg font-semibold">Export</h2>
+            <Segmented label="Output style" value={style} onChange={(s) => setStyleOverride(s)}
+              options={[{ id: "placeholder", label: "Reversible [NAME_1]" }, { id: "label", label: "Labels [NAME]" }, { id: "block", label: "Blocks ████" }]} />
+            <span className={`badge sm:ml-auto ${leaks === null ? "" : leakFail ? "badge-danger" : "badge-ok"}`} role="status" data-testid="leak-badge">
+              {leaks === null ? "Checking output…" : leakFail ? `${leaks.length} redacted value${leaks.length === 1 ? "" : "s"} still present` : "Leak check passed"}
             </span>
           </div>
-          <pre className="mono max-h-72 overflow-auto whitespace-pre-wrap rounded border p-3 text-sm" style={{ borderColor: "var(--border)" }}>{result.output}</pre>
-          <div className="flex flex-wrap items-center gap-3">
-            <button className="btn btn-primary" disabled={leaks.length > 0}
-              onClick={() => download(fileName.replace(/(\.[^.]+)?$/, ".redacted$1"), result.output)}>
-              Download redacted file
-            </button>
-            {style === "placeholder" && (
-              <>
-                <input type="password" className="input w-64" placeholder="Password for restore key (8+ chars)"
-                  value={password} onChange={(e) => setPassword(e.target.value)} />
-                <button className="btn" disabled={password.length < 8} onClick={downloadKey}>Download restore key</button>
-                <span className="text-xs muted">Encrypted in your browser. We never see it.</span>
-              </>
-            )}
+          {leakFail && <p className="alert alert-danger" role="alert">A value you are redacting still appears elsewhere in the output. Use “Search and redact” for it, or keep every occurrence, before downloading.</p>}
+          <pre className="mono max-h-64 overflow-auto whitespace-pre-wrap break-words rounded-lg border p-3 text-[13px] leading-6" style={{ borderColor: "var(--border)", background: "var(--surface)" }} tabIndex={0} aria-label="Redacted output preview" data-testid="output">
+            {result.output.length > 20_000 ? result.output.slice(0, 20_000) + "\n… (preview shortened; the download is complete)" : result.output}
+          </pre>
+          <div className="flex flex-wrap items-center gap-2">
+            <button type="button" className="btn btn-primary" disabled={leakFail || leaks === null} onClick={() => download(redactedName(fileName), result.output)}>Download redacted file</button>
+            <button type="button" className="btn" disabled={leakFail || leaks === null} onClick={copyOut}>{copied ? "Copied ✓" : "Copy"}</button>
+            <button type="button" className="btn" onClick={() => download(`${baseName(fileName)}.redaction-report.md`, reportMarkdown(report()), "text/markdown;charset=utf-8")}>Download report</button>
+            <button type="button" className="btn btn-ghost btn-sm" onClick={() => download(`${baseName(fileName)}.redaction-report.json`, JSON.stringify(report(), null, 2), "application/json")}>report as JSON</button>
+            <span className="text-xs muted">Saved as <span className="mono">{redactedName(fileName)}</span>. The report has counts only, never values.</span>
           </div>
+          {style === "placeholder" && (
+            <div className="rounded-lg border p-3" style={{ borderColor: "var(--border)" }}>
+              <h3 className="text-sm font-semibold">Restore key <span className="font-normal muted">(optional)</span></h3>
+              <p className="mt-1 text-xs muted">Lets you put the original values back later, for example into an AI summary of the redacted text. It is encrypted in this browser with your password. We never see the key or the password.</p>
+              <div className="mt-3 flex flex-wrap items-start gap-3">
+                <div className="w-full sm:w-72">
+                  <label htmlFor="pw" className="sr-only">Password for the restore key</label>
+                  <input id="pw" type="password" className="input" placeholder="Password (8+ characters)" autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} aria-describedby="pw-hint" />
+                  <div className="mt-1 flex gap-1" aria-hidden="true">{[1, 2, 3, 4].map((i) => <span key={i} className="h-1 flex-1 rounded" style={{ background: password && strength.score >= i ? (strength.score >= 3 ? "var(--accent)" : "var(--t-date-bd)") : "var(--border)" }} />)}</div>
+                  <p id="pw-hint" className="mt-1 text-xs muted" role="status">{password ? `${strength.label}. ${strength.hint}` : "Choose a password you will not lose."}</p>
+                </div>
+                <button type="button" className="btn" disabled={strength.score < 1 || leakFail} onClick={downloadKey}>Download restore key</button>
+              </div>
+              <p className="alert alert-warn mt-3 text-xs">If you lose the key file or forget its password, the original values cannot be recovered by anyone, including us.</p>
+            </div>
+          )}
         </section>
       )}
+
+      {help && <ShortcutOverlay onClose={() => setHelp(false)} />}
     </div>
   );
 }

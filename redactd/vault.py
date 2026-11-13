@@ -12,7 +12,7 @@ Mirrored by apps/web/lib/redact.ts (render/restore/leakCheck) and apps/web/lib/v
 """
 import hmac, hashlib, json, re, base64, os
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
-from .post import Span, merge_spans, propagate_spans, occurrences
+from .post import Span, merge_spans, propagate_spans, occurrences, occurrences_many  # noqa: F401
 
 def _spans(tuples):
     return [Span(s, e, t, "x") for s, e, t, *_ in tuples]
@@ -51,7 +51,8 @@ def restore(text, vault):
 def leak_check(redacted, vault):
     """Verify no redacted value survives in the output (the step most tools skip). Uses the same occurrence
     test as propagation: 'Art' inside 'Article' is not a leak, 'Art' on its own is."""
-    return [v for v in set(vault.values()) if len(v) >= 3 and occurrences(redacted, v)]
+    vals = sorted({v for v in vault.values() if len(v) >= 3})
+    return sorted({vals[k] for _, _, k in occurrences_many(redacted, vals)})
 
 def seal(vault, key: bytes):
     n = os.urandom(12)

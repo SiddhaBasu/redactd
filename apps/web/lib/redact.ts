@@ -45,6 +45,45 @@ export function occurrences(text: string, v: string): [number, number][] {
   return out;
 }
 
+function boundaryOk(text: string, v: string, i: number, j: number, digit: boolean): boolean {
+  const n = j - i;
+  if (!digit) {
+    if (isLetter(v[0]) && i > 0 && isLetter(text[i - 1])) return false;
+    if (isLetter(v[n - 1]) && j < text.length && isLetter(text[j])) return false;
+  } else if (n < 6) {
+    if (isDigit(v[0]) && i > 0 && isDigit(text[i - 1])) return false;
+    if (isDigit(v[n - 1]) && j < text.length && isDigit(text[j])) return false;
+  }
+  return true;
+}
+
+/** occurrences() for many values in ONE pass over the text: [start, end, index into values], ordered by start,
+ *  then by value order. Same result per value as occurrences(). */
+export function occurrencesMany(text: string, values: string[]): [number, number, number][] {
+  const K = 4, byKey = new Map<string, number[]>(), lensSet = new Set<number>();
+  values.forEach((v, k) => {
+    if (v.length < 2) return;
+    const key = v.slice(0, K); lensSet.add(key.length);
+    const a = byKey.get(key); if (a) a.push(k); else byKey.set(key, [k]);
+  });
+  const out: [number, number, number][] = [];
+  if (!byKey.size) return out;
+  const lens = [...lensSet].sort((a, b) => a - b), digit = values.map(hasDigit), nxt = new Array<number>(values.length).fill(0), L = text.length;
+  for (let i = 0; i < L; i++) {
+    for (const kl of lens) {
+      if (i + kl > L) break;
+      const cand = byKey.get(text.substr(i, kl));
+      if (!cand) continue;
+      for (const k of cand) {
+        const v = values[k], j = i + v.length;
+        if (i < nxt[k] || j > L || !text.startsWith(v, i)) continue;
+        if (boundaryOk(text, v, i, j, digit[k])) { out.push([i, j, k]); nxt[k] = j; }
+      }
+    }
+  }
+  return out;
+}
+
 // ---------------------------------------------------------------- merge
 const mk = (start: number, end: number, type: PiiType, source: string, score: number | null, label: string | null | undefined, why: string[], sources: string[]): Span =>
   ({ start, end, type, source, score, label: label ?? null, why, sources });
@@ -169,19 +208,21 @@ const EMAIL = /(?<![\w.+-])[\w.+-]{1,64}@[\w-]{1,63}(?:\.[\w-]{1,63}){1,8}/g, HA
 /** Redact every other occurrence of each detected value, plus the coreferent forms of person names. */
 export function propagate(text: string, spans: Span[], minLen = 3): Span[] {
   const extra: Span[] = [], seen = new Set<string>(), handleParts: string[] = [];
+  const needles: string[] = [], meta: [PiiType, string | null | undefined, string][] = [];
   for (const sp of spans) {
     const v = text.slice(sp.start, sp.end), key = sp.type + "\u0000" + v;
     if (v.length < minLen || seen.has(key)) continue;
     seen.add(key);
-    for (const [a, b] of occurrences(text, v)) extra.push(mk(a, b, sp.type, "propagated", null, sp.label, ["same value as another finding"], ["propagated"]));
+    needles.push(v); meta.push([sp.type, sp.label, "same value as another finding"]);
     if (sp.type === "NAME") {
-      for (const [s, why] of nameVariants(v)) for (const [a, b] of occurrences(text, s)) extra.push(mk(a, b, "NAME", "propagated", null, sp.label, [why], ["propagated"]));
+      for (const [s, why] of nameVariants(v)) { needles.push(s); meta.push(["NAME", sp.label, why]); }
       for (const p of nameParts(v)) {
         const low = p.toLowerCase();
         if (p.length >= 5 && !STOP.has(low) && !COMMON.has(low) && Array.from(p).every(isLetter) && !handleParts.includes(low)) handleParts.push(low);
       }
     }
   }
+  for (const [a, b, k] of occurrencesMany(text, needles)) extra.push(mk(a, b, meta[k][0], "propagated", null, meta[k][1], [meta[k][2]], ["propagated"]));
   if (handleParts.length) {
     for (const m of text.matchAll(EMAIL)) {
       const local = m[0].split("@")[0].toLowerCase();
@@ -297,12 +338,16 @@ export function restore(text: string, vault: Record<string, string>): string {
 /** Values that were redacted but still occur in the output. `kept` lists output regions the user chose to keep
  *  (rejected findings); a value inside one of those is intentional, not a leak. */
 export function leakCheck(output: string, values: string[], kept: [number, number][] = []): string[] {
-  const leaks: string[] = [];
-  for (const v of new Set(values)) {
-    if (v.length < 3) continue;
-    if (occurrences(output, v).some(([a, b]) => !kept.some(([ks, ke]) => a >= ks && b <= ke))) leaks.push(v);
+  const vals = [...new Set(values)].filter((v) => v.length >= 3).sort();
+  const leaks = new Set<string>();
+  let ki = 0;   // kept regions are sorted by start; matches arrive sorted by start
+  for (const [a, b, k] of occurrencesMany(output, vals)) {
+    while (ki < kept.length && kept[ki][1] <= a) ki++;
+    let inside = false;
+    for (let x = ki; x < kept.length && kept[x][0] <= a; x++) if (b <= kept[x][1]) { inside = true; break; }
+    if (!inside) leaks.add(vals[k]);
   }
-  return leaks;
+  return [...leaks].sort();
 }
 
 // ---------------------------------------------------------------- offsets: API (code points) <-> JS (UTF-16)
@@ -320,4 +365,19 @@ export function convertOffsets<T extends { start: number; end: number }>(text: s
   cpToU16.push(text.length); u16ToCp[text.length] = cp;
   const f = to === "utf16" ? (x: number) => cpToU16[Math.min(x, cpToU16.length - 1)] : (x: number) => u16ToCp[Math.min(x, text.length)];
   return spans.map((s) => ({ ...s, start: f(s.start), end: f(s.end) }));
+}
+
+/** Replacement string for each finding (indexed by position in `spans`, which must be sorted and non-overlapping):
+ *  the same strings render() would write. Rejected findings get "". Used by the diff view. */
+export function replacementsFor(text: string, spans: (Span & { accepted?: boolean })[], style: OutputStyle): string[] {
+  const counters: Record<string, number> = {}, seen = new Map<string, string>();
+  return spans.map((sp) => {
+    if (sp.accepted === false) return "";
+    if (style === "block") return "█".repeat(6);
+    if (style === "label") return `[${sp.type}]`;
+    const key = sp.type + "\u0000" + text.slice(sp.start, sp.end);
+    let ph = seen.get(key);
+    if (!ph) { counters[sp.type] = (counters[sp.type] ?? 0) + 1; ph = `[${sp.type}_${counters[sp.type]}]`; seen.set(key, ph); }
+    return ph;
+  });
 }

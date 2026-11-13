@@ -66,3 +66,17 @@ function followJob(id: string, onProgress?: Progress, signal?: AbortSignal): Pro
     es.onerror = () => { if (es.readyState === EventSource.CLOSED) { stop(); resolve(); } };  // fall through to the result fetch
   });
 }
+
+export interface Extracted { text: string; format: string; attachments: number; attachments_included: boolean; chars: number }
+/** Convert .docx / .pdf / .eml / .msg to text on the server (in memory; nothing is stored). */
+export async function extractOnServer(file: File, includeAttachments = false, signal?: AbortSignal): Promise<Extracted> {
+  const fd = new FormData();
+  fd.append("file", file, file.name); fd.append("include_attachments", includeAttachments ? "true" : "false");
+  const r = await fetch(`${API_BASE}/v1/extract`, { method: "POST", body: fd, signal });
+  if (!r.ok) {
+    let detail = "";
+    try { detail = (await r.json()).detail ?? ""; } catch { /* no body */ }
+    throw new Error(r.status === 415 ? `This file could not be read${detail ? `: ${detail}` : ""}.` : r.status === 413 ? "This file is too large." : "The server could not read this file.");
+  }
+  return (await r.json()) as Extracted;
+}

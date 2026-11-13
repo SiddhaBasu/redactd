@@ -38,5 +38,5 @@ export const DEFAULT_OPTIONS: Options = {
 export type WorkerRequest = { kind: "detect"; text: string; mode: DetectMode; sensitivity: number };
 export type WorkerResponse =
   | { kind: "progress"; stage: string; pct: number }
-  | { kind: "result"; spans: Span[]; ms: number }
+  | { kind: "result"; spans: Span[]; ms: number; versions?: Record<string, string> }
   | { kind: "error"; message: string };

@@ -96,7 +96,7 @@ body { background: var(--bg); color: var(--fg); min-width: 320px; }
   .badge-danger { background: var(--danger-soft); color: var(--danger-soft-fg); border-color: transparent; }
   .badge-warn { background: var(--warn-soft); color: var(--warn-soft-fg); border-color: transparent; }
   .badge-accent { background: var(--accent-soft); color: var(--accent-soft-fg); border-color: transparent; }
-  .kbd { display: inline-block; min-width: 1.4rem; text-align: center; font-family: var(--font-mono); font-size: .75rem; padding: 0 .35rem; border: 1px solid var(--border-strong); border-bottom-width: 2px; border-radius: 5px; background: var(--surface-2); }
+  .kbd { display: inline-block; min-width: 1.4rem; text-align: center; font-family: var(--font-mono); font-size: .75rem; padding: 0 .35rem; border: 1px solid var(--border-strong); border-bottom-width: 2px; border-radius: 5px; background: var(--surface-2); color: var(--fg); }
   .alert { border-radius: 8px; padding: .6rem .8rem; font-size: .875rem; border: 1px solid transparent; }
   .alert-danger { background: var(--danger-soft); color: var(--danger-soft-fg); }
   .alert-warn { background: var(--warn-soft); color: var(--warn-soft-fg); }

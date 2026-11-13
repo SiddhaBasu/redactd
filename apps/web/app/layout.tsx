@@ -1,25 +1,32 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import Link from "next/link";
 import "./globals.css";
+import { ThemeToggle } from "../components/ui";
 
 export const metadata: Metadata = {
-  title: "redactd — private redaction",
-  description: "Redact personal and financial data in your browser. Your document never leaves your device.",
+  title: "redactd — private redaction for financial documents",
+  description: "Find and redact personal and financial identifiers in statements, emails, SWIFT messages and tickets. Review every finding. Optionally reversible.",
 };
+export const viewport: Viewport = { width: "device-width", initialScale: 1 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className="min-h-screen antialiased">
-        <header className="border-b" style={{ borderColor: "var(--border)" }}>
-          <nav className="mx-auto flex max-w-6xl items-center gap-6 px-4 py-3 text-sm">
-            <Link href="/" className="text-base font-semibold tracking-tight">redactd</Link>
-            <Link href="/redact" className="muted hover:underline">Redact</Link>
-            <Link href="/restore" className="muted hover:underline">Restore</Link>
-            <span className="ml-auto hidden text-xs muted sm:block">Runs locally · nothing is uploaded</span>
+        <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-50 btn">Skip to content</a>
+        <header className="border-b" style={{ borderColor: "var(--border)", background: "var(--surface)" }}>
+          <nav aria-label="Main" className="mx-auto flex max-w-6xl items-center gap-1 px-3 py-2 text-sm sm:gap-4 sm:px-4">
+            <Link href="/" className="mr-2 text-base font-semibold tracking-tight">redactd</Link>
+            <Link href="/redact" className="rounded px-2 py-1 hover:underline">Redact</Link>
+            <Link href="/restore" className="rounded px-2 py-1 hover:underline">Restore</Link>
+            <Link href="/privacy" className="rounded px-2 py-1 hover:underline">Data policy</Link>
+            <span className="ml-auto"><ThemeToggle /></span>
           </nav>
         </header>
-        <main className="mx-auto max-w-6xl px-4 py-8">{children}</main>
+        <main id="main" className="mx-auto max-w-6xl px-3 py-6 sm:px-4 sm:py-8">{children}</main>
+        <footer className="mx-auto max-w-6xl px-3 pb-8 text-xs muted sm:px-4">
+          No hosted AI model ever sees your documents. Detection uses pattern rules and small open-weight models that run on our servers or in your browser.
+        </footer>
       </body>
     </html>
   );

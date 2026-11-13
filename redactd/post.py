@@ -68,6 +68,37 @@ def occurrences(text: str, v: str) -> list[tuple[int, int]]:
         else: i = text.find(v, i + 1)
     return out
 
+def _boundary_ok(text: str, v: str, i: int, j: int, digit: bool) -> bool:
+    n = j - i
+    if not digit:
+        if _is_letter(v[0]) and i > 0 and _is_letter(text[i - 1]): return False
+        if _is_letter(v[-1]) and j < len(text) and _is_letter(text[j]): return False
+    elif n < 6:
+        if _is_digit(v[0]) and i > 0 and _is_digit(text[i - 1]): return False
+        if _is_digit(v[-1]) and j < len(text) and _is_digit(text[j]): return False
+    return True
+
+def occurrences_many(text: str, values: list[str]) -> list[tuple[int, int, int]]:
+    """occurrences() for many values in ONE pass over the text: -> [(start, end, index into values)], ordered by
+    start, then by value order. Same result per value as occurrences() (left to right, non-overlapping). A 1 MB
+    document with thousands of distinct values would otherwise need thousands of full scans."""
+    K = 4
+    by_key: dict[str, list[int]] = {}; lens = set()
+    for k, v in enumerate(values):
+        if len(v) < 2: continue
+        key = v[:K]; lens.add(len(key)); by_key.setdefault(key, []).append(k)
+    if not by_key: return []
+    lens = sorted(lens); digit = [_has_digit(v) for v in values]; nxt = [0] * len(values); out = []; L = len(text)
+    for i in range(L):
+        for kl in lens:
+            cand = by_key.get(text[i:i + kl])
+            if not cand: continue
+            for k in cand:
+                v = values[k]; j = i + len(v)
+                if i < nxt[k] or j > L or not text.startswith(v, i): continue
+                if _boundary_ok(text, v, i, j, digit[k]): out.append((i, j, k)); nxt[k] = j
+    return out
+
 # ---------------------------------------------------------------- merge
 def merge_spans(text: str, spans: list[Span]) -> list[Span]:
     """Union overlapping spans. Type: a rule covering at least half of the union wins (validated patterns beat model
@@ -195,19 +226,21 @@ def propagate_spans(text: str, spans: list[Span], min_len: int = 3) -> list[Span
     name parts, initials ("P. Raman", "PR"), possessives, ALL-CAPS headers, and email addresses / login handles
     whose local part contains a detected name."""
     extra: list[Span] = []; seen: set[tuple[str, str]] = set(); handle_parts: list[str] = []
+    needles: list[str] = []; meta: list[tuple[str, str | None, str]] = []      # value -> (type, label, why)
     for sp in spans:
         v = text[sp.start:sp.end]
         if len(v) < min_len or (v, sp.type) in seen: continue
         seen.add((v, sp.type))
-        for a, b in occurrences(text, v):
-            extra.append(Span(a, b, sp.type, "propagated", None, sp.label, ["same value as another finding"], ["propagated"]))
+        needles.append(v); meta.append((sp.type, sp.label, "same value as another finding"))
         if sp.type == "NAME":
             for s, why in name_variants(v):
-                for a, b in occurrences(text, s):
-                    extra.append(Span(a, b, "NAME", "propagated", None, sp.label, [why], ["propagated"]))
+                needles.append(s); meta.append(("NAME", sp.label, why))
             for p in name_parts(v):
                 if len(p) >= 5 and p.lower() not in _STOP and p.lower() not in _COMMON and all(_is_letter(c) for c in p):
                     if p.lower() not in handle_parts: handle_parts.append(p.lower())
+    for a, b, k in occurrences_many(text, needles):
+        t, lab, why = meta[k]
+        extra.append(Span(a, b, t, "propagated", None, lab, [why], ["propagated"]))
     if handle_parts:
         for m in _EMAIL.finditer(text):
             local = m.group().split("@")[0].lower()

@@ -102,8 +102,8 @@ export const Viewer = forwardRef<ViewerHandle, Props>(function Viewer(p, ref) {
       const sel = window.getSelection(), el = scroller.current;
       if (!sel || sel.isCollapsed || !el || !el.contains(sel.anchorNode) || !el.contains(sel.focusNode)) return null;
       const off = (node: Node, o: number): number | null => {
-        const row = (node.nodeType === 1 ? (node as Element) : node.parentElement)?.closest<HTMLElement>(".doc-row[data-side='orig']");
-        if (!row) return null;
+        const row = (node.nodeType === 1 ? (node as Element) : node.parentElement)?.closest<HTMLElement>(".doc-row");
+        if (!row || !row.closest("[data-side='orig']")) return null;
         const r = document.createRange(); r.selectNodeContents(row); r.setEnd(node, o);
         return Number(row.dataset.a) + r.toString().replace(/​/g, "").length;
       };
@@ -184,7 +184,7 @@ export const Viewer = forwardRef<ViewerHandle, Props>(function Viewer(p, ref) {
   };
 
   return (
-    <div className="relative flex" style={{ height: p.height ?? "min(62vh, 640px)" }}>
+    <div className="relative flex" style={{ height: p.height ?? `min(62vh, 640px, ${Math.max(300, total + 250)}px)` }}>
       <span ref={probe} aria-hidden="true" className="doc pointer-events-none invisible absolute">{"0".repeat(40)}</span>
       <div ref={scroller} onScroll={onScroll} onClick={onClick} tabIndex={0} role="group" data-testid="viewer"
         aria-label={`Document with ${spans.length} findings. Press j or k to move between findings, x to redact or keep, question mark for all shortcuts.`}
