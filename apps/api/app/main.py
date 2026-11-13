@@ -49,7 +49,7 @@ async def lifespan(app: FastAPI):
     yield
 
 app = FastAPI(title="redactd API", version="0.2.0", lifespan=lifespan)
-app.add_middleware(CORSMiddleware, allow_origins=settings.allowed_origins, allow_methods=["GET", "POST"],
+app.add_middleware(CORSMiddleware, allow_origins=settings.allowed_origins, allow_origin_regex=settings.allowed_origin_regex or None, allow_methods=["GET", "POST"],
                    allow_headers=["Content-Type", "Authorization"], expose_headers=["X-Request-Id"], max_age=600)
 
 # ---------- auth, rate limit, metadata-only access log ----------
@@ -232,7 +232,9 @@ def model_file(model: str, path: str, request: Request):
     if not full.startswith(os.path.realpath(base) + os.sep) or not os.path.isfile(full): raise HTTPException(404, "not found")
     origin = request.headers.get("origin", "")
     headers = {"Cache-Control": "public, max-age=31536000, immutable", "Cross-Origin-Resource-Policy": "cross-origin"}
-    if origin in settings.allowed_origins: headers["Access-Control-Allow-Origin"] = origin
+    import re
+    if origin in settings.allowed_origins or (settings.allowed_origin_regex and re.fullmatch(settings.allowed_origin_regex, origin)):
+        headers["Access-Control-Allow-Origin"] = origin; headers["Vary"] = "Origin"
     return FileResponse(full, media_type="application/octet-stream", headers=headers)
 
 @app.post("/v1/extract")

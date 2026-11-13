@@ -4,9 +4,6 @@
 app = "redactd-api"
 primary_region = "iad"            # Ashburn, Virginia (US). Documents are processed here, in memory only.
 
-[build]
-  dockerfile = "Dockerfile"
-
 [deploy]
   release_command = "alembic upgrade head"
   strategy = "immediate"          # one machine; no Redis yet, so in-flight jobs are lost on deploy (users rescan)
@@ -20,7 +17,8 @@ primary_region = "iad"            # Ashburn, Virginia (US). Documents are proces
   LOG_FORMAT = "json"
   ANON_RATE_PER_MINUTE = "20"
   RATE_PER_MINUTE = "60"
-# Secrets (fly secrets set …, never in this file): DATABASE_URL, IP_SALT, ALLOWED_ORIGINS
+# Set by .github/workflows/deploy-api.yml as secrets: IP_SALT (generated once), ALLOWED_ORIGINS, ALLOWED_ORIGIN_REGEX
+# Later: DATABASE_URL (Neon; until then a SQLite file inside the machine, reset on each deploy), REDIS_URL
 # Later, for more than one machine: REDIS_URL
 
 [http_service]

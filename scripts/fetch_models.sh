@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Put every model file the API image and the on-device app need under browser/models, without training anything.
 #   redactd-small  <- private Hugging Face repo (needs a token: HF_TOKEN, or a proxy that injects one)
-#   openmed-small  <- exported from OpenMed/OpenMed-PII-SuperClinical-Small-44M-v1 (Apache-2.0) by bench/export_onnx.py
+#   openmed-small  <- only with WITH_OPENMED=1 (not shipped since Thorough = distilled + GLiNER); needs torch + transformers
 #   gliner         <- knowledgator/gliner-pii-base-v1.0 (Apache-2.0), published int8 ONNX
 # Idempotent. Run from anywhere:  bash scripts/fetch_models.sh
 set -euo pipefail
@@ -15,8 +15,8 @@ G=browser/models/gliner
 for f in tokenizer.json tokenizer_config.json gliner_config.json special_tokens_map.json added_tokens.json onnx/model_quint8.onnx; do
   dl "$HF/knowledgator/gliner-pii-base-v1.0/resolve/main/$f" "$G/$f"; done
 [ -s $G/config.json ] || echo '{"model_type":"deberta-v2"}' > $G/config.json
-if [ ! -s browser/models/openmed-small/onnx/model_quantized.onnx ]; then
+if [ "${WITH_OPENMED:-0}" = 1 ] && [ ! -s browser/models/openmed-small/onnx/model_quantized.onnx ]; then
   python bench/export_onnx.py OpenMed/OpenMed-PII-SuperClinical-Small-44M-v1 browser/models/openmed-small
   rm -f browser/models/openmed-small/onnx/model.onnx      # fp32 export: not shipped
 fi
-sha256sum $M/onnx/model_quantized.onnx $G/onnx/model_quint8.onnx browser/models/openmed-small/onnx/model_quantized.onnx
+sha256sum $M/onnx/model_quantized.onnx $G/onnx/model_quint8.onnx

@@ -16,6 +16,8 @@ class Settings:
     preload: str = os.getenv("PRELOAD_MODES", "thorough")               # warm models at startup
     allowed_origins: list[str] = field(default_factory=lambda: os.getenv(
         "ALLOWED_ORIGINS", "http://localhost:3000,http://127.0.0.1:3000").split(","))
+    # e.g. ^https://redactd-[a-z0-9-]+\.vercel\.app$ so Vercel preview deployments can call the API
+    allowed_origin_regex: str = os.getenv("ALLOWED_ORIGIN_REGEX", "")
     database_url: str = os.getenv("DATABASE_URL", f"sqlite:///{os.path.join(ROOT, 'apps/api/redactd.db')}")
     redis_url: str = os.getenv("REDIS_URL", "")                        # set to share jobs + rate limits across instances
     rate_per_minute: int = int(os.getenv("RATE_PER_MINUTE", "60"))      # default for API keys without their own quota
