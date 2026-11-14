@@ -41,7 +41,10 @@ async def one(client, url, text, mode, sync_limit):
         async with client.stream("GET", f"{url}/v1/jobs/{jid}/events") as s:
             async for line in s.aiter_lines():
                 if line.startswith("event: done") or line.startswith("event: failed"): break
-        r = await client.get(f"{url}/v1/jobs/{jid}"); r.raise_for_status(); n = len(r.json()["result"]["spans"])
+        r = await client.get(f"{url}/v1/jobs/{jid}"); r.raise_for_status(); j = r.json()
+        if "result" not in j:   # the SSE stream ends after JOB_TTL_S even if the job is still running
+            raise TimeoutError(f"job still '{j.get('status')}' when the progress stream closed (JOB_TTL_S)")
+        n = len(j["result"]["spans"])
     return time.perf_counter() - t0, len(text), n
 
 async def run(url, docs, mode, conc, sync_limit):
@@ -50,7 +53,7 @@ async def run(url, docs, mode, conc, sync_limit):
         async def task(d):
             async with sem:
                 try: out.append(await one(client, url, d, mode, sync_limit))
-                except Exception as e: out.append((None, len(d), type(e).__name__))   # noqa: BLE001
+                except Exception as e: out.append((None, len(d), f"{type(e).__name__}: {e}"[:120]))   # noqa: BLE001
         t0 = time.perf_counter(); await asyncio.gather(*(task(d) for d in docs)); wall = time.perf_counter() - t0
     return out, wall
 

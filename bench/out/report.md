@@ -1,23 +1,23 @@
 # redactd benchmark report
 
-Generated 2026-11-13 07:01 UTC · mode **thorough** · shipped `redactd.pipeline.Pipeline` · 4 worker processes × 1 thread · total wall time 9.6 min
+Generated 2026-11-13 23:50 UTC · mode **thorough** · shipped `redactd.pipeline.Pipeline` · 2 worker processes × 1 thread · total wall time 16.6 min
 
 Recall = share of gold identifiers with ≥50% / ≥90% of their characters redacted. Precision = share of redacted characters that fall inside a gold span (Gretel leaves real PII unlabelled, so its precision understates reality). *Raw* uses dataset labels as-is; *policy* removes gold spans that are template placeholders and, for organisation labels only, generic phrases and public bodies (`bench/gold_policy.py`).
 
-**Held-out** sets are never used to tune rules, thresholds or prompts. **Dev** sets are.
+**Held-out** sets are never used to tune rules, thresholds or prompts. **Dev** sets are. The **regression** set (hand-built hard cases) was written by us and rules were fixed against it, so it shows that known hard cases pass, not how unseen text behaves.
 
 ## Summary
 
 | Set | Role | Docs | Direct ≥50 raw | Direct ≥90 raw | Indirect ≥50 raw | Indirect ≥90 raw | Prec raw | Direct ≥50 pol | Direct ≥90 pol | Indirect ≥50 pol | Indirect ≥90 pol | Prec pol |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| eval_gretel_fin_holdout | held-out | 300 | 98.9 | 95.6 | 92.2 | 87.8 | 33.4 | 99.7 | 97.2 | 95.4 | 92.0 | 32.5 |
-| eval_fin_holdout2 | held-out | 300 | 98.6 | 96.3 | 89.7 | 88.6 | 35.0 | 99.2 | 97.4 | 92.8 | 91.7 | 34.6 |
-| eval_nemotron_fin_structured | held-out | 300 | 99.6 | 99.2 | 92.6 | 92.2 | 76.1 | 99.6 | 99.2 | 96.2 | 95.9 | 76.0 |
-| eval_gretel_en | held-out | 300 | 100.0 | 99.2 | 100.0 | 99.0 | 76.7 | 100.0 | 99.2 | 100.0 | 99.0 | 76.7 |
-| eval_adversarial | held-out | 160 | 99.0 | 98.0 | 98.1 | 98.1 | 75.9 | 99.5 | 98.5 | 98.1 | 98.1 | 75.9 |
-| eval_gretel_fin | dev | 200 | 98.6 | 96.7 | 95.9 | 93.7 | 36.0 | 99.0 | 97.5 | 99.4 | 97.6 | 34.5 |
-| eval_nemotron_fin | dev | 300 | 99.9 | 99.8 | 97.6 | 97.3 | 74.3 | 99.9 | 99.8 | 98.6 | 98.3 | 74.2 |
-| dev_nemotron_fin_structured | dev | 200 | 99.7 | 99.2 | 92.1 | 91.1 | 73.7 | 99.7 | 99.2 | 96.8 | 96.3 | 73.6 |
+| eval_gretel_fin_holdout | held-out | 300 | 99.3 | 98.1 | 96.9 | 95.5 | 28.1 | 99.8 | 99.6 | 99.4 | 99.2 | 27.1 |
+| eval_fin_holdout2 | held-out | 300 | 99.3 | 98.7 | 93.5 | 93.1 | 29.4 | 99.8 | 99.3 | 96.4 | 96.2 | 29.0 |
+| eval_nemotron_fin_structured | held-out | 300 | 99.9 | 99.8 | 94.0 | 93.8 | 69.5 | 99.9 | 99.8 | 97.6 | 97.5 | 69.5 |
+| eval_gretel_en | held-out | 300 | 100.0 | 100.0 | 100.0 | 100.0 | 69.2 | 100.0 | 100.0 | 100.0 | 100.0 | 69.2 |
+| eval_adversarial | regression | 160 | 100.0 | 100.0 | 100.0 | 100.0 | 72.0 | 100.0 | 100.0 | 100.0 | 100.0 | 71.9 |
+| eval_gretel_fin | dev | 200 | 99.6 | 98.8 | 97.3 | 96.2 | 29.9 | 99.7 | 99.4 | 100.0 | 99.4 | 28.4 |
+| eval_nemotron_fin | dev | 300 | 99.9 | 99.9 | 97.7 | 97.4 | 66.9 | 99.9 | 99.9 | 98.8 | 98.5 | 66.9 |
+| dev_nemotron_fin_structured | dev | 200 | 100.0 | 99.7 | 94.0 | 92.4 | 66.1 | 100.0 | 99.7 | 98.6 | 97.7 | 66.0 |
 
 ## Leak regression (A3)
 
@@ -25,27 +25,27 @@ Recall = share of gold identifiers with ≥50% / ≥90% of their characters reda
 
 | Set | leak_check failures | Gold direct values still in output | of | Docs affected |
 |---|---:|---:|---:|---:|
-| eval_gretel_fin_holdout | 131 | 7 | 773 | 7 / 300 |
-| eval_fin_holdout2 | 117 | 8 | 720 | 7 / 300 |
-| eval_nemotron_fin_structured | 39 | 6 | 1287 | 6 / 300 |
-| eval_gretel_en | 6 | 0 | 1214 | 0 / 300 |
-| eval_adversarial | 4 | 5 | 592 | 4 / 160 |
-| eval_gretel_fin | 92 | 4 | 513 | 4 / 200 |
-| eval_nemotron_fin | 23 | 1 | 1270 | 1 / 300 |
-| dev_nemotron_fin_structured | 25 | 0 | 824 | 0 / 200 |
+| eval_gretel_fin_holdout | 0 | 4 | 773 | 4 / 300 |
+| eval_fin_holdout2 | 0 | 3 | 720 | 3 / 300 |
+| eval_nemotron_fin_structured | 0 | 2 | 1287 | 2 / 300 |
+| eval_gretel_en | 0 | 0 | 1130 | 0 / 300 |
+| eval_adversarial | 0 | 0 | 592 | 0 / 160 |
+| eval_gretel_fin | 0 | 1 | 513 | 1 / 200 |
+| eval_nemotron_fin | 0 | 1 | 1270 | 1 / 300 |
+| dev_nemotron_fin_structured | 0 | 0 | 824 | 0 / 200 |
 
 ## Latency (per document, measured inside the worker; all workers busy)
 
 | Set | mean chars | p50 ms | p95 ms | p99 ms | ms / 1k chars | stage share |
 |---|---:|---:|---:|---:|---:|---|
-| eval_gretel_fin_holdout | 1399 | 1418 | 2993 | 5037 | 1137 | rules 0%, openmed 15%, gliner 85%, finalize 0% |
-| eval_fin_holdout2 | 1427 | 1613 | 3385 | 5048 | 1148 | rules 0%, openmed 14%, gliner 86%, finalize 0% |
-| eval_nemotron_fin_structured | 1087 | 911 | 3617 | 4354 | 1189 | rules 0%, openmed 17%, gliner 83%, finalize 0% |
-| eval_gretel_en | 214 | 257 | 522 | 804 | 1373 | rules 0%, openmed 12%, gliner 88%, finalize 0% |
-| eval_adversarial | 147 | 198 | 397 | 470 | 1536 | rules 0%, openmed 11%, gliner 89%, finalize 0% |
-| eval_gretel_fin | 1481 | 1716 | 3353 | 5191 | 1123 | rules 0%, openmed 15%, gliner 85%, finalize 0% |
-| eval_nemotron_fin | 615 | 436 | 945 | 2049 | 834 | rules 0%, openmed 12%, gliner 88%, finalize 0% |
-| dev_nemotron_fin_structured | 1031 | 840 | 3304 | 6264 | 1170 | rules 0%, openmed 16%, gliner 84%, finalize 0% |
+| eval_gretel_fin_holdout | 1399 | 1219 | 2464 | 4050 | 985 | rules 0%, distilled 12%, gliner 88%, finalize 0% |
+| eval_fin_holdout2 | 1427 | 1358 | 2524 | 4249 | 1006 | rules 0%, distilled 12%, gliner 88%, finalize 0% |
+| eval_nemotron_fin_structured | 1087 | 791 | 3089 | 3705 | 1038 | rules 0%, distilled 14%, gliner 86%, finalize 0% |
+| eval_gretel_en | 221 | 209 | 517 | 743 | 1103 | rules 0%, distilled 10%, gliner 90%, finalize 0% |
+| eval_adversarial | 147 | 171 | 321 | 360 | 1328 | rules 0%, distilled 10%, gliner 90%, finalize 0% |
+| eval_gretel_fin | 1481 | 1373 | 2874 | 4135 | 930 | rules 0%, distilled 12%, gliner 87%, finalize 0% |
+| eval_nemotron_fin | 615 | 389 | 824 | 1835 | 735 | rules 0%, distilled 11%, gliner 89%, finalize 0% |
+| dev_nemotron_fin_structured | 1031 | 711 | 2716 | 4929 | 999 | rules 0%, distilled 13%, gliner 86%, finalize 0% |
 
 ## eval_gretel_fin_holdout (held-out)
 
@@ -53,30 +53,30 @@ Recall = share of gold identifiers with ≥50% / ≥90% of their characters reda
 
 | | n | ≥50% | ≥90% |
 |---|---:|---:|---:|
-| NAME | 439 | 100.0 | 97.7 |
-| ORG | 437 | 92.7 | 87.2 |
-| ADDRESS | 244 | 98.0 | 91.4 |
-| DATE | 130 | 90.8 | 90.0 |
-| CONTACT | 125 | 96.0 | 93.6 |
+| NAME | 439 | 100.0 | 98.9 |
+| ORG | 437 | 96.8 | 95.0 |
+| ADDRESS | 244 | 98.0 | 97.1 |
+| DATE | 130 | 97.7 | 97.7 |
+| CONTACT | 125 | 98.4 | 95.2 |
 | FIN_ID | 94 | 100.0 | 100.0 |
 | NETWORK | 19 | 100.0 | 100.0 |
 | GOV_ID | 15 | 100.0 | 100.0 |
-| SECRET | 10 | 100.0 | 90.0 |
+| SECRET | 10 | 100.0 | 100.0 |
 
 ### Recall per fine label (raw labels)
 
 | | n | ≥50% | ≥90% |
 |---|---:|---:|---:|
-| indirect:company | 437 | 92.7 | 87.2 |
-| direct:name | 406 | 100.0 | 97.5 |
-| direct:street_address | 240 | 97.9 | 91.7 |
+| indirect:company | 437 | 96.8 | 95.0 |
+| direct:name | 406 | 100.0 | 98.8 |
+| direct:street_address | 240 | 97.9 | 97.1 |
 | indirect:date | 85 | 98.8 | 98.8 |
-| direct:phone_number | 81 | 95.1 | 93.8 |
-| direct:email | 44 | 97.7 | 93.2 |
-| indirect:time | 25 | 60.0 | 60.0 |
+| direct:phone_number | 81 | 97.5 | 95.1 |
+| direct:email | 44 | 100.0 | 95.5 |
+| indirect:time | 25 | 92.0 | 92.0 |
 | direct:swift_bic_code | 18 | 100.0 | 100.0 |
 | direct:last_name | 16 | 100.0 | 100.0 |
-| direct:date_of_birth | 16 | 93.8 | 87.5 |
+| direct:date_of_birth | 16 | 100.0 | 100.0 |
 | direct:bban | 14 | 100.0 | 100.0 |
 | direct:first_name | 14 | 100.0 | 100.0 |
 | direct:iban | 14 | 100.0 | 100.0 |
@@ -88,10 +88,10 @@ Recall = share of gold identifiers with ≥50% / ≥90% of their characters reda
 | direct:employee_id | 8 | 100.0 | 100.0 |
 | direct:ipv4 | 7 | 100.0 | 100.0 |
 | direct:account_pin | 7 | 100.0 | 100.0 |
-| direct:password | 6 | 100.0 | 83.3 |
+| direct:password | 6 | 100.0 | 100.0 |
 | direct:passport_number | 5 | 100.0 | 100.0 |
 | direct:credit_card_security_code | 5 | 100.0 | 100.0 |
-| direct:local_latlng | 4 | 100.0 | 75.0 |
+| direct:local_latlng | 4 | 100.0 | 100.0 |
 | direct:api_key | 4 | 100.0 | 100.0 |
 | indirect:date_time | 4 | 100.0 | 100.0 |
 | direct:user_name | 3 | 100.0 | 100.0 |
@@ -101,48 +101,48 @@ Recall = share of gold identifiers with ≥50% / ≥90% of their characters reda
 
 | | n | ≥50% | ≥90% |
 |---|---:|---:|---:|
-| Bill of Lading | 98 | 98.0 | 96.9 |
+| Bill of Lading | 98 | 100.0 | 99.0 |
 | CSV | 89 | 100.0 | 100.0 |
-| IT support ticket | 74 | 97.3 | 95.9 |
-| Loan Application | 73 | 98.6 | 94.5 |
-| Health Insurance Claim Form | 65 | 96.9 | 93.8 |
-| Business Plan | 61 | 90.2 | 90.2 |
-| ISDA Definition | 61 | 96.7 | 88.5 |
-| Insurance Claim Form | 48 | 93.8 | 93.8 |
-| Policyholder's Report | 43 | 93.0 | 86.0 |
+| IT support ticket | 74 | 98.6 | 97.3 |
+| Loan Application | 73 | 100.0 | 98.6 |
+| Health Insurance Claim Form | 65 | 96.9 | 96.9 |
+| Business Plan | 61 | 93.4 | 93.4 |
+| ISDA Definition | 61 | 95.1 | 86.9 |
+| Insurance Claim Form | 48 | 97.9 | 95.8 |
+| Policyholder's Report | 43 | 93.0 | 93.0 |
 | Payment Confirmation | 42 | 100.0 | 100.0 |
 | FpML | 38 | 100.0 | 100.0 |
-| Financial Aid Application | 38 | 89.5 | 78.9 |
-| SWIFT Message | 38 | 97.4 | 84.2 |
-| Trade Confirmation | 37 | 100.0 | 91.9 |
-| Safety Data Sheet | 36 | 77.8 | 75.0 |
-| Customer support conversational log | 36 | 100.0 | 97.2 |
-| Email | 34 | 100.0 | 97.1 |
-| Regulatory Filing | 33 | 97.0 | 87.9 |
+| Financial Aid Application | 38 | 100.0 | 100.0 |
+| SWIFT Message | 38 | 100.0 | 100.0 |
+| Trade Confirmation | 37 | 100.0 | 100.0 |
+| Safety Data Sheet | 36 | 100.0 | 100.0 |
+| Customer support conversational log | 36 | 100.0 | 100.0 |
+| Email | 34 | 100.0 | 100.0 |
+| Regulatory Filing | 33 | 97.0 | 97.0 |
 | Financial Statement | 33 | 100.0 | 100.0 |
-| EDI | 31 | 100.0 | 93.5 |
-| Insurance Policy | 30 | 100.0 | 93.3 |
-| Tax Return | 24 | 95.8 | 87.5 |
+| EDI | 31 | 100.0 | 100.0 |
+| Insurance Policy | 30 | 100.0 | 100.0 |
+| Tax Return | 24 | 95.8 | 91.7 |
 | Financial Risk Assessment | 22 | 100.0 | 100.0 |
-| Compliance Certificate | 22 | 100.0 | 95.5 |
-| Corporate Governance Guidelines | 21 | 90.5 | 90.5 |
+| Compliance Certificate | 22 | 100.0 | 100.0 |
+| Corporate Governance Guidelines | 21 | 100.0 | 90.5 |
 
 ### Character precision by predicted type (policy-adjusted gold)
 
 | predicted | chars | precision |
 |---|---:|---:|
-| tier:direct | 39754 | 41.0 |
-| tier:indirect | 37259 | 23.5 |
-| DEMOGRAPHIC | 18267 | 2.6 |
-| ADDRESS | 13917 | 48.6 |
-| ORG | 11052 | 61.1 |
-| NAME | 8026 | 65.2 |
-| DATE | 7940 | 18.9 |
-| SECRET | 7118 | 4.6 |
-| CONTACT | 6401 | 31.5 |
-| FIN_ID | 3093 | 40.1 |
-| NETWORK | 978 | 59.0 |
-| GOV_ID | 221 | 58.8 |
+| tier:indirect | 47794 | 16.8 |
+| tier:direct | 46682 | 37.7 |
+| DEMOGRAPHIC | 26578 | 1.4 |
+| ADDRESS | 16203 | 42.5 |
+| ORG | 12157 | 49.8 |
+| NAME | 9385 | 69.5 |
+| DATE | 9059 | 17.8 |
+| CONTACT | 8699 | 23.1 |
+| SECRET | 8455 | 3.5 |
+| FIN_ID | 2982 | 39.1 |
+| NETWORK | 702 | 80.1 |
+| GOV_ID | 256 | 59.0 |
 
 ## eval_fin_holdout2 (held-out)
 
@@ -150,13 +150,13 @@ Recall = share of gold identifiers with ≥50% / ≥90% of their characters reda
 
 | | n | ≥50% | ≥90% |
 |---|---:|---:|---:|
-| ORG | 413 | 87.7 | 86.7 |
-| NAME | 396 | 98.5 | 97.2 |
-| ADDRESS | 271 | 98.2 | 93.7 |
-| DATE | 156 | 95.5 | 94.2 |
-| FIN_ID | 96 | 99.0 | 99.0 |
+| ORG | 413 | 92.0 | 91.5 |
+| NAME | 396 | 99.5 | 99.5 |
+| ADDRESS | 271 | 98.9 | 97.4 |
+| DATE | 156 | 97.4 | 97.4 |
+| FIN_ID | 96 | 100.0 | 100.0 |
 | CONTACT | 81 | 100.0 | 97.5 |
-| GOV_ID | 21 | 100.0 | 95.2 |
+| GOV_ID | 21 | 100.0 | 100.0 |
 | NETWORK | 15 | 100.0 | 100.0 |
 | SECRET | 7 | 100.0 | 100.0 |
 
@@ -164,13 +164,13 @@ Recall = share of gold identifiers with ≥50% / ≥90% of their characters reda
 
 | | n | ≥50% | ≥90% |
 |---|---:|---:|---:|
-| indirect:company | 413 | 87.7 | 86.7 |
-| direct:name | 376 | 98.4 | 97.1 |
-| direct:street_address | 267 | 98.1 | 93.6 |
+| indirect:company | 413 | 92.0 | 91.5 |
+| direct:name | 376 | 99.5 | 99.5 |
+| direct:street_address | 267 | 98.9 | 97.4 |
 | indirect:date | 110 | 99.1 | 99.1 |
 | direct:phone_number | 49 | 100.0 | 98.0 |
 | direct:email | 32 | 100.0 | 96.9 |
-| indirect:time | 24 | 79.2 | 70.8 |
+| indirect:time | 24 | 91.7 | 91.7 |
 | direct:employee_id | 21 | 100.0 | 100.0 |
 | direct:bban | 16 | 100.0 | 100.0 |
 | direct:date_of_birth | 15 | 93.3 | 93.3 |
@@ -180,14 +180,14 @@ Recall = share of gold identifiers with ≥50% / ≥90% of their characters reda
 | direct:last_name | 10 | 100.0 | 100.0 |
 | direct:customer_id | 8 | 100.0 | 100.0 |
 | direct:ipv6 | 8 | 100.0 | 100.0 |
-| direct:passport_number | 7 | 100.0 | 85.7 |
+| direct:passport_number | 7 | 100.0 | 100.0 |
 | indirect:date_time | 7 | 100.0 | 100.0 |
 | direct:ipv4 | 7 | 100.0 | 100.0 |
 | direct:ssn | 7 | 100.0 | 100.0 |
 | direct:account_pin | 7 | 100.0 | 100.0 |
 | direct:driver_license_number | 7 | 100.0 | 100.0 |
 | direct:first_name | 5 | 100.0 | 100.0 |
-| direct:credit_card_security_code | 5 | 80.0 | 80.0 |
+| direct:credit_card_security_code | 5 | 100.0 | 100.0 |
 | direct:user_name | 5 | 100.0 | 100.0 |
 | direct:password | 4 | 100.0 | 100.0 |
 | direct:local_latlng | 4 | 100.0 | 100.0 |
@@ -199,47 +199,47 @@ Recall = share of gold identifiers with ≥50% / ≥90% of their characters reda
 | | n | ≥50% | ≥90% |
 |---|---:|---:|---:|
 | Insurance Policy | 91 | 98.9 | 98.9 |
-| Bill of Lading | 86 | 95.3 | 93.0 |
+| Bill of Lading | 86 | 98.8 | 97.7 |
 | CSV | 66 | 100.0 | 100.0 |
-| Payment Confirmation | 64 | 93.8 | 92.2 |
-| IT support ticket | 54 | 98.1 | 98.1 |
+| Payment Confirmation | 64 | 96.9 | 96.9 |
+| IT support ticket | 54 | 100.0 | 100.0 |
 | Customer support conversational log | 49 | 100.0 | 100.0 |
-| Health Insurance Claim Form | 45 | 97.8 | 97.8 |
+| Health Insurance Claim Form | 45 | 100.0 | 100.0 |
 | Loan Application | 44 | 100.0 | 97.7 |
 | Credit Card Statement | 36 | 94.4 | 94.4 |
-| Shareholder Agreement | 35 | 71.4 | 71.4 |
+| Shareholder Agreement | 35 | 77.1 | 77.1 |
 | Investment Prospectus | 34 | 94.1 | 94.1 |
 | Audit Report | 32 | 100.0 | 100.0 |
 | BAI Format | 32 | 100.0 | 100.0 |
-| FIX Protocol | 31 | 93.5 | 87.1 |
-| SWIFT Message | 31 | 100.0 | 83.9 |
-| Safety Data Sheet | 30 | 73.3 | 73.3 |
+| FIX Protocol | 31 | 96.8 | 93.5 |
+| SWIFT Message | 31 | 100.0 | 96.8 |
+| Safety Data Sheet | 30 | 83.3 | 83.3 |
 | Tax Return | 30 | 100.0 | 100.0 |
 | Real Estate Loan Agreement | 29 | 96.6 | 96.6 |
-| Policyholder's Report | 29 | 96.6 | 89.7 |
-| Transaction Confirmation | 28 | 100.0 | 96.4 |
-| Compliance Certificate | 27 | 100.0 | 96.3 |
-| ISDA Definition | 26 | 88.5 | 80.8 |
+| Policyholder's Report | 29 | 96.6 | 93.1 |
+| Transaction Confirmation | 28 | 100.0 | 100.0 |
+| Compliance Certificate | 27 | 100.0 | 100.0 |
+| ISDA Definition | 26 | 88.5 | 88.5 |
 | Insurance Claim Form | 25 | 100.0 | 100.0 |
-| MT940 | 25 | 96.0 | 96.0 |
+| MT940 | 25 | 100.0 | 100.0 |
 | Annual Report | 24 | 95.8 | 91.7 |
 
 ### Character precision by predicted type (policy-adjusted gold)
 
 | predicted | chars | precision |
 |---|---:|---:|
-| tier:direct | 40230 | 40.2 |
-| tier:indirect | 33847 | 27.8 |
-| ADDRESS | 14746 | 53.1 |
-| DEMOGRAPHIC | 13888 | 2.0 |
-| ORG | 12576 | 57.6 |
-| NAME | 8153 | 62.2 |
-| DATE | 7383 | 25.8 |
-| CONTACT | 6786 | 20.0 |
-| SECRET | 6466 | 4.2 |
-| FIN_ID | 3092 | 33.5 |
-| NETWORK | 695 | 58.4 |
-| GOV_ID | 292 | 71.6 |
+| tier:direct | 47344 | 36.5 |
+| tier:indirect | 42787 | 20.7 |
+| DEMOGRAPHIC | 21546 | 2.0 |
+| ADDRESS | 16943 | 47.6 |
+| ORG | 12964 | 50.1 |
+| NAME | 9299 | 64.1 |
+| SECRET | 9023 | 2.2 |
+| CONTACT | 8516 | 16.0 |
+| DATE | 8277 | 23.5 |
+| FIN_ID | 2760 | 38.6 |
+| NETWORK | 497 | 81.7 |
+| GOV_ID | 306 | 69.6 |
 
 ## eval_nemotron_fin_structured (held-out)
 
@@ -247,15 +247,15 @@ Recall = share of gold identifiers with ≥50% / ≥90% of their characters reda
 
 | | n | ≥50% | ≥90% |
 |---|---:|---:|---:|
-| FIN_ID | 586 | 99.1 | 99.1 |
+| FIN_ID | 586 | 100.0 | 100.0 |
 | NAME | 498 | 100.0 | 100.0 |
-| DATE | 414 | 94.7 | 94.4 |
+| DATE | 414 | 94.9 | 94.7 |
 | CONTACT | 348 | 99.7 | 99.7 |
-| ADDRESS | 322 | 94.4 | 93.2 |
-| ORG | 225 | 100.0 | 99.6 |
-| DEMOGRAPHIC | 176 | 80.1 | 79.0 |
+| ADDRESS | 322 | 95.0 | 94.7 |
+| ORG | 225 | 100.0 | 100.0 |
+| DEMOGRAPHIC | 176 | 86.4 | 85.8 |
 | GOV_ID | 130 | 100.0 | 100.0 |
-| SECRET | 47 | 100.0 | 93.6 |
+| SECRET | 47 | 100.0 | 100.0 |
 | NETWORK | 28 | 100.0 | 100.0 |
 
 ### Recall per fine label (raw labels)
@@ -264,29 +264,29 @@ Recall = share of gold identifiers with ≥50% / ≥90% of their characters reda
 |---|---:|---:|---:|
 | indirect:date | 312 | 93.6 | 93.3 |
 | direct:first_name | 248 | 100.0 | 100.0 |
-| indirect:company_name | 225 | 100.0 | 99.6 |
+| indirect:company_name | 225 | 100.0 | 100.0 |
 | direct:last_name | 218 | 100.0 | 100.0 |
-| direct:account_number | 189 | 99.5 | 99.5 |
+| direct:account_number | 189 | 100.0 | 100.0 |
 | direct:email | 174 | 99.4 | 99.4 |
 | direct:customer_id | 110 | 100.0 | 100.0 |
 | direct:credit_debit_card | 102 | 100.0 | 100.0 |
-| direct:street_address | 95 | 98.9 | 94.7 |
-| indirect:occupation | 94 | 68.1 | 66.0 |
+| direct:street_address | 95 | 98.9 | 97.9 |
+| indirect:occupation | 94 | 81.9 | 80.9 |
 | direct:url | 83 | 100.0 | 100.0 |
 | direct:bank_routing_number | 75 | 100.0 | 100.0 |
 | direct:phone_number | 71 | 100.0 | 100.0 |
 | indirect:state | 61 | 93.4 | 93.4 |
-| indirect:country | 52 | 98.1 | 98.1 |
+| indirect:country | 52 | 100.0 | 100.0 |
 | indirect:city | 50 | 100.0 | 100.0 |
 | direct:ssn | 44 | 100.0 | 100.0 |
 | direct:swift_bic | 41 | 100.0 | 100.0 |
-| indirect:time | 40 | 97.5 | 97.5 |
+| indirect:time | 40 | 100.0 | 100.0 |
 | direct:date_of_birth | 36 | 100.0 | 100.0 |
-| indirect:county | 35 | 65.7 | 65.7 |
-| direct:cvv | 33 | 87.9 | 87.9 |
+| indirect:county | 35 | 68.6 | 68.6 |
+| direct:cvv | 33 | 100.0 | 100.0 |
 | direct:user_name | 32 | 100.0 | 100.0 |
 | direct:biometric_identifier | 31 | 100.0 | 100.0 |
-| direct:password | 29 | 100.0 | 96.6 |
+| direct:password | 29 | 100.0 | 100.0 |
 | indirect:postcode | 29 | 100.0 | 100.0 |
 | indirect:date_time | 26 | 96.2 | 96.2 |
 | indirect:employment_status | 21 | 90.5 | 90.5 |
@@ -296,15 +296,15 @@ Recall = share of gold identifiers with ≥50% / ≥90% of their characters reda
 | direct:tax_id | 14 | 100.0 | 100.0 |
 | indirect:education_level | 13 | 100.0 | 100.0 |
 | direct:ipv4 | 11 | 100.0 | 100.0 |
-| indirect:language | 10 | 90.0 | 90.0 |
+| indirect:language | 10 | 80.0 | 80.0 |
 | indirect:race_ethnicity | 10 | 100.0 | 100.0 |
 | direct:medical_record_number | 10 | 100.0 | 100.0 |
 | direct:api_key | 10 | 100.0 | 100.0 |
 | indirect:age | 9 | 88.9 | 88.9 |
 | direct:employee_id | 9 | 100.0 | 100.0 |
-| direct:http_cookie | 8 | 100.0 | 75.0 |
+| direct:http_cookie | 8 | 100.0 | 100.0 |
 | direct:mac_address | 8 | 100.0 | 100.0 |
-| indirect:political_view | 7 | 100.0 | 100.0 |
+| indirect:political_view | 7 | 85.7 | 85.7 |
 | direct:unique_id | 7 | 100.0 | 100.0 |
 | direct:ipv6 | 6 | 100.0 | 100.0 |
 | direct:national_id | 5 | 100.0 | 100.0 |
@@ -322,22 +322,22 @@ Recall = share of gold identifiers with ≥50% / ≥90% of their characters reda
 | | n | ≥50% | ≥90% |
 |---|---:|---:|---:|
 | Investment Agreement | 58 | 98.3 | 98.3 |
-| Mortgage Loan | 54 | 92.6 | 92.6 |
+| Mortgage Loan | 54 | 94.4 | 94.4 |
 | Premium Payment Schedule | 48 | 100.0 | 100.0 |
 | Emergency Planning | 44 | 100.0 | 100.0 |
 | Corporate Solutions | 41 | 97.6 | 97.6 |
-| Affidavit of No Contingencies | 40 | 92.5 | 92.5 |
+| Affidavit of No Contingencies | 40 | 95.0 | 95.0 |
 | Privacy Policy Document | 39 | 100.0 | 100.0 |
 | Investment Statement | 38 | 97.4 | 97.4 |
-| Bank Services | 35 | 100.0 | 97.1 |
+| Bank Services | 35 | 100.0 | 100.0 |
 | Audit Report | 34 | 100.0 | 100.0 |
 | Affidavit of No Unpaid Insurance Premiums | 34 | 73.5 | 73.5 |
 | Debt Consolidation Agreement | 33 | 100.0 | 100.0 |
 | Investment Proposal | 33 | 100.0 | 100.0 |
 | Investment Strategy | 32 | 100.0 | 100.0 |
-| Affidavit of Title | 31 | 96.8 | 96.8 |
+| Affidavit of Title | 31 | 100.0 | 100.0 |
 | Due Diligence Report | 30 | 100.0 | 100.0 |
-| Affidavit of No Unpaid Maintenance Fees | 30 | 100.0 | 93.3 |
+| Affidavit of No Unpaid Maintenance Fees | 30 | 100.0 | 100.0 |
 | Credit Card Replacement Form | 29 | 89.7 | 89.7 |
 | Application Setup Guide | 29 | 100.0 | 100.0 |
 | Investment Evaluation | 29 | 96.6 | 96.6 |
@@ -351,18 +351,18 @@ Recall = share of gold identifiers with ≥50% / ≥90% of their characters reda
 
 | predicted | chars | precision |
 |---|---:|---:|
-| tier:direct | 30963 | 88.8 |
-| tier:indirect | 18627 | 54.8 |
-| CONTACT | 11782 | 99.0 |
-| DEMOGRAPHIC | 7293 | 24.8 |
-| ORG | 6555 | 64.5 |
-| FIN_ID | 6533 | 95.4 |
-| DATE | 4779 | 87.2 |
-| NAME | 4192 | 81.0 |
-| ADDRESS | 3989 | 82.1 |
-| SECRET | 2942 | 48.4 |
-| GOV_ID | 1016 | 97.8 |
-| NETWORK | 509 | 100.0 |
+| tier:direct | 32535 | 85.4 |
+| tier:indirect | 22196 | 46.2 |
+| CONTACT | 12210 | 95.5 |
+| DEMOGRAPHIC | 10024 | 19.3 |
+| ORG | 7101 | 58.9 |
+| FIN_ID | 6535 | 95.0 |
+| DATE | 5071 | 81.5 |
+| NAME | 4251 | 80.7 |
+| ADDRESS | 4232 | 77.4 |
+| SECRET | 3631 | 42.9 |
+| GOV_ID | 1159 | 97.6 |
+| NETWORK | 517 | 98.5 |
 
 ## eval_gretel_en (held-out)
 
@@ -370,115 +370,114 @@ Recall = share of gold identifiers with ≥50% / ≥90% of their characters reda
 
 | | n | ≥50% | ≥90% |
 |---|---:|---:|---:|
-| GOV_ID | 314 | 100.0 | 100.0 |
-| NAME | 258 | 100.0 | 99.6 |
-| DATE | 221 | 100.0 | 100.0 |
-| FIN_ID | 194 | 100.0 | 100.0 |
-| CONTACT | 128 | 100.0 | 100.0 |
-| ADDRESS | 107 | 100.0 | 91.6 |
-| NETWORK | 73 | 100.0 | 100.0 |
-| ORG | 10 | 100.0 | 90.0 |
+| GOV_ID | 341 | 100.0 | 100.0 |
+| DATE | 225 | 100.0 | 100.0 |
+| NAME | 224 | 100.0 | 100.0 |
+| FIN_ID | 189 | 100.0 | 100.0 |
+| ADDRESS | 101 | 100.0 | 100.0 |
+| CONTACT | 100 | 100.0 | 100.0 |
+| NETWORK | 50 | 100.0 | 100.0 |
+| ORG | 16 | 100.0 | 100.0 |
 | SECRET | 8 | 100.0 | 100.0 |
 
 ### Recall per fine label (raw labels)
 
 | | n | ≥50% | ≥90% |
 |---|---:|---:|---:|
-| direct:medical_record_number | 155 | 100.0 | 100.0 |
-| direct:date_of_birth | 144 | 100.0 | 100.0 |
-| direct:ssn | 107 | 100.0 | 100.0 |
-| direct:first_name | 97 | 100.0 | 100.0 |
-| direct:last_name | 92 | 100.0 | 100.0 |
-| direct:street_address | 90 | 100.0 | 90.0 |
-| direct:employee_id | 70 | 100.0 | 100.0 |
-| direct:email | 70 | 100.0 | 100.0 |
-| indirect:date | 62 | 100.0 | 100.0 |
-| direct:name | 57 | 100.0 | 98.2 |
-| direct:customer_id | 57 | 100.0 | 100.0 |
-| direct:phone_number | 56 | 100.0 | 100.0 |
-| direct:ipv4 | 50 | 100.0 | 100.0 |
-| direct:license_plate | 33 | 100.0 | 100.0 |
-| direct:credit_card_number | 31 | 100.0 | 100.0 |
-| direct:device_identifier | 20 | 100.0 | 100.0 |
-| direct:bank_routing_number | 18 | 100.0 | 100.0 |
-| direct:user_name | 12 | 100.0 | 100.0 |
-| indirect:company_name | 10 | 100.0 | 90.0 |
-| direct:account_number | 9 | 100.0 | 100.0 |
-| direct:unique_id | 9 | 100.0 | 100.0 |
-| indirect:date_time | 8 | 100.0 | 100.0 |
+| direct:medical_record_number | 161 | 100.0 | 100.0 |
+| direct:date_of_birth | 130 | 100.0 | 100.0 |
+| direct:ssn | 103 | 100.0 | 100.0 |
+| direct:street_address | 87 | 100.0 | 100.0 |
+| direct:first_name | 78 | 100.0 | 100.0 |
+| indirect:date | 77 | 100.0 | 100.0 |
+| direct:last_name | 71 | 100.0 | 100.0 |
+| direct:employee_id | 61 | 100.0 | 100.0 |
+| direct:customer_id | 56 | 100.0 | 100.0 |
+| direct:name | 55 | 100.0 | 100.0 |
+| direct:phone_number | 50 | 100.0 | 100.0 |
+| direct:email | 49 | 100.0 | 100.0 |
+| direct:license_plate | 44 | 100.0 | 100.0 |
+| direct:ipv4 | 36 | 100.0 | 100.0 |
+| direct:credit_card_number | 35 | 100.0 | 100.0 |
+| direct:user_name | 20 | 100.0 | 100.0 |
+| indirect:company_name | 16 | 100.0 | 100.0 |
+| direct:bank_routing_number | 14 | 100.0 | 100.0 |
+| direct:account_number | 13 | 100.0 | 100.0 |
+| direct:device_identifier | 12 | 100.0 | 100.0 |
+| direct:certificate_license_number | 11 | 100.0 | 100.0 |
+| indirect:date_time | 11 | 100.0 | 100.0 |
+| direct:unique_id | 10 | 100.0 | 100.0 |
+| direct:biometric_identifier | 7 | 100.0 | 100.0 |
+| direct:vehicle_identifier | 7 | 100.0 | 100.0 |
 | indirect:time | 7 | 100.0 | 100.0 |
-| direct:api_key | 6 | 100.0 | 100.0 |
-| direct:vehicle_identifier | 6 | 100.0 | 100.0 |
-| direct:coordinate | 5 | 100.0 | 100.0 |
-| direct:biometric_identifier | 4 | 100.0 | 100.0 |
+| indirect:city | 6 | 100.0 | 100.0 |
+| direct:password | 5 | 100.0 | 100.0 |
 | indirect:postcode | 4 | 100.0 | 100.0 |
-| indirect:city | 4 | 100.0 | 100.0 |
-| direct:certificate_license_number | 4 | 100.0 | 100.0 |
+| direct:api_key | 3 | 100.0 | 100.0 |
+| direct:health_plan_beneficiary_number | 3 | 100.0 | 100.0 |
 | indirect:country | 3 | 100.0 | 100.0 |
-| direct:ipv6 | 3 | 100.0 | 100.0 |
-| direct:password | 2 | 100.0 | 100.0 |
-| direct:national_id | 2 | 100.0 | 100.0 |
-| direct:health_plan_beneficiary_number | 2 | 100.0 | 100.0 |
-| direct:url | 2 | 100.0 | 100.0 |
-| indirect:state | 1 | 100.0 | 100.0 |
-| direct:tax_id | 1 | 100.0 | 100.0 |
+| direct:national_id | 3 | 100.0 | 100.0 |
+| direct:ipv6 | 2 | 100.0 | 100.0 |
+| direct:tax_id | 2 | 100.0 | 100.0 |
+| direct:coordinate | 1 | 100.0 | 100.0 |
+| direct:url | 1 | 100.0 | 100.0 |
 
 ### Recall per document type (raw labels)
 
 | | n | ≥50% | ≥90% |
 |---|---:|---:|---:|
-| Invoice | 18 | 100.0 | 94.4 |
-| Vulnerability Assessment Report | 17 | 100.0 | 100.0 |
-| Router Configuration | 15 | 100.0 | 100.0 |
-| TransportationContract | 14 | 100.0 | 92.9 |
-| InvestmentAccountStatement | 13 | 100.0 | 100.0 |
-| Service Level Description | 13 | 100.0 | 100.0 |
-| PatientIntakeForm | 12 | 100.0 | 100.0 |
-| MedicalHistoryForm | 12 | 100.0 | 100.0 |
-| E-Ticket | 11 | 100.0 | 100.0 |
-| Certificate Practice Statement | 11 | 100.0 | 100.0 |
-| ClaimForm | 11 | 100.0 | 100.0 |
-| InstallationReport | 10 | 100.0 | 90.0 |
-| UserManual | 10 | 100.0 | 100.0 |
-| Voter Registration Form | 10 | 100.0 | 100.0 |
-| LoanAgreement | 10 | 100.0 | 100.0 |
-| BillOfLading | 9 | 100.0 | 88.9 |
-| Termination Agreement | 9 | 100.0 | 100.0 |
-| Vaccination Record | 9 | 100.0 | 100.0 |
-| Classified Document | 9 | 100.0 | 100.0 |
-| AvionicsManual | 9 | 100.0 | 100.0 |
-| TroubleshootingReport | 9 | 100.0 | 100.0 |
-| PackingSlip | 9 | 100.0 | 88.9 |
-| TaxReturnForm | 9 | 100.0 | 100.0 |
-| QualityControlReport | 9 | 100.0 | 100.0 |
-| ProductionSchedule | 8 | 100.0 | 100.0 |
+| ClaimForm | 23 | 100.0 | 100.0 |
+| Marriage Certificate | 17 | 100.0 | 100.0 |
+| Invoice | 15 | 100.0 | 100.0 |
+| Bill of Lading | 14 | 100.0 | 100.0 |
+| Packing List | 14 | 100.0 | 100.0 |
+| Incident Report | 13 | 100.0 | 100.0 |
+| Vaccination Record | 13 | 100.0 | 100.0 |
+| BillOfLading | 13 | 100.0 | 100.0 |
+| PackageInsert | 12 | 100.0 | 100.0 |
+| UserManual | 12 | 100.0 | 100.0 |
+| IncidentReport | 12 | 100.0 | 100.0 |
+| InsurancePolicy | 11 | 100.0 | 100.0 |
+| Audit Report | 11 | 100.0 | 100.0 |
+| Shipment Notice | 10 | 100.0 | 100.0 |
+| Contract | 10 | 100.0 | 100.0 |
+| CaseReportForm | 10 | 100.0 | 100.0 |
+| PromotionDetails | 10 | 100.0 | 100.0 |
+| DisciplinaryActionForm | 10 | 100.0 | 100.0 |
+| QualityControlReport | 10 | 100.0 | 100.0 |
+| Distribution Agreement | 10 | 100.0 | 100.0 |
+| AccountClosureForm | 10 | 100.0 | 100.0 |
+| Data Privacy Notice | 10 | 100.0 | 100.0 |
+| Title Report | 10 | 100.0 | 100.0 |
+| Bill | 10 | 100.0 | 100.0 |
+| DrugMasterFile | 10 | 100.0 | 100.0 |
 
 ### Character precision by predicted type (policy-adjusted gold)
 
 | predicted | chars | precision |
 |---|---:|---:|
-| tier:direct | 16607 | 88.3 |
-| tier:indirect | 5791 | 43.6 |
-| ADDRESS | 3299 | 93.1 |
-| DATE | 3221 | 73.5 |
-| NAME | 3085 | 82.0 |
-| FIN_ID | 2818 | 93.5 |
-| GOV_ID | 2617 | 99.8 |
-| CONTACT | 2596 | 95.2 |
-| DEMOGRAPHIC | 2117 | 0.0 |
-| SECRET | 1194 | 33.5 |
-| NETWORK | 998 | 94.5 |
-| ORG | 453 | 34.4 |
+| tier:direct | 15474 | 87.8 |
+| tier:indirect | 7926 | 33.0 |
+| DEMOGRAPHIC | 3885 | 0.0 |
+| DATE | 3641 | 68.0 |
+| ADDRESS | 3229 | 90.6 |
+| FIN_ID | 2937 | 96.4 |
+| GOV_ID | 2914 | 98.8 |
+| NAME | 2735 | 83.9 |
+| CONTACT | 2046 | 93.3 |
+| SECRET | 991 | 17.1 |
+| NETWORK | 622 | 92.8 |
+| ORG | 400 | 35.0 |
 
-## eval_adversarial (held-out)
+## eval_adversarial (regression)
 
 ### Recall per coarse type (raw labels)
 
 | | n | ≥50% | ≥90% |
 |---|---:|---:|---:|
-| NAME | 224 | 97.8 | 96.4 |
-| FIN_ID | 220 | 100.0 | 99.1 |
-| ADDRESS | 112 | 97.3 | 96.4 |
+| NAME | 224 | 100.0 | 100.0 |
+| FIN_ID | 220 | 100.0 | 100.0 |
+| ADDRESS | 112 | 100.0 | 100.0 |
 | CONTACT | 80 | 100.0 | 100.0 |
 | DATE | 28 | 100.0 | 100.0 |
 | GOV_ID | 24 | 100.0 | 100.0 |
@@ -489,14 +488,14 @@ Recall = share of gold identifiers with ≥50% / ≥90% of their characters reda
 
 | | n | ≥50% | ≥90% |
 |---|---:|---:|---:|
-| direct:name | 132 | 98.5 | 96.2 |
-| direct:account_number | 76 | 100.0 | 97.4 |
+| direct:name | 132 | 100.0 | 100.0 |
+| direct:account_number | 76 | 100.0 | 100.0 |
 | direct:iban | 60 | 100.0 | 100.0 |
 | direct:first_name | 52 | 100.0 | 100.0 |
 | direct:phone_number | 44 | 100.0 | 100.0 |
-| direct:street_address | 40 | 97.5 | 95.0 |
-| indirect:city | 40 | 95.0 | 95.0 |
-| direct:last_name | 36 | 91.7 | 91.7 |
+| direct:street_address | 40 | 100.0 | 100.0 |
+| indirect:city | 40 | 100.0 | 100.0 |
+| direct:last_name | 36 | 100.0 | 100.0 |
 | direct:email | 36 | 100.0 | 100.0 |
 | direct:credit_debit_card | 32 | 100.0 | 100.0 |
 | indirect:postcode | 28 | 100.0 | 100.0 |
@@ -518,13 +517,13 @@ Recall = share of gold identifiers with ≥50% / ≥90% of their characters reda
 
 | | n | ≥50% | ≥90% |
 |---|---:|---:|---:|
-| international formats | 124 | 100.0 | 99.2 |
-| structured keys | 92 | 98.9 | 98.9 |
-| email threads | 76 | 100.0 | 98.7 |
-| SWIFT / FIX | 64 | 90.6 | 84.4 |
+| international formats | 124 | 100.0 | 100.0 |
+| structured keys | 92 | 100.0 | 100.0 |
+| email threads | 76 | 100.0 | 100.0 |
+| SWIFT / FIX | 64 | 100.0 | 100.0 |
 | common-word names | 56 | 100.0 | 100.0 |
 | masked partials | 56 | 100.0 | 100.0 |
-| coreference | 48 | 97.9 | 97.9 |
+| coreference | 48 | 100.0 | 100.0 |
 | odd spacing / line breaks | 44 | 100.0 | 100.0 |
 | glued text | 40 | 100.0 | 100.0 |
 | prompt injection | 40 | 100.0 | 100.0 |
@@ -536,25 +535,24 @@ Recall = share of gold identifiers with ≥50% / ≥90% of their characters reda
 
 | | n | ≥50% | ≥90% |
 |---|---:|---:|---:|
-| templates also rendered (other values) for training | 356 | 99.4 | 98.9 |
-| templates never used in training | 352 | 98.3 | 97.2 |
+| templates also rendered (other values) for training | 356 | 100.0 | 100.0 |
+| templates never used in training | 352 | 100.0 | 100.0 |
 
 ### Character precision by predicted type (policy-adjusted gold)
 
 | predicted | chars | precision |
 |---|---:|---:|
-| tier:direct | 10278 | 80.8 |
-| FIN_ID | 3530 | 79.5 |
-| NAME | 2306 | 89.9 |
-| tier:indirect | 2035 | 51.5 |
-| CONTACT | 1954 | 96.1 |
-| ADDRESS | 1462 | 82.0 |
-| ORG | 814 | 78.3 |
-| SECRET | 733 | 14.6 |
-| DEMOGRAPHIC | 620 | 2.6 |
-| DATE | 601 | 65.9 |
+| tier:direct | 11231 | 76.7 |
+| FIN_ID | 3453 | 81.0 |
+| NAME | 2627 | 86.9 |
+| CONTACT | 2040 | 92.0 |
+| tier:indirect | 1909 | 43.6 |
+| ADDRESS | 1643 | 79.6 |
+| SECRET | 1228 | 9.2 |
+| DEMOGRAPHIC | 773 | 0.0 |
+| DATE | 623 | 62.6 |
+| ORG | 513 | 86.4 |
 | GOV_ID | 240 | 100.0 |
-| NETWORK | 53 | 0.0 |
 
 ## eval_gretel_fin (dev)
 
@@ -562,12 +560,12 @@ Recall = share of gold identifiers with ≥50% / ≥90% of their characters reda
 
 | | n | ≥50% | ≥90% |
 |---|---:|---:|---:|
-| NAME | 304 | 99.3 | 98.0 |
-| ORG | 284 | 95.1 | 93.0 |
-| ADDRESS | 200 | 99.5 | 96.0 |
-| DATE | 94 | 97.9 | 95.7 |
-| CONTACT | 69 | 98.6 | 95.7 |
-| FIN_ID | 65 | 92.3 | 92.3 |
+| NAME | 304 | 100.0 | 98.7 |
+| ORG | 284 | 96.5 | 95.4 |
+| ADDRESS | 200 | 99.5 | 99.0 |
+| DATE | 94 | 98.9 | 97.9 |
+| CONTACT | 69 | 98.6 | 98.6 |
+| FIN_ID | 65 | 100.0 | 100.0 |
 | GOV_ID | 19 | 100.0 | 100.0 |
 | NETWORK | 11 | 100.0 | 100.0 |
 | SECRET | 11 | 100.0 | 100.0 |
@@ -576,15 +574,15 @@ Recall = share of gold identifiers with ≥50% / ≥90% of their characters reda
 
 | | n | ≥50% | ≥90% |
 |---|---:|---:|---:|
-| indirect:company | 284 | 95.1 | 93.0 |
-| direct:name | 271 | 99.3 | 97.8 |
-| direct:street_address | 191 | 99.5 | 95.8 |
+| indirect:company | 284 | 96.5 | 95.4 |
+| direct:name | 271 | 100.0 | 98.5 |
+| direct:street_address | 191 | 99.5 | 99.0 |
 | indirect:date | 68 | 100.0 | 100.0 |
 | direct:email | 36 | 100.0 | 100.0 |
-| direct:phone_number | 33 | 97.0 | 90.9 |
+| direct:phone_number | 33 | 97.0 | 97.0 |
 | direct:first_name | 31 | 100.0 | 100.0 |
-| indirect:time | 13 | 92.3 | 76.9 |
-| direct:account_pin | 12 | 58.3 | 58.3 |
+| indirect:time | 13 | 100.0 | 92.3 |
+| direct:account_pin | 12 | 100.0 | 100.0 |
 | direct:date_of_birth | 11 | 90.9 | 90.9 |
 | direct:credit_card_security_code | 10 | 100.0 | 100.0 |
 | direct:employee_id | 10 | 100.0 | 100.0 |
@@ -610,48 +608,48 @@ Recall = share of gold identifiers with ≥50% / ≥90% of their characters reda
 
 | | n | ≥50% | ≥90% |
 |---|---:|---:|---:|
-| Loan Application | 101 | 100.0 | 98.0 |
-| BAI Format | 50 | 100.0 | 96.0 |
-| SWIFT Message | 47 | 100.0 | 97.9 |
-| Policyholder's Report | 43 | 100.0 | 90.7 |
-| IT support ticket | 39 | 97.4 | 97.4 |
+| Loan Application | 101 | 100.0 | 100.0 |
+| BAI Format | 50 | 100.0 | 100.0 |
+| SWIFT Message | 47 | 100.0 | 100.0 |
+| Policyholder's Report | 43 | 100.0 | 100.0 |
+| IT support ticket | 39 | 100.0 | 100.0 |
 | Customer support conversational log | 37 | 100.0 | 100.0 |
 | Customer Agreement | 35 | 100.0 | 100.0 |
-| Payment Confirmation | 31 | 100.0 | 93.5 |
+| Payment Confirmation | 31 | 100.0 | 96.8 |
 | Audit Report | 31 | 100.0 | 100.0 |
 | EDI | 31 | 100.0 | 100.0 |
 | Supply Chain Management Agreement | 29 | 100.0 | 100.0 |
-| FIX Protocol | 29 | 100.0 | 96.6 |
-| Bill of Lading | 29 | 100.0 | 96.6 |
+| FIX Protocol | 29 | 100.0 | 100.0 |
+| Bill of Lading | 29 | 100.0 | 100.0 |
 | Financial Risk Assessment | 25 | 100.0 | 96.0 |
-| Regulatory Compliance Guide | 25 | 84.0 | 80.0 |
+| Regulatory Compliance Guide | 25 | 96.0 | 92.0 |
 | Insurance Policy | 24 | 100.0 | 100.0 |
-| Trade Confirmation | 23 | 100.0 | 95.7 |
+| Trade Confirmation | 23 | 100.0 | 100.0 |
 | CSV | 21 | 100.0 | 100.0 |
 | Financial Disclosure Statement | 21 | 100.0 | 100.0 |
 | Compliance Certificate | 21 | 100.0 | 95.2 |
-| MT940 | 17 | 70.6 | 70.6 |
+| MT940 | 17 | 100.0 | 100.0 |
 | Employment Contract | 17 | 100.0 | 100.0 |
 | Credit Card Statement | 16 | 100.0 | 100.0 |
-| Email | 16 | 87.5 | 87.5 |
+| Email | 16 | 100.0 | 87.5 |
 | Health Insurance Claim Form | 16 | 100.0 | 100.0 |
 
 ### Character precision by predicted type (policy-adjusted gold)
 
 | predicted | chars | precision |
 |---|---:|---:|
-| tier:direct | 26515 | 42.7 |
-| tier:indirect | 23910 | 25.4 |
-| DEMOGRAPHIC | 11314 | 1.7 |
-| ADDRESS | 9375 | 58.1 |
-| ORG | 8005 | 58.5 |
-| SECRET | 5596 | 4.3 |
-| NAME | 5309 | 64.6 |
-| DATE | 4591 | 26.3 |
-| CONTACT | 3354 | 33.9 |
-| FIN_ID | 2213 | 29.1 |
-| NETWORK | 407 | 59.5 |
-| GOV_ID | 261 | 73.6 |
+| tier:direct | 30932 | 38.8 |
+| tier:indirect | 30926 | 18.0 |
+| DEMOGRAPHIC | 16939 | 1.4 |
+| ADDRESS | 10688 | 53.1 |
+| ORG | 8602 | 47.5 |
+| SECRET | 7530 | 3.3 |
+| NAME | 5885 | 67.5 |
+| DATE | 5385 | 22.8 |
+| CONTACT | 4373 | 25.7 |
+| FIN_ID | 1841 | 30.7 |
+| NETWORK | 394 | 58.6 |
+| GOV_ID | 221 | 82.4 |
 
 ## eval_nemotron_fin (dev)
 
@@ -661,14 +659,14 @@ Recall = share of gold identifiers with ≥50% / ≥90% of their characters reda
 |---|---:|---:|---:|
 | FIN_ID | 480 | 100.0 | 100.0 |
 | NAME | 370 | 100.0 | 100.0 |
-| ADDRESS | 265 | 99.6 | 99.2 |
+| ADDRESS | 265 | 99.6 | 99.6 |
 | CONTACT | 262 | 99.6 | 99.6 |
 | DATE | 221 | 99.1 | 99.1 |
-| DEMOGRAPHIC | 158 | 91.8 | 90.5 |
+| DEMOGRAPHIC | 158 | 92.4 | 91.1 |
 | ORG | 127 | 100.0 | 100.0 |
 | GOV_ID | 103 | 100.0 | 100.0 |
 | NETWORK | 49 | 100.0 | 100.0 |
-| SECRET | 34 | 100.0 | 97.1 |
+| SECRET | 34 | 100.0 | 100.0 |
 
 ### Recall per fine label (raw labels)
 
@@ -682,7 +680,7 @@ Recall = share of gold identifiers with ≥50% / ≥90% of their characters reda
 | direct:email | 121 | 99.2 | 99.2 |
 | direct:customer_id | 106 | 100.0 | 100.0 |
 | direct:url | 81 | 100.0 | 100.0 |
-| direct:street_address | 71 | 100.0 | 98.6 |
+| direct:street_address | 71 | 100.0 | 100.0 |
 | indirect:country | 67 | 100.0 | 100.0 |
 | direct:credit_debit_card | 64 | 100.0 | 100.0 |
 | direct:bank_routing_number | 61 | 100.0 | 100.0 |
@@ -703,7 +701,7 @@ Recall = share of gold identifiers with ≥50% / ≥90% of their characters reda
 | indirect:race_ethnicity | 20 | 100.0 | 100.0 |
 | direct:health_plan_beneficiary_number | 19 | 100.0 | 100.0 |
 | indirect:date_time | 18 | 100.0 | 100.0 |
-| direct:http_cookie | 17 | 100.0 | 94.1 |
+| direct:http_cookie | 17 | 100.0 | 100.0 |
 | direct:pin | 17 | 100.0 | 100.0 |
 | indirect:blood_type | 17 | 64.7 | 64.7 |
 | direct:fax_number | 17 | 100.0 | 100.0 |
@@ -713,7 +711,7 @@ Recall = share of gold identifiers with ≥50% / ≥90% of their characters reda
 | indirect:county | 11 | 100.0 | 100.0 |
 | direct:mac_address | 10 | 100.0 | 100.0 |
 | direct:ipv6 | 10 | 100.0 | 100.0 |
-| indirect:religious_belief | 10 | 90.0 | 90.0 |
+| indirect:religious_belief | 10 | 100.0 | 100.0 |
 | direct:employee_id | 9 | 100.0 | 100.0 |
 | indirect:age | 8 | 100.0 | 100.0 |
 | indirect:language | 8 | 100.0 | 100.0 |
@@ -734,10 +732,10 @@ Recall = share of gold identifiers with ≥50% / ≥90% of their characters reda
 | | n | ≥50% | ≥90% |
 |---|---:|---:|---:|
 | Mortgage | 401 | 99.0 | 98.8 |
-| Investment | 342 | 99.1 | 99.1 |
+| Investment | 342 | 99.4 | 99.4 |
 | Banking | 337 | 100.0 | 100.0 |
-| User Account and Transaction Services | 282 | 100.0 | 99.6 |
-| Brokerage | 279 | 100.0 | 99.6 |
+| User Account and Transaction Services | 282 | 100.0 | 100.0 |
+| Brokerage | 279 | 100.0 | 100.0 |
 | Insurance | 214 | 96.7 | 96.3 |
 | Credit | 214 | 98.6 | 98.6 |
 
@@ -745,18 +743,18 @@ Recall = share of gold identifiers with ≥50% / ≥90% of their characters reda
 
 | predicted | chars | precision |
 |---|---:|---:|
-| tier:direct | 26609 | 86.2 |
-| tier:indirect | 13119 | 50.0 |
-| CONTACT | 9179 | 97.9 |
-| DEMOGRAPHIC | 7166 | 23.5 |
-| FIN_ID | 5347 | 95.5 |
-| NAME | 3575 | 71.0 |
-| ADDRESS | 3284 | 83.8 |
-| SECRET | 3283 | 51.2 |
-| ORG | 3232 | 77.5 |
-| DATE | 2721 | 87.1 |
-| GOV_ID | 1005 | 95.3 |
-| NETWORK | 936 | 96.3 |
+| tier:direct | 27988 | 82.0 |
+| tier:indirect | 16185 | 40.8 |
+| DEMOGRAPHIC | 10035 | 17.8 |
+| CONTACT | 9587 | 93.9 |
+| FIN_ID | 5215 | 96.5 |
+| SECRET | 4144 | 41.5 |
+| ADDRESS | 3597 | 78.1 |
+| NAME | 3413 | 72.7 |
+| ORG | 3391 | 72.6 |
+| DATE | 2759 | 85.2 |
+| GOV_ID | 1071 | 94.3 |
+| NETWORK | 961 | 93.8 |
 
 ## dev_nemotron_fin_structured (dev)
 
@@ -764,61 +762,61 @@ Recall = share of gold identifiers with ≥50% / ≥90% of their characters reda
 
 | | n | ≥50% | ≥90% |
 |---|---:|---:|---:|
-| FIN_ID | 378 | 100.0 | 99.5 |
+| FIN_ID | 378 | 100.0 | 100.0 |
 | NAME | 310 | 100.0 | 100.0 |
-| DATE | 274 | 94.2 | 93.4 |
+| DATE | 274 | 95.6 | 94.9 |
 | ADDRESS | 189 | 93.7 | 92.1 |
 | CONTACT | 171 | 100.0 | 100.0 |
 | ORG | 135 | 99.3 | 99.3 |
 | GOV_ID | 98 | 100.0 | 100.0 |
-| DEMOGRAPHIC | 98 | 80.6 | 78.6 |
-| SECRET | 25 | 88.0 | 76.0 |
+| DEMOGRAPHIC | 98 | 88.8 | 83.7 |
+| SECRET | 25 | 100.0 | 88.0 |
 | NETWORK | 19 | 100.0 | 100.0 |
 
 ### Recall per fine label (raw labels)
 
 | | n | ≥50% | ≥90% |
 |---|---:|---:|---:|
-| indirect:date | 193 | 93.3 | 92.2 |
+| indirect:date | 193 | 94.3 | 93.3 |
 | direct:first_name | 164 | 100.0 | 100.0 |
 | indirect:company_name | 135 | 99.3 | 99.3 |
 | direct:last_name | 124 | 100.0 | 100.0 |
 | direct:account_number | 121 | 100.0 | 100.0 |
 | direct:customer_id | 86 | 100.0 | 100.0 |
 | direct:email | 82 | 100.0 | 100.0 |
-| direct:street_address | 59 | 100.0 | 98.3 |
-| direct:credit_debit_card | 56 | 100.0 | 96.4 |
+| direct:street_address | 59 | 100.0 | 100.0 |
+| direct:credit_debit_card | 56 | 100.0 | 100.0 |
 | direct:url | 50 | 100.0 | 100.0 |
 | direct:bank_routing_number | 46 | 100.0 | 100.0 |
 | indirect:country | 35 | 100.0 | 100.0 |
 | direct:phone_number | 31 | 100.0 | 100.0 |
 | direct:date_of_birth | 30 | 100.0 | 100.0 |
-| indirect:occupation | 29 | 48.3 | 48.3 |
-| indirect:time | 28 | 92.9 | 92.9 |
+| indirect:occupation | 29 | 65.5 | 58.6 |
+| indirect:time | 28 | 100.0 | 100.0 |
 | indirect:state | 28 | 89.3 | 89.3 |
 | direct:ssn | 27 | 100.0 | 100.0 |
 | direct:cvv | 27 | 100.0 | 100.0 |
 | direct:biometric_identifier | 25 | 100.0 | 100.0 |
-| indirect:city | 23 | 100.0 | 100.0 |
+| indirect:city | 23 | 100.0 | 95.7 |
 | indirect:date_time | 23 | 95.7 | 95.7 |
 | indirect:county | 22 | 59.1 | 50.0 |
 | direct:user_name | 22 | 100.0 | 100.0 |
 | indirect:postcode | 19 | 100.0 | 100.0 |
 | direct:pin | 16 | 100.0 | 100.0 |
-| indirect:employment_status | 15 | 86.7 | 86.7 |
+| indirect:employment_status | 15 | 93.3 | 93.3 |
 | direct:medical_record_number | 15 | 100.0 | 100.0 |
-| indirect:blood_type | 14 | 85.7 | 78.6 |
+| indirect:blood_type | 14 | 100.0 | 100.0 |
 | direct:swift_bic | 13 | 100.0 | 100.0 |
-| direct:password | 12 | 83.3 | 75.0 |
+| direct:password | 12 | 100.0 | 75.0 |
 | indirect:race_ethnicity | 11 | 100.0 | 90.9 |
 | direct:ipv4 | 10 | 100.0 | 100.0 |
-| direct:http_cookie | 9 | 88.9 | 66.7 |
+| direct:http_cookie | 9 | 100.0 | 100.0 |
 | direct:health_plan_beneficiary_number | 8 | 100.0 | 100.0 |
 | direct:employee_id | 8 | 100.0 | 100.0 |
 | direct:fax_number | 8 | 100.0 | 100.0 |
 | indirect:language | 8 | 100.0 | 100.0 |
 | direct:tax_id | 8 | 100.0 | 100.0 |
-| indirect:religious_belief | 6 | 100.0 | 100.0 |
+| indirect:religious_belief | 6 | 100.0 | 66.7 |
 | direct:certificate_license_number | 6 | 100.0 | 100.0 |
 | direct:national_id | 6 | 100.0 | 100.0 |
 | direct:ipv6 | 5 | 100.0 | 100.0 |
@@ -838,11 +836,11 @@ Recall = share of gold identifiers with ≥50% / ≥90% of their characters reda
 
 | | n | ≥50% | ≥90% |
 |---|---:|---:|---:|
-| Risk Assessment | 33 | 93.9 | 93.9 |
+| Risk Assessment | 33 | 100.0 | 100.0 |
 | Affidavit of No Unpaid Assessments | 32 | 96.9 | 96.9 |
 | Investment Strategy | 29 | 100.0 | 100.0 |
 | Credit Policy Document | 27 | 100.0 | 100.0 |
-| Trade Authorization | 26 | 84.6 | 84.6 |
+| Trade Authorization | 26 | 96.2 | 88.5 |
 | Medical Records Release Form | 25 | 100.0 | 100.0 |
 | Investment Policy Statement | 24 | 100.0 | 100.0 |
 | Investment Objectives | 22 | 100.0 | 100.0 |
@@ -851,9 +849,9 @@ Recall = share of gold identifiers with ≥50% / ≥90% of their characters reda
 | Investment Forecast | 22 | 100.0 | 100.0 |
 | Investment Review | 22 | 100.0 | 95.5 |
 | System Diagnostic Log | 22 | 100.0 | 100.0 |
-| blood bank inventory record | 21 | 81.0 | 76.2 |
+| blood bank inventory record | 21 | 90.5 | 90.5 |
 | Account Closing Form | 21 | 100.0 | 100.0 |
-| Quitclaim Deed | 20 | 90.0 | 85.0 |
+| Quitclaim Deed | 20 | 95.0 | 90.0 |
 | Incident Report | 20 | 100.0 | 100.0 |
 | Investment Proposal | 20 | 100.0 | 100.0 |
 | Insurance Compliance Report | 19 | 100.0 | 100.0 |
@@ -868,15 +866,62 @@ Recall = share of gold identifiers with ≥50% / ≥90% of their characters reda
 
 | predicted | chars | precision |
 |---|---:|---:|
-| tier:direct | 18673 | 86.4 |
-| tier:indirect | 12201 | 53.9 |
-| CONTACT | 6216 | 97.2 |
-| ORG | 4704 | 61.2 |
-| DEMOGRAPHIC | 4428 | 20.0 |
-| FIN_ID | 4274 | 96.1 |
-| DATE | 3069 | 91.7 |
-| NAME | 2561 | 78.8 |
-| ADDRESS | 2439 | 81.9 |
-| SECRET | 2146 | 43.3 |
-| GOV_ID | 672 | 99.9 |
-| NETWORK | 365 | 100.0 |
+| tier:direct | 19479 | 83.7 |
+| tier:indirect | 15218 | 43.2 |
+| DEMOGRAPHIC | 6784 | 12.4 |
+| CONTACT | 6402 | 95.3 |
+| ORG | 5079 | 57.2 |
+| FIN_ID | 4179 | 94.7 |
+| DATE | 3355 | 84.4 |
+| SECRET | 2822 | 39.6 |
+| ADDRESS | 2580 | 76.7 |
+| NAME | 2300 | 86.2 |
+| GOV_ID | 844 | 97.5 |
+| NETWORK | 352 | 99.4 |
+
+## Notes, caveats and negative results
+
+**How to read the precision numbers.** Precision counts a redacted character as correct only if the dataset labels
+it. Gretel labels no demographics at all and only some dates, places and organisations, so real quasi-identifiers
+("Software Engineer", "New York", "December 31, 2021") count as errors there. On the dev split, DEMOGRAPHIC and
+unlabelled DATE/ADDRESS findings are roughly half of all "false" characters. Nemotron labels these categories and
+is the better guide to true precision.
+
+**Manual audit of "false positives" (Gretel dev, 100 random findings that the labels do not cover, seed 7).**
+Judged by hand: about 27 are real identifiers the dataset simply does not label (routing and policy numbers, IBAN
+and BIC fragments, LEIs, e-mail addresses, transaction timestamps, ZIP codes, a person's occupation); about 8 are
+debatable (governing-law jurisdictions, "Monday through Friday"); about 65 are genuine over-redaction. Of those 65,
+roughly 30 are GLiNER `occupation`/demographic guesses on ordinary noun phrases ("Corporate Governance Guidelines",
+"industry experts") and roughly 14 are GLiNER `password`/`api key` guesses ("transaction history", "prompts").
+So about a third of the measured false positives are not errors, and two GLiNER labels cause most of the rest. This
+is a small single-rater sample on a dev set: treat it as an indication, not a measurement.
+
+**What did not work, or worked less than hoped**
+
+* *Per-type confidence thresholds (B2).* Calibrated on the dev sets under the stated constraint (keep each type's
+  recall at ≥ 99% of its value): about +1 point of precision. GLiNER's low-score findings are what carry recall for
+  names and organisations on Gretel, so almost no threshold survives the recall constraint. Only two were kept.
+* *"Unsupported finding" thresholds* (drop a GLiNER finding that no rule and no other model overlaps when its score
+  is under a per-label threshold): about +3 points on every dev set with recall unchanged. The biggest offender,
+  GLiNER's `occupation` label (9 true vs 550 false lone findings on the Nemotron dev sets), could NOT be thresholded
+  without breaking the 99% constraint for DEMOGRAPHIC recall, so it stays.
+* *Propagating only confident findings.* +1 point of precision, but it left other occurrences of a redacted value
+  visible, i.e. it broke the zero-leak invariant (131 leak-check failures on the headline set). Reverted.
+* *Precision targets (Gretel ≥ 55%, Nemotron ≥ 85%) are not met.* See the summary table. Reaching them with this
+  ensemble would require giving up indirect recall (dropping demographics or unlabelled dates), which the ground
+  rules forbid.
+* *Raw-label direct recall ≥ 99% on Gretel is not met* (see table). On the dev split every remaining ≥50% miss was
+  inspected: they are label noise ("Corporation" and "Complainant" labelled as names, "[Employee's Name]",
+  "MM/DD/YYYY") plus one document with a bare 4-digit PIN in an MT940 line. Held-out misses were not inspected.
+
+**Policy-adjusted labels.** `bench/gold_policy.py` now also excludes generic terms ("Borrower", "Company"), public
+bodies and reporting periods ("Q3 2025"), reusing the lists the product ships, because the product deliberately does
+not redact them. This makes the policy number a measure of "did we redact what we intend to redact". It cannot
+validate the intent itself; the raw column next to it is there for that.
+
+**Held-out hygiene.** Rules, word lists and thresholds were tuned only on the three dev sets and on the hand-built
+regression set. `eval_gretel_fin_holdout` predates this work (the legacy part of the policy may have been informed
+by it); `eval_fin_holdout2`, `eval_nemotron_fin_structured` and `eval_gretel_en` were built here and never opened.
+
+**Latency columns** are measured inside 4 single-threaded worker processes running concurrently; the API uses
+`MODEL_THREADS` intra-op threads per request instead, see `bench/out/load.md`.

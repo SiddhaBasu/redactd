@@ -23,7 +23,8 @@ class Settings:
     rate_per_minute: int = int(os.getenv("RATE_PER_MINUTE", "60"))      # default for API keys without their own quota
     anon_rate_per_minute: int = int(os.getenv("ANON_RATE_PER_MINUTE", "20"))  # callers without an API key
     require_api_key: bool = os.getenv("REQUIRE_API_KEY", "0") == "1"
-    job_ttl_s: int = int(os.getenv("JOB_TTL_S", "600"))
+    job_ttl_s: int = int(os.getenv("JOB_TTL_S", "600"))             # how long a FINISHED job's result waits to be collected
+    job_max_run_s: int = int(os.getenv("JOB_MAX_RUN_S", "3600"))    # how long a job may run before it is abandoned
     ip_salt: str = os.getenv("IP_SALT", "dev-salt-change-me")
     log_format: str = os.getenv("LOG_FORMAT", "json")
     otel_endpoint: str = os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT", "")   # traces are exported only when this is set

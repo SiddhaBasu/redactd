@@ -29,12 +29,17 @@ xenv.allowRemoteModels = false; xenv.allowLocalModels = true; xenv.localModelPat
 
 const post = (m: WorkerResponse) => (self as unknown as DedicatedWorkerGlobalScope).postMessage(m);
 let files = new Map<string, ArrayBuffer>();
+let stageMs: Record<string, number> = {};          // per-stage timings of the current request (metadata only)
+const timed = async <T,>(name: string, f: () => Promise<T>): Promise<T> => {
+  const t = performance.now();
+  try { return await f(); } finally { stageMs[name] = Math.round((stageMs[name] ?? 0) + performance.now() - t); }
+};
 
 async function ensure(ids: string[], from: number, to: number) {
   const missing = ids.filter((id) => !Object.keys(MANIFEST.models[id]?.files ?? {}).every((f) => files.has(`${id}/${f}`)));
   if (!missing.length) return;
-  const got = await prepareModels(MODEL_BASE, missing, (done, total) =>
-    post({ kind: "progress", stage: `Getting the detection model (${(done / 1e6).toFixed(0)} of ${(total / 1e6).toFixed(0)} MB, first time only)`, pct: from + ((to - from) * done) / Math.max(1, total) }));
+  const got = await timed("model files (download or cache + SHA-256)", () => prepareModels(MODEL_BASE, missing, (done, total) =>
+    post({ kind: "progress", stage: `Getting the detection model (${(done / 1e6).toFixed(0)} of ${(total / 1e6).toFixed(0)} MB, first time only)`, pct: from + ((to - from) * done) / Math.max(1, total) })));
   files = new Map([...files, ...got]);
   (env as unknown as { useCustomCache: boolean; customCache: unknown }).useCustomCache = true;
   (env as unknown as { customCache: unknown }).customCache = verifiedCache(MODEL_BASE, files);
@@ -79,13 +84,13 @@ async function loadTokenModel() {
   if (model) return;
   await ensure([TOKEN_MODEL], 3, 40);
   post({ kind: "progress", stage: "Starting the model", pct: 42 });
-  tok = await AutoTokenizer.from_pretrained(TOKEN_MODEL);
+  tok = await timed("tokenizer load", () => AutoTokenizer.from_pretrained(TOKEN_MODEL));
   const fp16 = Object.keys(MANIFEST.models[TOKEN_MODEL].files).includes("onnx/model_fp16.onnx");
   if (fp16 && "gpu" in navigator) {
     try { model = await AutoModelForTokenClassification.from_pretrained(TOKEN_MODEL, { dtype: "fp16", device: "webgpu" }); return; }
     catch { /* no usable adapter: fall through to WASM */ }
   }
-  model = await AutoModelForTokenClassification.from_pretrained(TOKEN_MODEL, { dtype: "q8", device: "wasm" });
+  model = await timed("ONNX session (wasm)", () => AutoModelForTokenClassification.from_pretrained(TOKEN_MODEL, { dtype: "q8", device: "wasm" }));
 }
 
 /** Align sentencepiece tokens back to character offsets in `text`. */
@@ -186,15 +191,19 @@ async function runGliner(text: string, threshold: number, from: number, to: numb
 self.onmessage = async (ev: MessageEvent<WorkerRequest>) => {
   const { text, mode, sensitivity } = ev.data;
   const t0 = performance.now();
+  stageMs = {};
   try {
     post({ kind: "progress", stage: "Applying pattern rules", pct: 2 });
     let spans: Span[] = detectRules(text);
-    if (mode !== "rules") spans = spans.concat(await runTokenModel(text, sensitivity, 3, mode === "thorough" ? 55 : 98));
+    if (mode !== "rules") {
+      await loadTokenModel();
+      spans = spans.concat(await timed("inference (token model)", () => runTokenModel(text, sensitivity, 3, mode === "thorough" ? 55 : 98)));
+    }
     if (mode === "thorough") spans = spans.concat(await runGliner(text, Math.max(0.15, sensitivity - 0.2), 55, 98));
     const versions: Record<string, string> = { rules: RULES_VERSION, "model manifest": MANIFEST.version };
     if (mode !== "rules") versions[SOURCE] = TOKEN_MODEL;
     if (mode === "thorough") versions.gliner = "gliner-pii-base-v1.0";
-    post({ kind: "result", spans, ms: performance.now() - t0, versions });
+    post({ kind: "result", spans, ms: performance.now() - t0, versions, timings: stageMs });
   } catch (e) {
     post({ kind: "error", message: e instanceof Error ? e.message : String(e) });
   }

@@ -67,8 +67,25 @@ def test_redis_job_store_matches_memory_contract():
 
 def test_redis_job_ttl():
     import fakeredis
-    r = fakeredis.FakeRedis(); s = jobs_mod.RedisJobStore(r, ttl=600); jid = s.create()
-    assert 0 < r.ttl(s._k(jid)) <= 600
+    r = fakeredis.FakeRedis(); s = jobs_mod.RedisJobStore(r, ttl=600, max_run=3600); jid = s.create()
+    assert 600 < r.ttl(s._k(jid)) <= 3600            # while running: the run limit
+    s.update(jid, status="done", result={"spans": []})
+    assert 0 < r.ttl(s._k(jid)) <= 600               # once finished: the collection window, counted from now
+
+def test_long_job_is_still_collectable_after_the_ttl(monkeypatch):
+    """Regression: the TTL used to count from creation, so a job running longer than JOB_TTL_S was deleted
+    before it could be collected (found by bench/load_test.py on a 1 MB Thorough scan)."""
+    clock = [1000.0]; monkeypatch.setattr(jobs_mod.time, "time", lambda: clock[0])
+    s = jobs_mod.MemoryJobStore(ttl=600, max_run=3600)
+    jid = s.create(); s.update(jid, status="running")
+    clock[0] += 900; s._gc()                        # running for 15 min: longer than the TTL, still there
+    assert s.peek(jid)["status"] == "running"
+    s.update(jid, status="done", result={"spans": [1]})
+    clock[0] += 599; s._gc()
+    assert s.take(jid)["result"] == {"spans": [1]}   # collectable for the full window after finishing
+    jid2 = s.create(); s.update(jid2, status="done", result={})
+    clock[0] += 601; s._gc(); assert s.peek(jid2) is None      # uncollected results still expire
+    jid3 = s.create(); clock[0] += 3601; s._gc(); assert s.peek(jid3) is None   # runaway jobs are abandoned
 
 def test_rate_limiters():
     import fakeredis

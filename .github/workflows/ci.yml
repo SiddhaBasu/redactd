@@ -49,24 +49,36 @@ jobs:
         run: pip install -q pg8000 && python scripts/licence_audit.py
 
   benchmark-gate:
+    # Gates the SHIPPED configuration: Standard = distilled model, Thorough = distilled + GLiNER.
+    # Needs the HF_TOKEN repository secret (read access to the private model repo); skipped where secrets are absent.
     if: github.event_name != 'deployment_status'
     runs-on: ubuntu-latest
     timeout-minutes: 45
+    env:
+      HF_TOKEN: ${{ secrets.HF_TOKEN }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: { python-version: "3.12", cache: pip }
+      - name: Skip without the model secret (e.g. pull requests from forks)
+        id: secret
+        run: echo "ok=$([ -n "$HF_TOKEN" ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
       - uses: actions/cache@v4
-        id: models
-        with: { path: browser/models, key: "models-${{ hashFiles('scripts/setup.sh', 'bench/export_onnx.py') }}" }
+        if: steps.secret.outputs.ok == 'true'
+        with: { path: browser/models, key: "shipped-models-${{ hashFiles('apps/web/lib/models.manifest.json', 'scripts/fetch_models.sh') }}" }
       - name: Python deps
+        if: steps.secret.outputs.ok == 'true'
         run: |
           pip install torch --index-url https://download.pytorch.org/whl/cpu
-          pip install transformers gliner onnx onnxruntime tokenizers numpy sentencepiece cryptography
-      - name: Build ONNX models (cache miss only)
-        if: steps.models.outputs.cache-hit != 'true'
-        run: bash scripts/setup.sh models
-      - name: 50-doc benchmark + leak gate, Thorough (fails if any tier drops > 0.5 points vs bench/baseline.json)
+          pip install gliner onnxruntime tokenizers numpy cryptography
+      - name: Fetch the shipped models
+        if: steps.secret.outputs.ok == 'true'
+        run: bash scripts/fetch_models.sh
+      - name: Standard, every eval doc - leak check must be 0, recall within 0.5 points of bench/baseline.json
+        if: steps.secret.outputs.ok == 'true'
+        run: python bench/gate.py --mode standard
+      - name: Thorough, 50 docs per set - same gate
+        if: steps.secret.outputs.ok == 'true'
         run: python bench/gate.py --mode thorough --limit 50
 
   e2e-preview:
