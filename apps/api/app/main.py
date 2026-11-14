@@ -53,14 +53,23 @@ app.add_middleware(CORSMiddleware, allow_origins=settings.allowed_origins, allow
                    allow_headers=["Content-Type", "Authorization"], expose_headers=["X-Request-Id"], max_age=600)
 
 # ---------- auth, rate limit, metadata-only access log ----------
+def _key_record(key: str):
+    """-> (client_hash, per-minute limit, monthly quota) for a valid key, else None. Static (deploy-time) keys first."""
+    h = db.hash_key(key)
+    if h in settings.static_key_sha256: return db.client_id("key:" + h), settings.rate_per_minute, None
+    rec = db.find_api_key(key)
+    return None if rec is None else (db.client_id("key:" + h), rec["rate_per_minute"] or settings.rate_per_minute, rec["monthly_chars"])
+
 def _identify(request: Request):
     """-> (client_hash, per-minute limit, monthly char quota, auth kind) or a JSONResponse to return."""
     auth = request.headers.get("authorization") or ""
     if auth.lower().startswith("bearer "):
-        key = auth[7:].strip(); rec = db.find_api_key(key)
-        if rec is None: return JSONResponse({"detail": "invalid API key"}, status_code=401)
-        return db.client_id("key:" + db.hash_key(key)), rec["rate_per_minute"] or settings.rate_per_minute, rec["monthly_chars"], "key"
-    if settings.require_api_key and request.url.path.startswith("/v1/"):
+        found = _key_record(auth[7:].strip())
+        if found is None: return JSONResponse({"detail": "invalid API key"}, status_code=401)
+        return (*found, "key")
+    # With REQUIRE_API_KEY, every POST needs a key. GETs of /v1/jobs/{id} (and its progress stream, which browsers open
+    # with EventSource and cannot add headers to) stay open: the job id is a random 128-bit capability.
+    if settings.require_api_key and request.url.path.startswith("/v1/") and request.method != "GET":
         return JSONResponse({"detail": "API key required"}, status_code=401)
     return db.client_id(request.client.host if request.client else "?"), settings.anon_rate_per_minute, None, "anon"
 
@@ -226,6 +235,11 @@ MODEL_EXT = (".json", ".onnx")
 @app.get("/models/{model}/{path:path}")
 def model_file(model: str, path: str, request: Request):
     from fastapi.responses import FileResponse
+    who = _identify(request)
+    if isinstance(who, JSONResponse): return who
+    if settings.require_api_key and who[3] != "key": return JSONResponse({"detail": "API key required"}, status_code=401)
+    if not limiter.allow("models:" + who[0], settings.model_files_per_minute):   # each download is up to ~200 MB of egress
+        return JSONResponse({"detail": "rate limit exceeded"}, status_code=429, headers={"Retry-After": "60"})
     base = MODEL_FILES.get(model)
     if not base or not path.endswith(MODEL_EXT) or ".." in path.split("/"): raise HTTPException(404, "not found")
     full = os.path.realpath(os.path.join(base, path))

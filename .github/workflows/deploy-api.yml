@@ -1,5 +1,7 @@
 # Deploy the API to Fly.io. Manual: Actions -> deploy-api -> Run workflow (or the API / MCP workflow_dispatch).
 # Repo secrets needed: FLY_API_TOKEN (fly tokens create org), HF_TOKEN (read access to the private model repo).
+# Optional: WEB_API_KEY, the key the website sends (same value as NEXT_PUBLIC_API_KEY in Vercel). When it is set, the
+# API requires a key for every POST and for model files, and only its SHA-256 is stored on Fly.
 name: deploy-api
 on:
   workflow_dispatch:
@@ -57,23 +59,39 @@ jobs:
             echo "IP_SALT=$(openssl rand -hex 32)" | flyctl secrets import --app "$APP" --stage
           fi
           printf 'ALLOWED_ORIGINS=%s\nALLOWED_ORIGIN_REGEX=%s\n' "${{ inputs.allowed_origins }}" "${{ inputs.allowed_origin_regex }}" | flyctl secrets import --app "$APP" --stage
+          if [ -n "$WEB_API_KEY" ]; then
+            printf 'STATIC_API_KEY_SHA256=%s\nREQUIRE_API_KEY=1\n' "$(printf %s "$WEB_API_KEY" | sha256sum | cut -d' ' -f1)" | flyctl secrets import --app "$APP" --stage
+          else
+            echo "::warning::WEB_API_KEY is not set: the API stays open to anonymous callers (rate-limited)"
+            printf 'REQUIRE_API_KEY=0\n' | flyctl secrets import --app "$APP" --stage
+          fi
+        env: { WEB_API_KEY: "${{ secrets.WEB_API_KEY }}" }
       - name: Deploy (remote builder)
         run: flyctl deploy . --app "$APP" --config apps/api/fly.toml --dockerfile apps/api/Dockerfile --remote-only --ha=false --wait-timeout 10m
-      - name: Smoke test (health, Thorough redaction of the fixture, no fixture values in the output, model files served)
+      - name: Smoke test (health, Thorough redaction of the fixture, no fixture values in the output, model files served, key enforced)
+        env: { WEB_API_KEY: "${{ secrets.WEB_API_KEY }}" }
         run: |
           URL="https://$APP.fly.dev"
           for i in $(seq 1 60); do curl -fsS "$URL/health" | grep -q '"thorough"' && break; sleep 5; done
           curl -fsS "$URL/health"; echo
           python3 - "$URL" <<'PY'
-          import json, sys, urllib.request
-          url = sys.argv[1]; doc = open("tests/fixtures/wire_recall.txt").read()
-          req = urllib.request.Request(f"{url}/v1/redact", data=json.dumps({"text": doc, "mode": "thorough"}).encode(), headers={"Content-Type": "application/json"})
+          import json, os, sys, urllib.error, urllib.request
+          url = sys.argv[1]; doc = open("tests/fixtures/wire_recall.txt").read(); key = os.environ.get("WEB_API_KEY", "")
+          auth = {"Authorization": f"Bearer {key}"} if key else {}
+          if key:   # without the key the API must refuse
+              try:
+                  urllib.request.urlopen(urllib.request.Request(f"{url}/v1/detect", data=b'{"text":"x","mode":"rules"}', headers={"Content-Type": "application/json"}), timeout=60)
+                  sys.exit("API accepted a request without the key")
+              except urllib.error.HTTPError as e:
+                  assert e.code == 401, e.code
+                  print("anonymous request refused (401)")
+          req = urllib.request.Request(f"{url}/v1/redact", data=json.dumps({"text": doc, "mode": "thorough"}).encode(), headers={"Content-Type": "application/json", **auth})
           r = json.load(urllib.request.urlopen(req, timeout=120))
           must = ["Priya", "Raman", "0049821774471", "021000021", "GB82WEST12345698765432", "4111 1111 1111 1111", "123-45-6789", "Okafor"]
           left = [v for v in must if v in r["output"]]
           print("findings", r["findings"], "leaks", r["leaks"], "timings", r["timings"])
           assert not left and r["leaks"] == 0, f"identifiers left in output: {len(left)}"
-          head = urllib.request.urlopen(urllib.request.Request(f"{url}/models/gliner/gliner_config.json", method="GET"), timeout=60)
+          head = urllib.request.urlopen(urllib.request.Request(f"{url}/models/gliner/gliner_config.json", method="GET", headers=auth), timeout=60)
           assert head.status == 200 and head.headers.get("Cross-Origin-Resource-Policy") == "cross-origin"
           print("smoke test passed")
           PY
