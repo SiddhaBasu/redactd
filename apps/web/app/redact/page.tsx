@@ -20,7 +20,8 @@ import { Sidebar } from "../../components/Sidebar";
 import { PolicyPanel } from "../../components/PolicyPanel";
 import { DataPanel, type Where } from "../../components/DataPanel";
 import { ShortcutOverlay } from "../../components/Shortcuts";
-import { Progress, Segmented, Steps } from "../../components/ui";
+import { Dialog, Progress, Segmented, Steps, Switch } from "../../components/ui";
+import { PRESETS, parseTerms } from "../../lib/presets";
 
 const MAX_BYTES = 1_000_000;
 const MODES: { id: DetectMode; name: string; note: string }[] = [
@@ -43,6 +44,13 @@ export default function RedactPage() {
   const [text, setText] = useState("");
   const [fileName, setFileName] = useState("document.txt");
   const [mode, setMode] = useState<DetectMode>("thorough");
+  // UI layout mock-ups (?layout=a|b|c). Without the parameter the page is unchanged. Remove once one is chosen.
+  const [layout, setLayout] = useState<"current" | "a" | "b" | "c">("current");
+  const [showOptions, setShowOptions] = useState(false), [showDetails, setShowDetails] = useState(false), [showMore, setShowMore] = useState(false);
+  useEffect(() => {
+    const l = new URLSearchParams(window.location.search).get("layout");
+    if (l === "a" || l === "b" || l === "c") { setLayout(l); if (l !== "c") setMode("standard"); }
+  }, []);
   const [where, setWhere] = useState<Where>("server");
   const [policy, setPolicyState] = useState<UserPolicy>(DEFAULT_POLICY);
   const [serverUp, setServerUp] = useState<boolean | null>(null);
@@ -236,6 +244,236 @@ export default function RedactPage() {
   const leakFail = !!leaks?.length;
   const step: 1 | 2 | 3 = !scanned ? 1 : leaks !== null && !leakFail && accepted.length > 0 && review.past.length > 0 ? 3 : 2;
 
+  // ================================================================== building blocks (shared by every layout)
+  const minimal = layout === "a" || layout === "b";
+  const dropZone = (
+    <div onDragOver={(e) => { e.preventDefault(); setDragging(true); }} onDragLeave={() => setDragging(false)}
+      onDrop={(e) => { e.preventDefault(); setDragging(false); const f = e.dataTransfer.files?.[0]; if (f) onFile(f); }}
+      className={minimal ? "rounded-xl border-2 border-dashed p-3 sm:p-4" : "rounded-lg border-2 border-dashed p-3 sm:p-4"}
+      style={{ borderColor: dragging ? "var(--accent)" : "var(--border-strong)", background: dragging ? "var(--accent-soft)" : undefined }}>
+      <div className="flex flex-wrap items-center gap-3">
+        <label className="btn cursor-pointer">
+          {minimal ? "Open file" : "Choose file"}
+          <input type="file" className="sr-only" accept=".txt,.md,.csv,.tsv,.json,.jsonl,.log,.eml,.xml,.yaml,.yml,.html,.docx,.pdf,.msg,text/*"
+            onChange={(e) => { const f = e.target.files?.[0]; if (f) onFile(f); e.target.value = ""; }} />
+        </label>
+        <span className="text-sm muted">{minimal ? "or drop or paste" : "or drop a file here, or paste below"}</span>
+        {!text && <button type="button" className="btn btn-sm sm:ml-auto" onClick={() => resetDoc(SAMPLE_TEXT, SAMPLE_NAME)}>{minimal ? "Try a sample" : "Try the sample document"}</button>}
+        {text && <span className="text-sm sm:ml-auto"><span className="font-medium">{fileName}</span> <span className="muted">· {text.length.toLocaleString("en")} characters</span>{" "}
+          <button type="button" className="btn btn-ghost btn-sm" onClick={() => resetDoc("", "document.txt")}>Clear</button></span>}
+      </div>
+      {text.length > 100_000
+        ? <pre className="mono mt-3 max-h-40 overflow-hidden rounded p-2 text-xs muted" style={{ background: "var(--surface-2)" }} aria-label="Start of the document">{text.slice(0, 1500)}…</pre>
+        : <>
+            <label htmlFor="doc" className="sr-only">Document text</label>
+            <textarea id="doc" className={`input mono mt-3 ${minimal ? "h-56" : "h-40"}`} placeholder="Paste a statement, email, loan note, SWIFT message, ticket…" value={text} spellCheck={false}
+              onChange={(e) => { setText(e.target.value.slice(0, MAX_BYTES)); setScan(null); }} />
+          </>}
+      {!text && !minimal && <p className="mt-2 text-xs muted">New here? The sample is a fictional wire-recall email with names, an IBAN, a card number and an SSN. Nothing is uploaded until you press Scan.</p>}
+    </div>
+  );
+  const attachAlert = attach && (
+    <div className="alert alert-info flex flex-wrap items-center gap-3" role="status">
+      <span>This email has {attach.count} attachment{attach.count === 1 ? "" : "s"}. Only the file name{attach.count === 1 ? " is" : "s are"} included so far.</span>
+      <button type="button" className="btn btn-sm" onClick={() => onFile(attach.file, true)}>Also read attachment contents</button>
+      <button type="button" className="btn btn-ghost btn-sm" onClick={() => setAttach(null)}>No thanks</button>
+    </div>
+  );
+  const modelMb = mode === "rules" ? 0 : modelMegabytes([hasModel("redactd-small") ? "redactd-small" : "openmed-small", ...(mode === "thorough" ? ["gliner"] : [])]);
+  const sensLabel = policy.sensitivity <= 0.3 ? "catch more" : policy.sensitivity >= 0.6 ? "fewer flags" : "balanced";
+  const sensitivity = (
+    <label className="flex items-center gap-2 text-sm" htmlFor="sens">
+      Sensitivity
+      <input id="sens" type="range" min={0.2} max={0.9} step={0.05} value={+(1 - policy.sensitivity).toFixed(2)} onChange={(e) => setPolicyState({ ...policy, sensitivity: +(1 - +e.target.value).toFixed(2) })} aria-valuetext={sensLabel} />
+      <span className="muted text-xs">{sensLabel}</span>
+    </label>
+  );
+  const scanButton = (label?: string) => (
+    <button type="button" className="btn btn-primary" disabled={!text.trim() || !!progress} onClick={runScan}>{progress ? "Scanning…" : label ?? (scanned ? "Scan again" : "Scan for sensitive data")}</button>
+  );
+  const status = (<>{progress && <Progress pct={progress.pct} stage={progress.stage} onCancel={cancel} />}{error && <p className="alert alert-danger" role="alert">{error}</p>}</>);
+  // compact option controls (layouts a, b, c)
+  const compactOptions = (
+    <div className="space-y-4 text-sm">
+      <div className="flex flex-wrap items-center gap-3">
+        <span className="w-24 font-semibold">Detection</span>
+        <Segmented label="Detection mode" value={mode} onChange={setMode} options={MODES.map((m) => ({ id: m.id, label: m.name }))} />
+        <span className="text-xs muted">{MODES.find((m) => m.id === mode)?.note}</span>
+      </div>
+      <div className="flex flex-wrap items-center gap-3">
+        <span className="w-24 font-semibold">Runs on</span>
+        <Segmented label="Where to process" value={where} onChange={setWhere} options={[{ id: "server", label: "Our server" }, { id: "device", label: "This device" }]} />
+        <span className="text-xs muted">{where === "server" ? "In memory, never stored or logged." : `Never leaves this tab. ${modelMb ? `One-time ${modelMb} MB download.` : ""}`}</span>
+      </div>
+      <div className="flex flex-wrap items-center gap-3">
+        <label htmlFor="preset" className="w-24 font-semibold">Policy</label>
+        <select id="preset" className="input w-auto" value={policy.presetId} onChange={(e) => setPolicy({ ...policy, presetId: e.target.value })}>
+          {PRESETS.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
+        </select>
+        <span className="text-xs muted">{presetById(policy.presetId).summary}</span>
+      </div>
+      <Switch checked={policy.keepLast4} onChange={(v) => setPolicy({ ...policy, keepLast4: v })} label="Keep last 4 digits" />
+      <details className="rounded-lg border p-3" style={{ borderColor: "var(--border)" }}>
+        <summary className="cursor-pointer font-semibold">Always / never redact these terms</summary>
+        <div className="mt-3 grid gap-3 sm:grid-cols-2">
+          <div><label className="label" htmlFor="ct">Always redact</label><textarea id="ct" className="input mono h-20" defaultValue={policy.customTerms.join("\n")} onChange={(e) => setPolicy({ ...policy, customTerms: parseTerms(e.target.value) })} /></div>
+          <div><label className="label" htmlFor="at">Never redact</label><textarea id="at" className="input mono h-20" defaultValue={policy.allowTerms.join("\n")} onChange={(e) => setPolicy({ ...policy, allowTerms: parseTerms(e.target.value) })} /></div>
+        </div>
+        <p className="mt-2 text-xs muted">Stored in this browser only; never sent to our servers.</p>
+      </details>
+      {sensitivity}
+    </div>
+  );
+  const optionsSummary = `${MODES.find((m) => m.id === mode)?.name} · ${where === "server" ? "our server" : "this device"} · ${presetById(policy.presetId).name}${policy.keepLast4 ? " · last 4 kept" : ""}`;
+
+  const leakBadge = (
+    <span className={`badge ${leaks === null ? "" : leakFail ? "badge-danger" : "badge-ok"}`} role="status" data-testid="leak-badge">
+      {leaks === null ? "Checking output…" : leakFail ? `${leaks.length} redacted value${leaks.length === 1 ? "" : "s"} still present` : "Leak check passed"}
+    </span>
+  );
+  const searchForm = search !== null && (
+    <form className="flex flex-1 items-center gap-2" style={{ minWidth: 220 }} onSubmit={(e) => { e.preventDefault(); doSearch(); }}>
+      <label htmlFor="search" className="sr-only">Search the document and redact every match</label>
+      <input id="search" ref={searchBox} className="input" placeholder="Text to redact everywhere…" value={search} onChange={(e) => setSearch(e.target.value)} />
+      <button type="submit" className="btn btn-sm btn-primary" disabled={search.trim().length < 2}>Redact {search.trim().length >= 2 ? searchSpans(text, search, addType).length : 0} matches</button>
+      <button type="button" className="btn btn-ghost btn-sm" onClick={() => setSearch(null)}>Close</button>
+    </form>
+  );
+  const openSearch = () => { setSearch(""); setTimeout(() => searchBox.current?.focus(), 0); };
+  const addRow = (
+    <div className="flex flex-wrap items-center gap-2 text-sm">
+      <label htmlFor="addtype" className="muted">Add as</label>
+      <select id="addtype" className="input w-auto" value={addType} onChange={(e) => setAddType(e.target.value as PiiType)}>
+        {TYPES.map((t) => <option key={t} value={t}>{TYPE_INFO[t].label}</option>)}
+      </select>
+      <button type="button" className="btn btn-sm" onClick={addSelection}>Redact selection</button>
+      {search === null ? <button type="button" className="btn btn-sm" onClick={openSearch}>Search and redact <span className="kbd">/</span></button> : searchForm}
+    </div>
+  );
+  const viewerEl = (
+    <Viewer ref={viewer} text={text} spans={spans} focus={review.focus} mode={view} replacements={replacements} hidden={hidden} dim={dimFn}
+      onFocus={(id) => dispatch({ type: "focus", id })} onToggle={(id) => dispatch({ type: "toggle", id })} onToggleValue={(id) => dispatch({ type: "toggleValue", id })}
+      onRetype={(id, t) => dispatch({ type: "retype", id, piiType: t })} onRemove={(id) => dispatch({ type: "remove", id })}
+      sameValueCount={(id) => (spans[id] ? sameCount.get(valueOf({ text }, spans[id])) ?? 1 : 1)} />
+  );
+  const sidebarEl = (
+    <Sidebar text={text} spans={spans} focus={review.focus} hidden={hidden} below={below} filterOn={filterOn} onBelow={setBelow} onFilter={setFilterOn}
+      onFocus={(id) => { dispatch({ type: "focus", id }); viewer.current?.scrollToSpan(id); }}
+      onType={(t, on) => dispatch({ type: "setType", piiType: t, accepted: on })} onAll={(on) => dispatch({ type: "setAll", accepted: on })}
+      onHide={(t) => setHidden((h) => { const n = new Set(h); if (n.has(t)) n.delete(t); else n.add(t); return n; })}
+      onValue={(v, on) => dispatch({ type: "setValue", value: v, accepted: on })} />
+  );
+  const diffHeader = view === "diff" && <div className="grid grid-cols-2 text-xs font-semibold muted"><div className="px-3">Original</div><div className="px-3">Redacted output</div></div>;
+  const outputPre = (h: string) => result && (
+    <pre className={`mono ${h} overflow-auto whitespace-pre-wrap break-words rounded-lg border p-3 text-[13px] leading-6`} style={{ borderColor: "var(--border)", background: "var(--surface)" }} tabIndex={0} aria-label="Redacted output preview" data-testid="output">
+      {result.output.length > 20_000 ? result.output.slice(0, 20_000) + "\n… (preview shortened; the download is complete)" : result.output}
+    </pre>
+  );
+  const styleSeg = <Segmented label="Output style" value={style} onChange={(s) => setStyleOverride(s)} options={[{ id: "placeholder", label: "Reversible [NAME_1]" }, { id: "label", label: "Labels [NAME]" }, { id: "block", label: "Blocks ████" }]} />;
+  const downloadBtn = result && <button type="button" className="btn btn-primary" disabled={leakFail || leaks === null} onClick={() => download(redactedName(fileName), result.output)}>{minimal ? "Download" : "Download redacted file"}</button>;
+  const copyBtn = <button type="button" className="btn" disabled={leakFail || leaks === null} onClick={copyOut}>{copied ? "Copied ✓" : "Copy"}</button>;
+  const reportBtns = (<>
+    <button type="button" className="btn" onClick={() => download(`${baseName(fileName)}.redaction-report.md`, reportMarkdown(report()), "text/markdown;charset=utf-8")}>Download report</button>
+    <button type="button" className="btn btn-ghost btn-sm" onClick={() => download(`${baseName(fileName)}.redaction-report.json`, JSON.stringify(report(), null, 2), "application/json")}>report as JSON</button>
+  </>);
+  const leakAlert = leakFail && <p className="alert alert-danger" role="alert">A value you are redacting still appears elsewhere in the output. Use “Search and redact” for it, or keep every occurrence, before downloading.</p>;
+  const restoreKey = style === "placeholder" && (
+    <div className="rounded-lg border p-3" style={{ borderColor: "var(--border)" }}>
+      <h3 className="text-sm font-semibold">Restore key <span className="font-normal muted">(optional)</span></h3>
+      <p className="mt-1 text-xs muted">Lets you put the original values back later, for example into an AI summary of the redacted text. It is encrypted in this browser with your password. We never see the key or the password.</p>
+      <div className="mt-3 flex flex-wrap items-start gap-3">
+        <div className="w-full sm:w-72">
+          <label htmlFor="pw" className="sr-only">Password for the restore key</label>
+          <input id="pw" type="password" className="input" placeholder="Password (8+ characters)" autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} aria-describedby="pw-hint" />
+          <div className="mt-1 flex gap-1" aria-hidden="true">{[1, 2, 3, 4].map((i) => <span key={i} className="h-1 flex-1 rounded" style={{ background: password && strength.score >= i ? (strength.score >= 3 ? "var(--accent)" : "var(--t-date-bd)") : "var(--border)" }} />)}</div>
+          <p id="pw-hint" className="mt-1 text-xs muted" role="status">{password ? `${strength.label}. ${strength.hint}` : "Choose a password you will not lose."}</p>
+        </div>
+        <button type="button" className="btn" disabled={strength.score < 1 || leakFail} onClick={downloadKey}>Download restore key</button>
+      </div>
+      <p className="alert alert-warn mt-3 text-xs">If you lose the key file or forget its password, the original values cannot be recovered by anyone, including us.</p>
+    </div>
+  );
+  const announcer = <p className="sr-only" role="status" aria-live="polite">{announce}</p>;
+  const shortcuts = help && <ShortcutOverlay onClose={() => setHelp(false)} />;
+
+  // ================================================================== layouts A and B: minimal
+  if (minimal) {
+    const drawer = layout === "b";
+    return (
+      <div className="mx-auto max-w-4xl space-y-4">
+        <div className="flex items-baseline gap-3">
+          <h1 className="text-2xl font-semibold tracking-tight">Redact</h1>
+          <p className="text-sm muted">Find and remove personal data. Up to 1 MB.</p>
+        </div>
+        {announcer}
+        <section className="space-y-3" aria-labelledby="h-input">
+          <h2 id="h-input" className="sr-only">Add a document</h2>
+          {dropZone}
+          {attachAlert}
+          <div className="flex flex-wrap items-center gap-3">
+            <button type="button" className="btn btn-ghost btn-sm" aria-expanded={showOptions} onClick={() => setShowOptions((v) => !v)}>
+              <span aria-hidden="true">{drawer ? "⚙" : showOptions ? "▾" : "▸"}</span> Options
+            </button>
+            <span className="text-xs muted">{optionsSummary}</span>
+            <span className="ml-auto">{scanButton(scanned ? "Redact again" : "Redact")}</span>
+          </div>
+          {!drawer && showOptions && <div className="card p-4">{compactOptions}</div>}
+          {status}
+        </section>
+
+        {scanned && (
+          <section aria-labelledby="h-review" className="space-y-2">
+            <div className="flex flex-wrap items-center gap-2">
+              <h2 id="h-review" className="text-base font-semibold">{accepted.length} of {spans.length} found items redacted</h2>
+              <span className="sr-only" data-testid="summary">{accepted.length} of {spans.length} findings will be redacted</span>
+              <div className="ml-auto flex flex-wrap items-center gap-2">
+                <button type="button" className="btn btn-sm" onClick={() => dispatch({ type: "undo" })} disabled={!review.past.length}>Undo</button>
+                <button type="button" className="btn btn-sm" aria-pressed={view === "diff"} onClick={() => setView(view === "diff" ? "review" : "diff")}>Compare</button>
+                {search === null && <button type="button" className="btn btn-sm" onClick={openSearch}>Find &amp; redact</button>}
+                <button type="button" className="btn btn-sm" aria-pressed={showDetails} onClick={() => setShowDetails((v) => !v)}>Details</button>
+                <button type="button" className="btn btn-ghost btn-sm" onClick={() => setHelp(true)} aria-label="Keyboard shortcuts">?</button>
+              </div>
+            </div>
+            {searchForm}
+            {diffHeader}
+            {!drawer && showDetails
+              ? <div className="grid grid-cols-[minmax(0,1fr)] gap-3 lg:grid-cols-[minmax(0,1fr)_300px]">{viewerEl}<div className="flex max-h-[640px] min-h-[280px] min-w-0 flex-col lg:h-[min(62vh,640px)]">{sidebarEl}</div></div>
+              : viewerEl}
+            {!drawer && showDetails && addRow}
+          </section>
+        )}
+
+        {scanned && result && (
+          <section ref={exportRef} className="card space-y-3 p-4" aria-labelledby="h-export">
+            <div className="flex flex-wrap items-center gap-2">
+              <h2 id="h-export" className="sr-only">Export</h2>
+              {downloadBtn}{copyBtn}
+              <button type="button" className="btn btn-ghost btn-sm" aria-expanded={showMore} onClick={() => setShowMore((v) => !v)}>{showMore ? "▾" : "▸"} More</button>
+              <span className="ml-auto">{leakBadge}</span>
+            </div>
+            {leakAlert}
+            {showMore && (
+              <div className="space-y-3 border-t pt-3" style={{ borderColor: "var(--border)" }}>
+                <div className="flex flex-wrap items-center gap-2">{styleSeg}{reportBtns}</div>
+                {outputPre("max-h-64")}
+                {restoreKey}
+              </div>
+            )}
+          </section>
+        )}
+
+        {drawer && showOptions && <Dialog title="Options" drawer onClose={() => setShowOptions(false)}>{compactOptions}</Dialog>}
+        {drawer && showDetails && scanned && (
+          <Dialog title="Findings" drawer onClose={() => setShowDetails(false)}>
+            <div className="space-y-3"><div className="flex h-[60vh] min-h-[320px] flex-col">{sidebarEl}</div>{addRow}</div>
+          </Dialog>
+        )}
+        {shortcuts}
+      </div>
+    );
+  }
+
+  // ================================================================== layout C (tidied) and the current layout
   return (
     <div className="space-y-5">
       <div className="flex flex-wrap items-end gap-x-6 gap-y-2">
@@ -245,66 +483,32 @@ export default function RedactPage() {
         </div>
         <div className="sm:ml-auto"><Steps current={step} /></div>
       </div>
-      <p className="sr-only" role="status" aria-live="polite">{announce}</p>
+      {announcer}
 
       {/* ------------------------------------------------ 1. input */}
       <section className="card space-y-5 p-4 sm:p-5" aria-labelledby="h-input">
         <h2 id="h-input" className="sr-only">Add a document</h2>
-        <div onDragOver={(e) => { e.preventDefault(); setDragging(true); }} onDragLeave={() => setDragging(false)}
-          onDrop={(e) => { e.preventDefault(); setDragging(false); const f = e.dataTransfer.files?.[0]; if (f) onFile(f); }}
-          className="rounded-lg border-2 border-dashed p-3 sm:p-4" style={{ borderColor: dragging ? "var(--accent)" : "var(--border-strong)", background: dragging ? "var(--accent-soft)" : undefined }}>
-          <div className="flex flex-wrap items-center gap-3">
-            <label className="btn cursor-pointer">
-              Choose file
-              <input type="file" className="sr-only" accept=".txt,.md,.csv,.tsv,.json,.jsonl,.log,.eml,.xml,.yaml,.yml,.html,.docx,.pdf,.msg,text/*"
-                onChange={(e) => { const f = e.target.files?.[0]; if (f) onFile(f); e.target.value = ""; }} />
-            </label>
-            <span className="text-sm muted">or drop a file here, or paste below</span>
-            {!text && <button type="button" className="btn btn-sm sm:ml-auto" onClick={() => resetDoc(SAMPLE_TEXT, SAMPLE_NAME)}>Try the sample document</button>}
-            {text && <span className="text-sm sm:ml-auto"><span className="font-medium">{fileName}</span> <span className="muted">· {text.length.toLocaleString("en")} characters</span>{" "}
-              <button type="button" className="btn btn-ghost btn-sm" onClick={() => resetDoc("", "document.txt")}>Clear</button></span>}
-          </div>
-          {text.length > 100_000
-            ? <pre className="mono mt-3 max-h-40 overflow-hidden rounded p-2 text-xs muted" style={{ background: "var(--surface-2)" }} aria-label="Start of the document">{text.slice(0, 1500)}…</pre>
-            : <>
-                <label htmlFor="doc" className="sr-only">Document text</label>
-                <textarea id="doc" className="input mono mt-3 h-40" placeholder="Paste a statement, email, loan note, SWIFT message, ticket…" value={text} spellCheck={false}
-                  onChange={(e) => { setText(e.target.value.slice(0, MAX_BYTES)); setScan(null); }} />
-              </>}
-          {!text && <p className="mt-2 text-xs muted">New here? The sample is a fictional wire-recall email with names, an IBAN, a card number and an SSN. Nothing is uploaded until you press Scan.</p>}
-        </div>
-        {attach && (
-          <div className="alert alert-info flex flex-wrap items-center gap-3" role="status">
-            <span>This email has {attach.count} attachment{attach.count === 1 ? "" : "s"}. Only the file name{attach.count === 1 ? " is" : "s are"} included so far.</span>
-            <button type="button" className="btn btn-sm" onClick={() => onFile(attach.file, true)}>Also read attachment contents</button>
-            <button type="button" className="btn btn-ghost btn-sm" onClick={() => setAttach(null)}>No thanks</button>
-          </div>
-        )}
-
-        <fieldset>
-          <legend className="label">Detection</legend>
-          <div role="radiogroup" aria-label="Detection mode" className="grid gap-2 sm:grid-cols-3">
-            {MODES.map((m) => (
-              <button key={m.id} type="button" role="radio" aria-checked={mode === m.id} className="choice" onClick={() => setMode(m.id)}>
-                <div className="text-sm font-semibold">{m.name}</div><div className="text-xs muted">{m.note}</div>
-              </button>
-            ))}
-          </div>
-        </fieldset>
-        <DataPanel where={where} onChange={setWhere} serverUp={serverUp} online={online} modelMb={mode === "rules" ? 0 : modelMegabytes([hasModel("redactd-small") ? "redactd-small" : "openmed-small", ...(mode === "thorough" ? ["gliner"] : [])])} />
-        <PolicyPanel policy={policy} onChange={setPolicy} />
-
+        {dropZone}
+        {attachAlert}
+        {layout === "c" ? compactOptions : (<>
+          <fieldset>
+            <legend className="label">Detection</legend>
+            <div role="radiogroup" aria-label="Detection mode" className="grid gap-2 sm:grid-cols-3">
+              {MODES.map((m) => (
+                <button key={m.id} type="button" role="radio" aria-checked={mode === m.id} className="choice" onClick={() => setMode(m.id)}>
+                  <div className="text-sm font-semibold">{m.name}</div><div className="text-xs muted">{m.note}</div>
+                </button>
+              ))}
+            </div>
+          </fieldset>
+          <DataPanel where={where} onChange={setWhere} serverUp={serverUp} online={online} modelMb={modelMb} />
+          <PolicyPanel policy={policy} onChange={setPolicy} />
+        </>)}
         <div className="flex flex-wrap items-center gap-4">
-          <label className="flex items-center gap-2 text-sm" htmlFor="sens">
-            Sensitivity
-            <input id="sens" type="range" min={0.2} max={0.9} step={0.05} value={+(1 - policy.sensitivity).toFixed(2)} onChange={(e) => setPolicyState({ ...policy, sensitivity: +(1 - +e.target.value).toFixed(2) })}
-              aria-valuetext={policy.sensitivity <= 0.3 ? "catch more" : policy.sensitivity >= 0.6 ? "fewer flags" : "balanced"} />
-            <span className="muted text-xs">{policy.sensitivity <= 0.3 ? "catch more" : policy.sensitivity >= 0.6 ? "fewer flags" : "balanced"}</span>
-          </label>
-          <button type="button" className="btn btn-primary ml-auto" disabled={!text.trim() || !!progress} onClick={runScan}>{progress ? "Scanning…" : scanned ? "Scan again" : "Scan for sensitive data"}</button>
+          {layout !== "c" && sensitivity}
+          <span className="ml-auto">{scanButton()}</span>
         </div>
-        {progress && <Progress pct={progress.pct} stage={progress.stage} onCancel={cancel} />}
-        {error && <p className="alert alert-danger" role="alert">{error}</p>}
+        {status}
       </section>
 
       {/* ------------------------------------------------ 2. review */}
@@ -320,36 +524,13 @@ export default function RedactPage() {
               <button type="button" className="btn btn-sm" onClick={() => setHelp(true)} aria-label="Keyboard shortcuts">? Shortcuts</button>
             </div>
           </div>
-          <div className="flex flex-wrap items-center gap-2 text-sm">
-            <label htmlFor="addtype" className="muted">Add as</label>
-            <select id="addtype" className="input w-auto" value={addType} onChange={(e) => setAddType(e.target.value as PiiType)}>
-              {TYPES.map((t) => <option key={t} value={t}>{TYPE_INFO[t].label}</option>)}
-            </select>
-            <button type="button" className="btn btn-sm" onClick={addSelection}>Redact selection</button>
-            {search === null
-              ? <button type="button" className="btn btn-sm" onClick={() => { setSearch(""); setTimeout(() => searchBox.current?.focus(), 0); }}>Search and redact <span className="kbd">/</span></button>
-              : <form className="flex flex-1 items-center gap-2" style={{ minWidth: 220 }} onSubmit={(e) => { e.preventDefault(); doSearch(); }}>
-                  <label htmlFor="search" className="sr-only">Search the document and redact every match</label>
-                  <input id="search" ref={searchBox} className="input" placeholder="Text to redact everywhere…" value={search} onChange={(e) => setSearch(e.target.value)} />
-                  <button type="submit" className="btn btn-sm btn-primary" disabled={search.trim().length < 2}>Redact {search.trim().length >= 2 ? searchSpans(text, search, addType).length : 0} matches</button>
-                  <button type="button" className="btn btn-ghost btn-sm" onClick={() => setSearch(null)}>Close</button>
-                </form>}
-          </div>
-          {view === "diff" && <div className="grid grid-cols-2 text-xs font-semibold muted"><div className="px-3">Original</div><div className="px-3">Redacted output</div></div>}
+          {addRow}
+          {diffHeader}
           <div className="grid grid-cols-[minmax(0,1fr)] gap-3 lg:grid-cols-[minmax(0,1fr)_300px]">
-            <Viewer ref={viewer} text={text} spans={spans} focus={review.focus} mode={view} replacements={replacements} hidden={hidden} dim={dimFn}
-              onFocus={(id) => dispatch({ type: "focus", id })} onToggle={(id) => dispatch({ type: "toggle", id })} onToggleValue={(id) => dispatch({ type: "toggleValue", id })}
-              onRetype={(id, t) => dispatch({ type: "retype", id, piiType: t })} onRemove={(id) => dispatch({ type: "remove", id })}
-              sameValueCount={(id) => (spans[id] ? sameCount.get(valueOf({ text }, spans[id])) ?? 1 : 1)} />
-            <div className="flex max-h-[640px] min-h-[280px] min-w-0 flex-col lg:h-[min(62vh,640px)]">
-              <Sidebar text={text} spans={spans} focus={review.focus} hidden={hidden} below={below} filterOn={filterOn} onBelow={setBelow} onFilter={setFilterOn}
-                onFocus={(id) => { dispatch({ type: "focus", id }); viewer.current?.scrollToSpan(id); }}
-                onType={(t, on) => dispatch({ type: "setType", piiType: t, accepted: on })} onAll={(on) => dispatch({ type: "setAll", accepted: on })}
-                onHide={(t) => setHidden((h) => { const n = new Set(h); if (n.has(t)) n.delete(t); else n.add(t); return n; })}
-                onValue={(v, on) => dispatch({ type: "setValue", value: v, accepted: on })} />
-            </div>
+            {viewerEl}
+            <div className="flex max-h-[640px] min-h-[280px] min-w-0 flex-col lg:h-[min(62vh,640px)]">{sidebarEl}</div>
           </div>
-          <p className="text-xs muted">Click a highlight to inspect it, click again (or press <span className="kbd">x</span>) to keep or redact it. <span className="kbd">j</span>/<span className="kbd">k</span> move between findings, <span className="kbd">/</span> searches, <span className="kbd">u</span> undoes, <span className="kbd">?</span> lists every shortcut.</p>
+          {layout !== "c" && <p className="text-xs muted">Click a highlight to inspect it, click again (or press <span className="kbd">x</span>) to keep or redact it. <span className="kbd">j</span>/<span className="kbd">k</span> move between findings, <span className="kbd">/</span> searches, <span className="kbd">u</span> undoes, <span className="kbd">?</span> lists every shortcut.</p>}
         </section>
       )}
 
@@ -358,43 +539,22 @@ export default function RedactPage() {
         <section ref={exportRef} className="card space-y-4 p-4 sm:p-5" aria-labelledby="h-export">
           <div className="flex flex-wrap items-center gap-3">
             <h2 id="h-export" className="text-lg font-semibold">Export</h2>
-            <Segmented label="Output style" value={style} onChange={(s) => setStyleOverride(s)}
-              options={[{ id: "placeholder", label: "Reversible [NAME_1]" }, { id: "label", label: "Labels [NAME]" }, { id: "block", label: "Blocks ████" }]} />
-            <span className={`badge sm:ml-auto ${leaks === null ? "" : leakFail ? "badge-danger" : "badge-ok"}`} role="status" data-testid="leak-badge">
-              {leaks === null ? "Checking output…" : leakFail ? `${leaks.length} redacted value${leaks.length === 1 ? "" : "s"} still present` : "Leak check passed"}
-            </span>
+            {styleSeg}
+            <span className="sm:ml-auto">{leakBadge}</span>
           </div>
-          {leakFail && <p className="alert alert-danger" role="alert">A value you are redacting still appears elsewhere in the output. Use “Search and redact” for it, or keep every occurrence, before downloading.</p>}
-          <pre className="mono max-h-64 overflow-auto whitespace-pre-wrap break-words rounded-lg border p-3 text-[13px] leading-6" style={{ borderColor: "var(--border)", background: "var(--surface)" }} tabIndex={0} aria-label="Redacted output preview" data-testid="output">
-            {result.output.length > 20_000 ? result.output.slice(0, 20_000) + "\n… (preview shortened; the download is complete)" : result.output}
-          </pre>
+          {leakAlert}
+          {outputPre("max-h-64")}
           <div className="flex flex-wrap items-center gap-2">
-            <button type="button" className="btn btn-primary" disabled={leakFail || leaks === null} onClick={() => download(redactedName(fileName), result.output)}>Download redacted file</button>
-            <button type="button" className="btn" disabled={leakFail || leaks === null} onClick={copyOut}>{copied ? "Copied ✓" : "Copy"}</button>
-            <button type="button" className="btn" onClick={() => download(`${baseName(fileName)}.redaction-report.md`, reportMarkdown(report()), "text/markdown;charset=utf-8")}>Download report</button>
-            <button type="button" className="btn btn-ghost btn-sm" onClick={() => download(`${baseName(fileName)}.redaction-report.json`, JSON.stringify(report(), null, 2), "application/json")}>report as JSON</button>
-            <span className="text-xs muted">Saved as <span className="mono">{redactedName(fileName)}</span>. The report has counts only, never values.</span>
+            {downloadBtn}{copyBtn}
+            {layout === "c"
+              ? <button type="button" className="btn btn-ghost btn-sm" aria-expanded={showMore} onClick={() => setShowMore((v) => !v)}>{showMore ? "▾" : "▸"} Report and restore key</button>
+              : <>{reportBtns}<span className="text-xs muted">Saved as <span className="mono">{redactedName(fileName)}</span>. The report has counts only, never values.</span></>}
           </div>
-          {style === "placeholder" && (
-            <div className="rounded-lg border p-3" style={{ borderColor: "var(--border)" }}>
-              <h3 className="text-sm font-semibold">Restore key <span className="font-normal muted">(optional)</span></h3>
-              <p className="mt-1 text-xs muted">Lets you put the original values back later, for example into an AI summary of the redacted text. It is encrypted in this browser with your password. We never see the key or the password.</p>
-              <div className="mt-3 flex flex-wrap items-start gap-3">
-                <div className="w-full sm:w-72">
-                  <label htmlFor="pw" className="sr-only">Password for the restore key</label>
-                  <input id="pw" type="password" className="input" placeholder="Password (8+ characters)" autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} aria-describedby="pw-hint" />
-                  <div className="mt-1 flex gap-1" aria-hidden="true">{[1, 2, 3, 4].map((i) => <span key={i} className="h-1 flex-1 rounded" style={{ background: password && strength.score >= i ? (strength.score >= 3 ? "var(--accent)" : "var(--t-date-bd)") : "var(--border)" }} />)}</div>
-                  <p id="pw-hint" className="mt-1 text-xs muted" role="status">{password ? `${strength.label}. ${strength.hint}` : "Choose a password you will not lose."}</p>
-                </div>
-                <button type="button" className="btn" disabled={strength.score < 1 || leakFail} onClick={downloadKey}>Download restore key</button>
-              </div>
-              <p className="alert alert-warn mt-3 text-xs">If you lose the key file or forget its password, the original values cannot be recovered by anyone, including us.</p>
-            </div>
-          )}
+          {layout === "c" ? showMore && <div className="space-y-3"><div className="flex flex-wrap gap-2">{reportBtns}</div>{restoreKey}</div> : restoreKey}
         </section>
       )}
 
-      {help && <ShortcutOverlay onClose={() => setHelp(false)} />}
+      {shortcuts}
     </div>
   );
 }

@@ -32,7 +32,7 @@ export function Switch({ checked, onChange, label, hint }: { checked: boolean; o
 }
 
 /** Modal dialog with focus trap, Escape to close and focus restore. */
-export function Dialog({ title, onClose, children, wide }: { title: string; onClose: () => void; children: ReactNode; wide?: boolean }) {
+export function Dialog({ title, onClose, children, wide, drawer }: { title: string; onClose: () => void; children: ReactNode; wide?: boolean; drawer?: boolean }) {
   const ref = useRef<HTMLDivElement>(null), id = useId();
   useEffect(() => {
     const prev = document.activeElement as HTMLElement | null;
@@ -51,8 +51,9 @@ export function Dialog({ title, onClose, children, wide }: { title: string; onCl
     return () => { document.removeEventListener("keydown", onKey, true); prev?.focus?.(); };
   }, [onClose]);
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center p-0 sm:items-center sm:p-4" style={{ background: "rgb(0 0 0 / 0.5)" }} onMouseDown={(e) => { if (e.target === e.currentTarget) onClose(); }}>
-      <div ref={ref} role="dialog" aria-modal="true" aria-labelledby={id} className={`card max-h-[90vh] w-full overflow-auto p-5 ${wide ? "sm:max-w-2xl" : "sm:max-w-md"}`} style={{ boxShadow: "var(--shadow)" }}>
+    <div className={drawer ? "fixed inset-0 z-50 flex justify-end" : "fixed inset-0 z-50 flex items-end justify-center p-0 sm:items-center sm:p-4"} style={{ background: "rgb(0 0 0 / 0.5)" }} onMouseDown={(e) => { if (e.target === e.currentTarget) onClose(); }}>
+      <div ref={ref} role="dialog" aria-modal="true" aria-labelledby={id}
+        className={drawer ? "card h-full w-full overflow-auto rounded-none p-5 sm:max-w-md" : `card max-h-[90vh] w-full overflow-auto p-5 ${wide ? "sm:max-w-2xl" : "sm:max-w-md"}`} style={{ boxShadow: "var(--shadow)" }}>
         <div className="mb-3 flex items-center gap-3">
           <h2 id={id} className="text-lg font-semibold">{title}</h2>
           <button type="button" className="btn btn-ghost btn-sm ml-auto" onClick={onClose} aria-label="Close">✕</button>
