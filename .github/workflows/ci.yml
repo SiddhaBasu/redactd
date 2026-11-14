@@ -74,6 +74,10 @@ jobs:
       - name: Fetch the shipped models
         if: steps.secret.outputs.ok == 'true'
         run: bash scripts/fetch_models.sh
+      - name: Runner CPU (int8 kernels differ between CPUs with and without VNNI)
+        run: |
+          grep -m1 "model name" /proc/cpuinfo
+          echo "VNNI: $(grep -o -w -m1 -E 'avx512_vnni|avx_vnni' /proc/cpuinfo || echo none)"
       - name: Standard, every eval doc - leak check must be 0, recall within 0.5 points of bench/baseline.json
         if: steps.secret.outputs.ok == 'true'
         run: python bench/gate.py --mode standard

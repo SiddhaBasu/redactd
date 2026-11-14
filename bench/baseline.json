@@ -75,61 +75,70 @@
  },
  "standard:all": {
   "dev_nemotron_fin_structured": {
-   "char_precision": 72.77573296103566,
+   "char_precision": 73.52837278011496,
    "direct_r50": 99.72552607502287,
    "direct_r90": 99.45105215004574,
    "gold_direct_in_output": 1,
-   "indirect_r50": 94.86754966887418,
-   "indirect_r90": 92.21854304635761,
+   "indirect_r50": 94.20529801324503,
+   "indirect_r90": 92.05298013245033,
+   "leak_check_failures": 0
+  },
+  "dev_nemotron_med": {
+   "char_precision": 63.782507834438974,
+   "direct_r50": 99.90774907749078,
+   "direct_r90": 99.81549815498155,
+   "gold_direct_in_output": 1,
+   "indirect_r50": 95.15151515151516,
+   "indirect_r90": 94.54545454545455,
    "leak_check_failures": 0
   },
   "eval_adversarial": {
-   "char_precision": 74.65099771275337,
-   "direct_r50": 100.0,
-   "direct_r90": 100.0,
-   "gold_direct_in_output": 0,
+   "char_precision": 75.01983812093319,
+   "direct_r50": 99.66666666666667,
+   "direct_r90": 99.66666666666667,
+   "gold_direct_in_output": 1,
    "indirect_r50": 100.0,
    "indirect_r90": 100.0,
    "leak_check_failures": 0
   },
   "eval_fin_holdout2": {
-   "char_precision": 34.61820947984157,
+   "char_precision": 34.70959446871597,
    "direct_r50": 99.1130820399113,
-   "direct_r90": 98.22616407982261,
+   "direct_r90": 98.55875831485588,
    "gold_direct_in_output": 3,
-   "indirect_r50": 92.4187725631769,
-   "indirect_r90": 90.97472924187726,
+   "indirect_r50": 93.32129963898917,
+   "indirect_r90": 91.69675090252707,
    "leak_check_failures": 0
   },
   "eval_gretel_en": {
-   "char_precision": 75.67213727965587,
+   "char_precision": 75.84656456372066,
    "direct_r50": 100.0,
-   "direct_r90": 99.73451327433628,
+   "direct_r90": 99.64601769911505,
    "gold_direct_in_output": 0,
    "indirect_r50": 100.0,
-   "indirect_r90": 99.19354838709677,
+   "indirect_r90": 100.0,
    "leak_check_failures": 0
   },
   "eval_gretel_fin": {
-   "char_precision": 35.626426333500945,
-   "direct_r50": 99.1304347826087,
-   "direct_r90": 98.55072463768116,
+   "char_precision": 35.98207089075432,
+   "direct_r50": 99.27536231884058,
+   "direct_r90": 98.40579710144928,
    "gold_direct_in_output": 3,
-   "indirect_r50": 97.00272479564033,
-   "indirect_r90": 95.36784741144415,
+   "indirect_r50": 96.45776566757493,
+   "indirect_r90": 94.00544959128065,
    "leak_check_failures": 0
   },
   "eval_gretel_fin_holdout": {
-   "char_precision": 32.87799168181705,
-   "direct_r50": 99.27234927234927,
-   "direct_r90": 98.12889812889813,
-   "gold_direct_in_output": 3,
-   "indirect_r50": 96.18874773139746,
-   "indirect_r90": 94.01088929219601,
+   "char_precision": 33.05010621017119,
+   "direct_r50": 99.16839916839916,
+   "direct_r90": 97.81704781704782,
+   "gold_direct_in_output": 6,
+   "indirect_r50": 96.37023593466425,
+   "indirect_r90": 95.28130671506352,
    "leak_check_failures": 0
   },
   "eval_nemotron_fin": {
-   "char_precision": 74.50075642965204,
+   "char_precision": 76.21749896822121,
    "direct_r50": 99.92917847025495,
    "direct_r90": 99.92917847025495,
    "gold_direct_in_output": 1,
@@ -138,18 +147,27 @@
    "leak_check_failures": 0
   },
   "eval_nemotron_fin_structured": {
-   "char_precision": 77.68503743709341,
+   "char_precision": 77.46358183376178,
    "direct_r50": 99.8868778280543,
-   "direct_r90": 99.83031674208145,
+   "direct_r90": 99.8868778280543,
    "gold_direct_in_output": 2,
-   "indirect_r50": 93.53876739562624,
-   "indirect_r90": 93.3399602385686,
+   "indirect_r50": 93.3399602385686,
+   "indirect_r90": 93.14115308151094,
+   "leak_check_failures": 0
+  },
+  "eval_nemotron_med": {
+   "char_precision": 61.45854657113613,
+   "direct_r50": 100.0,
+   "direct_r90": 100.0,
+   "gold_direct_in_output": 1,
+   "indirect_r50": 94.76510067114094,
+   "indirect_r90": 93.28859060402685,
    "leak_check_failures": 0
   }
  },
  "thorough:50": {
   "dev_nemotron_fin_structured": {
-   "char_precision": 67.35809216246429,
+   "char_precision": 67.83837878408806,
    "direct_r50": 100.0,
    "direct_r90": 100.0,
    "gold_direct_in_output": 0,
@@ -157,8 +175,17 @@
    "indirect_r90": 94.36619718309859,
    "leak_check_failures": 0
   },
+  "dev_nemotron_med": {
+   "char_precision": 61.215674174637456,
+   "direct_r50": 100.0,
+   "direct_r90": 100.0,
+   "gold_direct_in_output": 0,
+   "indirect_r50": 91.12903225806451,
+   "indirect_r90": 89.51612903225806,
+   "leak_check_failures": 0
+  },
   "eval_adversarial": {
-   "char_precision": 74.86818980667839,
+   "char_precision": 74.31960921144452,
    "direct_r50": 100.0,
    "direct_r90": 100.0,
    "gold_direct_in_output": 0,
@@ -167,7 +194,7 @@
    "leak_check_failures": 0
   },
   "eval_fin_holdout2": {
-   "char_precision": 29.41614234490224,
+   "char_precision": 29.21454007928509,
    "direct_r50": 100.0,
    "direct_r90": 100.0,
    "gold_direct_in_output": 0,
@@ -176,7 +203,7 @@
    "leak_check_failures": 0
   },
   "eval_gretel_en": {
-   "char_precision": 66.3803388212837,
+   "char_precision": 66.31729394949976,
    "direct_r50": 100.0,
    "direct_r90": 100.0,
    "gold_direct_in_output": 0,
@@ -185,7 +212,7 @@
    "leak_check_failures": 0
   },
   "eval_gretel_fin": {
-   "char_precision": 29.684684684684683,
+   "char_precision": 30.096706743335076,
    "direct_r50": 98.88888888888889,
    "direct_r90": 97.77777777777777,
    "gold_direct_in_output": 1,
@@ -194,30 +221,39 @@
    "leak_check_failures": 0
   },
   "eval_gretel_fin_holdout": {
-   "char_precision": 26.227863046044863,
-   "direct_r50": 98.85057471264368,
+   "char_precision": 26.94910267725802,
+   "direct_r50": 99.42528735632185,
    "direct_r90": 97.70114942528735,
    "gold_direct_in_output": 0,
-   "indirect_r50": 93.02325581395348,
-   "indirect_r90": 90.69767441860465,
+   "indirect_r50": 97.67441860465117,
+   "indirect_r90": 97.67441860465117,
    "leak_check_failures": 0
   },
   "eval_nemotron_fin": {
-   "char_precision": 66.8844078386822,
+   "char_precision": 68.89343663207133,
    "direct_r50": 100.0,
    "direct_r90": 100.0,
    "gold_direct_in_output": 0,
    "indirect_r50": 97.72727272727273,
-   "indirect_r90": 96.5909090909091,
+   "indirect_r90": 97.72727272727273,
    "leak_check_failures": 0
   },
   "eval_nemotron_fin_structured": {
-   "char_precision": 70.23079496041922,
+   "char_precision": 69.40257454065353,
    "direct_r50": 99.68354430379746,
-   "direct_r90": 99.36708860759494,
+   "direct_r90": 99.68354430379746,
    "gold_direct_in_output": 1,
    "indirect_r50": 97.98657718120805,
    "indirect_r90": 97.31543624161074,
+   "leak_check_failures": 0
+  },
+  "eval_nemotron_med": {
+   "char_precision": 52.80342566572996,
+   "direct_r50": 100.0,
+   "direct_r90": 100.0,
+   "gold_direct_in_output": 1,
+   "indirect_r50": 100.0,
+   "indirect_r90": 97.29729729729729,
    "leak_check_failures": 0
   }
  }

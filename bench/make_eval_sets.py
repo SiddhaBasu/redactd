@@ -73,3 +73,16 @@ for r in df[(df.document_format == "structured") & df.domain.isin(FIN)].itertupl
     if sp: out.append({"id": r.uid, "source": "nemotron", "domain": r.domain, "fmt": "structured", "doc_type": r.document_type, "text": r.text, "spans": sp})
 random.seed(5); random.shuffle(out)
 dump(out[:200], "dev_nemotron_fin_structured")
+
+# 5. Medical (Nemotron test split, Health + Healthcare Providers domains, both formats). Nemotron's TRAIN split has no
+#    health documents, so these are also out-of-domain for the distilled model. dev = tuning allowed; eval = held-out.
+MED = {"Health", "Healthcare Providers"}
+df = pd.read_parquet(f"{ROOT}/data/raw/nemotron_test.parquet"); out = []
+for r in df[df.domain.isin(MED)].itertuples():
+    if len(r.text) >= 4000: continue
+    sp = norm(ast.literal_eval(r.spans), r.text)
+    if sp: out.append({"id": r.uid, "source": "nemotron", "domain": r.domain, "fmt": r.document_format, "doc_type": r.document_type, "text": r.text, "spans": sp})
+seen = set(); out = [r for r in out if not (r["id"] in seen or seen.add(r["id"]))]
+random.seed(6); random.shuffle(out)
+dump(out[:200], "dev_nemotron_med")
+dump(out[200:500], "eval_nemotron_med")

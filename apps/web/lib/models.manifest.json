@@ -18,8 +18,8 @@
      "bytes": 646
     },
     "onnx/model_quantized.onnx": {
-     "sha256": "17d15c59b059d0754daf088b4b12adc13571148da6225ebcb9d9c3589d24e545",
-     "bytes": 86973188
+     "sha256": "9be01657b827e18ff36b6338eef77975346cd96fd688844eb69c49703d4e554f",
+     "bytes": 86973228
     }
    }
   },
@@ -82,5 +82,5 @@
    }
   }
  },
- "version": "891627dc007c"
+ "version": "00452280be5d"
 }
