@@ -1,7 +1,8 @@
 # redactd
 
-Privacy-first redaction for unstructured financial text: bank emails, loan notes, statements, SWIFT/FIX/EDI
-messages, insurance policies and support tickets, up to 1 MB. redactd finds personal and sensitive identifiers,
+Privacy-first redaction for any text document up to 1 MB: emails, contracts, clinical notes, bank statements,
+SWIFT/FIX/EDI messages, HR files, support tickets and chat logs. Domain bundles (Financial, Medical, ...) add the
+identifiers specific to a kind of document on top of the general detectors. redactd finds personal and sensitive identifiers,
 lets the user review every finding, and exports a redacted copy. Redaction is optionally reversible: placeholders
 such as `[NAME_1]` plus a password-encrypted restore key that never leaves the browser.
 

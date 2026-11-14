@@ -4,8 +4,8 @@ import "./globals.css";
 import { ThemeToggle } from "../components/ui";
 
 export const metadata: Metadata = {
-  title: "redactd — private redaction for financial documents",
-  description: "Find and redact personal and financial identifiers in statements, emails, SWIFT messages and tickets. Review every finding. Optionally reversible.",
+  title: "redactd — private redaction for any document",
+  description: "Find and remove personal data from any document: emails, contracts, clinical notes, statements, chat logs and tickets. Review every finding. Optionally reversible.",
 };
 // Pages are rendered per request so Next can stamp the CSP nonce (middleware.ts) on its bootstrap scripts.
 export const dynamic = "force-dynamic";

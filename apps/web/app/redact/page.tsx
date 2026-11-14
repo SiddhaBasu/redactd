@@ -17,10 +17,9 @@ import { hasModel, modelMegabytes } from "../../lib/models";
 import type { DetectMode, OutputStyle, PiiType, ReviewSpan, Span, WorkerResponse } from "../../lib/types";
 import { Viewer, type ViewerHandle } from "../../components/Viewer";
 import { Sidebar } from "../../components/Sidebar";
-import { PolicyPanel } from "../../components/PolicyPanel";
-import { DataPanel, type Where } from "../../components/DataPanel";
+import type { Where } from "../../components/DataPanel";
 import { ShortcutOverlay } from "../../components/Shortcuts";
-import { Dialog, Progress, Segmented, Steps, Switch } from "../../components/ui";
+import { Dialog, Progress, Segmented, Switch } from "../../components/ui";
 import { PRESETS, parseTerms } from "../../lib/presets";
 
 const MAX_BYTES = 1_000_000;
@@ -43,14 +42,8 @@ export default function RedactPage() {
   // ---- document + settings
   const [text, setText] = useState("");
   const [fileName, setFileName] = useState("document.txt");
-  const [mode, setMode] = useState<DetectMode>("thorough");
-  // UI layout mock-ups (?layout=a|b|c). Without the parameter the page is unchanged. Remove once one is chosen.
-  const [layout, setLayout] = useState<"current" | "a" | "b" | "c">("current");
+  const [mode, setMode] = useState<DetectMode>("standard");   // Standard meets the latency target; Thorough is opt-in
   const [showOptions, setShowOptions] = useState(false), [showDetails, setShowDetails] = useState(false), [showMore, setShowMore] = useState(false);
-  useEffect(() => {
-    const l = new URLSearchParams(window.location.search).get("layout");
-    if (l === "a" || l === "b" || l === "c") { setLayout(l); if (l !== "c") setMode("standard"); }
-  }, []);
   const [where, setWhere] = useState<Where>("server");
   const [policy, setPolicyState] = useState<UserPolicy>(DEFAULT_POLICY);
   const [serverUp, setServerUp] = useState<boolean | null>(null);
@@ -242,23 +235,21 @@ export default function RedactPage() {
     catch { setError("Copying was blocked by the browser. Use Download instead."); }
   }
   const leakFail = !!leaks?.length;
-  const step: 1 | 2 | 3 = !scanned ? 1 : leaks !== null && !leakFail && accepted.length > 0 && review.past.length > 0 ? 3 : 2;
 
-  // ================================================================== building blocks (shared by every layout)
-  const minimal = layout === "a" || layout === "b";
+  // ================================================================== building blocks
   const dropZone = (
     <div onDragOver={(e) => { e.preventDefault(); setDragging(true); }} onDragLeave={() => setDragging(false)}
       onDrop={(e) => { e.preventDefault(); setDragging(false); const f = e.dataTransfer.files?.[0]; if (f) onFile(f); }}
-      className={minimal ? "rounded-xl border-2 border-dashed p-3 sm:p-4" : "rounded-lg border-2 border-dashed p-3 sm:p-4"}
+      className="rounded-xl border-2 border-dashed p-3 sm:p-4"
       style={{ borderColor: dragging ? "var(--accent)" : "var(--border-strong)", background: dragging ? "var(--accent-soft)" : undefined }}>
       <div className="flex flex-wrap items-center gap-3">
         <label className="btn cursor-pointer">
-          {minimal ? "Open file" : "Choose file"}
+          Open file
           <input type="file" className="sr-only" accept=".txt,.md,.csv,.tsv,.json,.jsonl,.log,.eml,.xml,.yaml,.yml,.html,.docx,.pdf,.msg,text/*"
             onChange={(e) => { const f = e.target.files?.[0]; if (f) onFile(f); e.target.value = ""; }} />
         </label>
-        <span className="text-sm muted">{minimal ? "or drop or paste" : "or drop a file here, or paste below"}</span>
-        {!text && <button type="button" className="btn btn-sm sm:ml-auto" onClick={() => resetDoc(SAMPLE_TEXT, SAMPLE_NAME)}>{minimal ? "Try a sample" : "Try the sample document"}</button>}
+        <span className="text-sm muted">or drop or paste</span>
+        {!text && <button type="button" className="btn btn-sm sm:ml-auto" onClick={() => resetDoc(SAMPLE_TEXT, SAMPLE_NAME)}>Try a sample</button>}
         {text && <span className="text-sm sm:ml-auto"><span className="font-medium">{fileName}</span> <span className="muted">· {text.length.toLocaleString("en")} characters</span>{" "}
           <button type="button" className="btn btn-ghost btn-sm" onClick={() => resetDoc("", "document.txt")}>Clear</button></span>}
       </div>
@@ -266,10 +257,9 @@ export default function RedactPage() {
         ? <pre className="mono mt-3 max-h-40 overflow-hidden rounded p-2 text-xs muted" style={{ background: "var(--surface-2)" }} aria-label="Start of the document">{text.slice(0, 1500)}…</pre>
         : <>
             <label htmlFor="doc" className="sr-only">Document text</label>
-            <textarea id="doc" className={`input mono mt-3 ${minimal ? "h-56" : "h-40"}`} placeholder="Paste a statement, email, loan note, SWIFT message, ticket…" value={text} spellCheck={false}
+            <textarea id="doc" className="input mono mt-3 h-56" placeholder="Paste an email, contract, clinical note, statement, chat log, ticket…" value={text} spellCheck={false}
               onChange={(e) => { setText(e.target.value.slice(0, MAX_BYTES)); setScan(null); }} />
           </>}
-      {!text && !minimal && <p className="mt-2 text-xs muted">New here? The sample is a fictional wire-recall email with names, an IBAN, a card number and an SSN. Nothing is uploaded until you press Scan.</p>}
     </div>
   );
   const attachAlert = attach && (
@@ -305,6 +295,10 @@ export default function RedactPage() {
         <Segmented label="Where to process" value={where} onChange={setWhere} options={[{ id: "server", label: "Our server" }, { id: "device", label: "This device" }]} />
         <span className="text-xs muted">{where === "server" ? "In memory, never stored or logged." : `Never leaves this tab. ${modelMb ? `One-time ${modelMb} MB download.` : ""}`}</span>
       </div>
+      {!online && <p className="alert alert-warn text-xs" role="status">You are offline. On-device processing still works if its model was downloaded before.</p>}
+      {online && where === "server" && serverUp === false && (
+        <p className="alert alert-warn text-xs" role="status">The redactd server is not reachable right now. <button type="button" className="link" onClick={() => setWhere("device")}>Process on this device instead</button>.</p>
+      )}
       <div className="flex flex-wrap items-center gap-3">
         <label htmlFor="preset" className="w-24 font-semibold">Policy</label>
         <select id="preset" className="input w-auto" value={policy.presetId} onChange={(e) => setPolicy({ ...policy, presetId: e.target.value })}>
@@ -322,6 +316,7 @@ export default function RedactPage() {
         <p className="mt-2 text-xs muted">Stored in this browser only; never sent to our servers.</p>
       </details>
       {sensitivity}
+      <p className="text-xs muted">Your policy, terms, review decisions, output and restore key stay in this browser. <a href="/privacy" className="link">Data policy</a></p>
     </div>
   );
   const optionsSummary = `${MODES.find((m) => m.id === mode)?.name} · ${where === "server" ? "our server" : "this device"} · ${presetById(policy.presetId).name}${policy.keepLast4 ? " · last 4 kept" : ""}`;
@@ -334,7 +329,7 @@ export default function RedactPage() {
   const searchForm = search !== null && (
     <form className="flex flex-1 items-center gap-2" style={{ minWidth: 220 }} onSubmit={(e) => { e.preventDefault(); doSearch(); }}>
       <label htmlFor="search" className="sr-only">Search the document and redact every match</label>
-      <input id="search" ref={searchBox} className="input" placeholder="Text to redact everywhere…" value={search} onChange={(e) => setSearch(e.target.value)} />
+      <input id="search" ref={searchBox} autoFocus className="input" placeholder="Text to redact everywhere…" value={search} onChange={(e) => setSearch(e.target.value)} />
       <button type="submit" className="btn btn-sm btn-primary" disabled={search.trim().length < 2}>Redact {search.trim().length >= 2 ? searchSpans(text, search, addType).length : 0} matches</button>
       <button type="button" className="btn btn-ghost btn-sm" onClick={() => setSearch(null)}>Close</button>
     </form>
@@ -370,7 +365,7 @@ export default function RedactPage() {
     </pre>
   );
   const styleSeg = <Segmented label="Output style" value={style} onChange={(s) => setStyleOverride(s)} options={[{ id: "placeholder", label: "Reversible [NAME_1]" }, { id: "label", label: "Labels [NAME]" }, { id: "block", label: "Blocks ████" }]} />;
-  const downloadBtn = result && <button type="button" className="btn btn-primary" disabled={leakFail || leaks === null} onClick={() => download(redactedName(fileName), result.output)}>{minimal ? "Download" : "Download redacted file"}</button>;
+  const downloadBtn = result && <button type="button" className="btn btn-primary" disabled={leakFail || leaks === null} onClick={() => download(redactedName(fileName), result.output)}>Download</button>;
   const copyBtn = <button type="button" className="btn" disabled={leakFail || leaks === null} onClick={copyOut}>{copied ? "Copied ✓" : "Copy"}</button>;
   const reportBtns = (<>
     <button type="button" className="btn" onClick={() => download(`${baseName(fileName)}.redaction-report.md`, reportMarkdown(report()), "text/markdown;charset=utf-8")}>Download report</button>
@@ -396,164 +391,72 @@ export default function RedactPage() {
   const announcer = <p className="sr-only" role="status" aria-live="polite">{announce}</p>;
   const shortcuts = help && <ShortcutOverlay onClose={() => setHelp(false)} />;
 
-  // ================================================================== layouts A and B: minimal
-  if (minimal) {
-    const drawer = layout === "b";
-    return (
-      <div className="mx-auto max-w-4xl space-y-4">
-        <div className="flex items-baseline gap-3">
-          <h1 className="text-2xl font-semibold tracking-tight">Redact</h1>
-          <p className="text-sm muted">Find and remove personal data. Up to 1 MB.</p>
-        </div>
-        {announcer}
-        <section className="space-y-3" aria-labelledby="h-input">
-          <h2 id="h-input" className="sr-only">Add a document</h2>
-          {dropZone}
-          {attachAlert}
-          <div className="flex flex-wrap items-center gap-3">
-            <button type="button" className="btn btn-ghost btn-sm" aria-expanded={showOptions} onClick={() => setShowOptions((v) => !v)}>
-              <span aria-hidden="true">{drawer ? "⚙" : showOptions ? "▾" : "▸"}</span> Options
-            </button>
-            <span className="text-xs muted">{optionsSummary}</span>
-            <span className="ml-auto">{scanButton(scanned ? "Redact again" : "Redact")}</span>
-          </div>
-          {!drawer && showOptions && <div className="card p-4">{compactOptions}</div>}
-          {status}
-        </section>
-
-        {scanned && (
-          <section aria-labelledby="h-review" className="space-y-2">
-            <div className="flex flex-wrap items-center gap-2">
-              <h2 id="h-review" className="text-base font-semibold">{accepted.length} of {spans.length} found items redacted</h2>
-              <span className="sr-only" data-testid="summary">{accepted.length} of {spans.length} findings will be redacted</span>
-              <div className="ml-auto flex flex-wrap items-center gap-2">
-                <button type="button" className="btn btn-sm" onClick={() => dispatch({ type: "undo" })} disabled={!review.past.length}>Undo</button>
-                <button type="button" className="btn btn-sm" aria-pressed={view === "diff"} onClick={() => setView(view === "diff" ? "review" : "diff")}>Compare</button>
-                {search === null && <button type="button" className="btn btn-sm" onClick={openSearch}>Find &amp; redact</button>}
-                <button type="button" className="btn btn-sm" aria-pressed={showDetails} onClick={() => setShowDetails((v) => !v)}>Details</button>
-                <button type="button" className="btn btn-ghost btn-sm" onClick={() => setHelp(true)} aria-label="Keyboard shortcuts">?</button>
-              </div>
-            </div>
-            {searchForm}
-            {diffHeader}
-            {!drawer && showDetails
-              ? <div className="grid grid-cols-[minmax(0,1fr)] gap-3 lg:grid-cols-[minmax(0,1fr)_300px]">{viewerEl}<div className="flex max-h-[640px] min-h-[280px] min-w-0 flex-col lg:h-[min(62vh,640px)]">{sidebarEl}</div></div>
-              : viewerEl}
-            {!drawer && showDetails && addRow}
-          </section>
-        )}
-
-        {scanned && result && (
-          <section ref={exportRef} className="card space-y-3 p-4" aria-labelledby="h-export">
-            <div className="flex flex-wrap items-center gap-2">
-              <h2 id="h-export" className="sr-only">Export</h2>
-              {downloadBtn}{copyBtn}
-              <button type="button" className="btn btn-ghost btn-sm" aria-expanded={showMore} onClick={() => setShowMore((v) => !v)}>{showMore ? "▾" : "▸"} More</button>
-              <span className="ml-auto">{leakBadge}</span>
-            </div>
-            {leakAlert}
-            {showMore && (
-              <div className="space-y-3 border-t pt-3" style={{ borderColor: "var(--border)" }}>
-                <div className="flex flex-wrap items-center gap-2">{styleSeg}{reportBtns}</div>
-                {outputPre("max-h-64")}
-                {restoreKey}
-              </div>
-            )}
-          </section>
-        )}
-
-        {drawer && showOptions && <Dialog title="Options" drawer onClose={() => setShowOptions(false)}>{compactOptions}</Dialog>}
-        {drawer && showDetails && scanned && (
-          <Dialog title="Findings" drawer onClose={() => setShowDetails(false)}>
-            <div className="space-y-3"><div className="flex h-[60vh] min-h-[320px] flex-col">{sidebarEl}</div>{addRow}</div>
-          </Dialog>
-        )}
-        {shortcuts}
-      </div>
-    );
-  }
-
-  // ================================================================== layout C (tidied) and the current layout
+  // ================================================================== layout (minimal; options and review tools in side drawers)
   return (
-    <div className="space-y-5">
-      <div className="flex flex-wrap items-end gap-x-6 gap-y-2">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Redact a document</h1>
-          <p className="text-sm muted">Text, CSV, JSON, XML, EML, DOCX and text PDFs up to 1 MB.</p>
-        </div>
-        <div className="sm:ml-auto"><Steps current={step} /></div>
+    <div className="mx-auto max-w-4xl space-y-4">
+      <div className="flex items-baseline gap-3">
+        <h1 className="text-2xl font-semibold tracking-tight">Redact</h1>
+        <p className="text-sm muted">Find and remove personal data. Up to 1 MB.</p>
       </div>
       {announcer}
-
-      {/* ------------------------------------------------ 1. input */}
-      <section className="card space-y-5 p-4 sm:p-5" aria-labelledby="h-input">
+      <section className="space-y-3" aria-labelledby="h-input">
         <h2 id="h-input" className="sr-only">Add a document</h2>
         {dropZone}
         {attachAlert}
-        {layout === "c" ? compactOptions : (<>
-          <fieldset>
-            <legend className="label">Detection</legend>
-            <div role="radiogroup" aria-label="Detection mode" className="grid gap-2 sm:grid-cols-3">
-              {MODES.map((m) => (
-                <button key={m.id} type="button" role="radio" aria-checked={mode === m.id} className="choice" onClick={() => setMode(m.id)}>
-                  <div className="text-sm font-semibold">{m.name}</div><div className="text-xs muted">{m.note}</div>
-                </button>
-              ))}
-            </div>
-          </fieldset>
-          <DataPanel where={where} onChange={setWhere} serverUp={serverUp} online={online} modelMb={modelMb} />
-          <PolicyPanel policy={policy} onChange={setPolicy} />
-        </>)}
-        <div className="flex flex-wrap items-center gap-4">
-          {layout !== "c" && sensitivity}
-          <span className="ml-auto">{scanButton()}</span>
+        <div className="flex flex-wrap items-center gap-3">
+          <button type="button" className="btn btn-ghost btn-sm" aria-expanded={showOptions} onClick={() => setShowOptions((v) => !v)}>
+            <span aria-hidden="true">⚙</span> Options
+          </button>
+          <span className="text-xs muted">{optionsSummary}</span>
+          <span className="ml-auto">{scanButton(scanned ? "Redact again" : "Redact")}</span>
         </div>
         {status}
       </section>
 
-      {/* ------------------------------------------------ 2. review */}
       {scanned && (
-        <section aria-labelledby="h-review" className="space-y-3">
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-            <h2 id="h-review" className="text-lg font-semibold">Review</h2>
-            <span className="text-sm muted" data-testid="summary">{accepted.length} of {spans.length} findings will be redacted{scan ? ` · scanned in ${(scan.ms / 1000).toFixed(1)} s` : ""}</span>
-            <div className="flex flex-wrap items-center gap-2 sm:ml-auto">
-              <Segmented label="View" value={view} onChange={setView} options={[{ id: "review", label: "Review" }, { id: "diff", label: "Side by side" }]} />
-              <button type="button" className="btn btn-sm" onClick={() => dispatch({ type: "undo" })} disabled={!review.past.length} aria-label="Undo">Undo</button>
-              <button type="button" className="btn btn-sm" onClick={() => dispatch({ type: "redo" })} disabled={!review.future.length} aria-label="Redo">Redo</button>
-              <button type="button" className="btn btn-sm" onClick={() => setHelp(true)} aria-label="Keyboard shortcuts">? Shortcuts</button>
+        <section aria-labelledby="h-review" className="space-y-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <h2 id="h-review" className="text-base font-semibold">{accepted.length} of {spans.length} found items redacted</h2>
+            <span className="sr-only" data-testid="summary">{accepted.length} of {spans.length} findings will be redacted</span>
+            <div className="ml-auto flex flex-wrap items-center gap-2">
+              <button type="button" className="btn btn-sm" onClick={() => dispatch({ type: "undo" })} disabled={!review.past.length}>Undo</button>
+              <button type="button" className="btn btn-sm" aria-pressed={view === "diff"} onClick={() => setView(view === "diff" ? "review" : "diff")}>Compare</button>
+              {search === null && <button type="button" className="btn btn-sm" onClick={openSearch}>Find &amp; redact</button>}
+              <button type="button" className="btn btn-sm" aria-pressed={showDetails} onClick={() => setShowDetails((v) => !v)}>Details</button>
+              <button type="button" className="btn btn-ghost btn-sm" onClick={() => setHelp(true)} aria-label="Keyboard shortcuts">?</button>
             </div>
           </div>
-          {addRow}
+          {searchForm}
           {diffHeader}
-          <div className="grid grid-cols-[minmax(0,1fr)] gap-3 lg:grid-cols-[minmax(0,1fr)_300px]">
-            {viewerEl}
-            <div className="flex max-h-[640px] min-h-[280px] min-w-0 flex-col lg:h-[min(62vh,640px)]">{sidebarEl}</div>
-          </div>
-          {layout !== "c" && <p className="text-xs muted">Click a highlight to inspect it, click again (or press <span className="kbd">x</span>) to keep or redact it. <span className="kbd">j</span>/<span className="kbd">k</span> move between findings, <span className="kbd">/</span> searches, <span className="kbd">u</span> undoes, <span className="kbd">?</span> lists every shortcut.</p>}
+          {viewerEl}
         </section>
       )}
 
-      {/* ------------------------------------------------ 3. export */}
       {scanned && result && (
-        <section ref={exportRef} className="card space-y-4 p-4 sm:p-5" aria-labelledby="h-export">
-          <div className="flex flex-wrap items-center gap-3">
-            <h2 id="h-export" className="text-lg font-semibold">Export</h2>
-            {styleSeg}
-            <span className="sm:ml-auto">{leakBadge}</span>
+        <section ref={exportRef} className="card space-y-3 p-4" aria-labelledby="h-export">
+          <div className="flex flex-wrap items-center gap-2">
+            <h2 id="h-export" className="sr-only">Export</h2>
+            {downloadBtn}{copyBtn}
+            <button type="button" className="btn btn-ghost btn-sm" aria-expanded={showMore} onClick={() => setShowMore((v) => !v)}>{showMore ? "▾" : "▸"} More</button>
+            <span className="ml-auto">{leakBadge}</span>
           </div>
           {leakAlert}
-          {outputPre("max-h-64")}
-          <div className="flex flex-wrap items-center gap-2">
-            {downloadBtn}{copyBtn}
-            {layout === "c"
-              ? <button type="button" className="btn btn-ghost btn-sm" aria-expanded={showMore} onClick={() => setShowMore((v) => !v)}>{showMore ? "▾" : "▸"} Report and restore key</button>
-              : <>{reportBtns}<span className="text-xs muted">Saved as <span className="mono">{redactedName(fileName)}</span>. The report has counts only, never values.</span></>}
-          </div>
-          {layout === "c" ? showMore && <div className="space-y-3"><div className="flex flex-wrap gap-2">{reportBtns}</div>{restoreKey}</div> : restoreKey}
+          {showMore && (
+            <div className="space-y-3 border-t pt-3" style={{ borderColor: "var(--border)" }}>
+              <div className="flex flex-wrap items-center gap-2">{styleSeg}{reportBtns}</div>
+              {outputPre("max-h-64")}
+              {restoreKey}
+            </div>
+          )}
         </section>
       )}
 
+      {showOptions && <Dialog title="Options" drawer onClose={() => setShowOptions(false)}>{compactOptions}</Dialog>}
+      {showDetails && scanned && (
+        <Dialog title="Findings" drawer onClose={() => setShowDetails(false)}>
+          <div className="space-y-3"><div className="flex h-[60vh] min-h-[320px] flex-col">{sidebarEl}</div>{addRow}</div>
+        </Dialog>
+      )}
       {shortcuts}
     </div>
   );

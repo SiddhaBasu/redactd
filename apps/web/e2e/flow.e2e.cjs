@@ -2,6 +2,7 @@
 // Usage: node e2e/flow.e2e.cjs [Fast|Standard|Thorough]     (needs the API on :8000 and `next start` on :3000)
 // BASE_URL / mode can be overridden for preview deployments: BASE_URL=https://preview.example node e2e/flow.e2e.cjs
 const { chromium } = require("playwright");
+const { loadSample, setOptions, openMore } = require("./ui.cjs");
 const fs = require("fs"), path = require("path"), os = require("os"), assert = require("assert/strict");
 const BASE = process.env.BASE_URL || "http://127.0.0.1:3000";
 const DOC = fs.readFileSync(path.join(__dirname, "../../../tests/fixtures/wire_recall.txt"), "utf8").replace(/\n$/, "");   // the sample has no trailing newline
@@ -17,15 +18,15 @@ const MODEL_ONLY = ["Priya", "Raman", "Okafor", "Boise"];   // names and places 
   const step = (s) => console.log("  ✓", s);
 
   await p.goto(`${BASE}/redact`, { waitUntil: "networkidle" });
-  const scan = p.getByRole("button", { name: "Scan for sensitive data" });
   // 1. onboarding sample -> scan
-  for (let i = 0; i < 20 && !(await scan.isEnabled()); i++) { await p.getByRole("button", { name: "Try the sample document" }).click().catch(() => {}); await p.waitForTimeout(300); }
+  const scan = await loadSample(p);
   assert.equal(await p.locator("#doc").inputValue(), DOC, "sample equals the fixture");
-  await p.getByRole("radiogroup", { name: "Detection mode" }).getByRole("radio", { name: new RegExp(`^${mode}`) }).click();
+  await setOptions(p, { mode });
   const t0 = Date.now();
   await scan.click();
   await p.getByTestId("viewer").waitFor({ timeout: 10 * 60_000 });
   await p.getByText("Leak check passed").waitFor({ timeout: 60_000 });
+  await openMore(p);    // the output preview, report and restore key live under "More"
   step(`scan in ${mode} mode: ${((Date.now() - t0) / 1000).toFixed(1)} s, ${await p.getByTestId("summary").innerText()}`);
   const output = () => p.getByTestId("output").innerText();
   let out = await output();
@@ -58,20 +59,20 @@ const MODEL_ONLY = ["Priya", "Raman", "Okafor", "Boise"];   // names and places 
   step("keyboard review: j/k, x, u/U, a/A, / search, ? overlay, d diff");
 
   // 3. presets change the output without rescanning
-  await p.getByRole("radio", { name: /^Share with LLM/ }).click();
+  await setOptions(p, { preset: "llm" });
   await p.waitForFunction(() => document.querySelector("[data-testid=output]").innerText.includes("Royal Bank of Canada"));
   out = await output(); assert.ok(out.includes("March 3, 2026") && /\[[A-Z_]+_1\]/.test(out) && !out.includes("4111 1111"));
-  await p.getByRole("radio", { name: /^Legal production/ }).click();
+  await setOptions(p, { preset: "legal" });
   await p.waitForFunction(() => document.querySelector("[data-testid=output]").innerText.includes("██████"));
   out = await output(); assert.ok(!out.includes("Royal Bank of Canada") && !out.includes("March 3, 2026") && !/\[[A-Z_]+\]/.test(out));
-  await p.getByRole("radio", { name: /^Analytics/ }).click();
+  await setOptions(p, { preset: "analytics" });
   await p.waitForFunction(() => document.querySelector("[data-testid=output]").innerText.includes("[FIN_ID]"));
   assert.ok((await output()).includes("March 3, 2026"));
-  await p.getByRole("radio", { name: /^Standard Reversible/ }).click();
+  await setOptions(p, { preset: "standard" });
   await p.waitForFunction(() => /\[FIN_ID_1\]/.test(document.querySelector("[data-testid=output]").innerText));
-  await p.getByRole("switch", { name: "Keep last 4 digits" }).click();
+  await setOptions(p, { keepLast4: true });
   await p.waitForFunction(() => document.querySelector("[data-testid=output]").innerText.includes("1111 was also"));
-  await p.getByRole("switch", { name: "Keep last 4 digits" }).click();
+  await setOptions(p, { keepLast4: false });
   await p.waitForFunction(() => !document.querySelector("[data-testid=output]").innerText.includes("1111 was also"));
   step("presets: Share with LLM, Legal production, Analytics, Standard, keep last 4");
 
@@ -79,7 +80,7 @@ const MODEL_ONLY = ["Priya", "Raman", "Okafor", "Boise"];   // names and places 
   await p.getByText("Leak check passed").waitFor();
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "redactd-e2e-"));
   const save = async (click) => { const [d] = await Promise.all([p.waitForEvent("download"), click()]); const f = path.join(dir, d.suggestedFilename()); await d.saveAs(f); return f; };
-  const redFile = await save(() => p.getByRole("button", { name: "Download redacted file" }).click());
+  const redFile = await save(() => p.getByRole("button", { name: "Download", exact: true }).click());
   assert.equal(path.basename(redFile), "sample-wire-recall.redacted.txt");
   const redacted = fs.readFileSync(redFile, "utf8");
   assert.deepEqual(must.filter((v) => redacted.includes(v)), []);
