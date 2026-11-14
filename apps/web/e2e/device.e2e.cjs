@@ -8,6 +8,11 @@ const MUST = ["Priya", "Raman", "priya.raman@northgate-mail.com", "0049821774471
 
 async function run(ctx, label, { throttle = false, tamper = false } = {}) {
   const p = await ctx.newPage();
+  // test-only: record the worker's per-stage timings (metadata) from its result message
+  await p.addInitScript(() => {
+    const W = window.Worker;
+    window.Worker = class extends W { constructor(...a) { super(...a); this.addEventListener("message", (e) => { if (e.data && e.data.kind === "result") window.__timings = e.data.timings; }); } };
+  });
   const errs = []; p.on("pageerror", (e) => errs.push(e.message));
   let modelBytes = 0, modelRequests = 0;
   p.on("response", async (r) => { if (r.url().includes("/models/")) { modelRequests++; modelBytes += Number((await r.allHeaders())["content-length"] || 0); } });
@@ -27,7 +32,8 @@ async function run(ctx, label, { throttle = false, tamper = false } = {}) {
   const s = (Date.now() - t0) / 1000, out = await p.getByTestId("output").innerText();
   assert.deepEqual(MUST.filter((v) => out.includes(v)), [], "identifiers left in on-device output");
   assert.deepEqual(errs, []);
-  console.log(`  ✓ ${label}: ${s.toFixed(1)} s, ${modelRequests} model requests, ${(modelBytes / 1e6).toFixed(0)} MB downloaded, isolated=${await p.evaluate(() => self.crossOriginIsolated)}`);
+  const tm = await p.evaluate(() => window.__timings || {});
+  console.log(`  ✓ ${label}: ${s.toFixed(1)} s, stages ${JSON.stringify(tm)}, ${modelRequests} model requests, ${(modelBytes / 1e6).toFixed(0)} MB downloaded, isolated=${await p.evaluate(() => self.crossOriginIsolated)}`);
   await p.close(); return s;
 }
 (async () => {

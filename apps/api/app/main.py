@@ -203,7 +203,7 @@ async def job_events(jid: str):
     carries the result; collect it once with GET /v1/jobs/{id}, after which it is deleted."""
     if jobs.peek(jid) is None: raise HTTPException(404, "job not found or already collected")
     async def stream():
-        last = None; deadline = time.monotonic() + settings.job_ttl_s
+        last = None; deadline = time.monotonic() + settings.job_max_run_s
         while time.monotonic() < deadline:
             j = await run_in_threadpool(jobs.peek, jid)
             if j is None: yield "event: failed\ndata: {}\n\n"; return
