@@ -249,3 +249,33 @@ def test_model_files_are_served_only_from_the_allow_list(c):
     for bad in ("/models/gliner/../../app/main.py", "/models/gliner/%2e%2e/%2e%2e/etc/passwd", "/models/openmed-small/config.json",
                 "/models/gliner/onnx/model_quint8.onnx.bak", "/models/nope/config.json"):
         assert c.get(bad).status_code == 404, bad
+
+# ---------------------------------------------------------------- website key (REQUIRE_API_KEY + STATIC_API_KEY_SHA256)
+def test_website_key_is_required_and_accepted(c, setting):
+    key = "web-key-for-tests-0123456789abcdef"
+    setting("require_api_key", True); setting("static_key_sha256", frozenset({db.hash_key(key)}))
+    h = {"Authorization": f"Bearer {key}"}
+    assert c.post("/v1/detect", json={"text": "x", "mode": "rules"}).status_code == 401                       # no key
+    assert c.post("/v1/detect", json={"text": "x", "mode": "rules"}, headers={"Authorization": "Bearer nope"}).status_code == 401
+    assert c.post("/v1/detect", json={"text": "x", "mode": "rules"}, headers=h).status_code == 200
+    assert c.post("/v1/extract", files={"file": ("a.txt", b"hello")}).status_code == 401
+    # job polling and the progress stream stay open (EventSource cannot send headers); the job id is the capability
+    jid = c.post("/v1/jobs", json={"text": DOC, "mode": "rules"}, headers=h).json()["job_id"]
+    for _ in range(100):
+        r = c.get(f"/v1/jobs/{jid}")
+        if r.status_code == 200 and r.json()["status"] == "done": break
+        time.sleep(0.02)
+    assert r.json()["result"]["spans"]
+    assert c.get("/health").status_code == 200
+    # the key never appears in what we store
+    raw = open(db.engine.url.database, "rb").read()
+    assert key.encode() not in raw
+
+def test_model_files_need_the_key_and_are_rate_limited(c, setting):
+    from app.main import MODEL_FILES
+    if not os.path.isfile(os.path.join(MODEL_FILES["gliner"], "gliner_config.json")): pytest.skip("models not built")
+    key = "web-key-for-tests-0123456789abcdef"
+    setting("require_api_key", True); setting("static_key_sha256", frozenset({db.hash_key(key)})); setting("model_files_per_minute", 3)
+    assert c.get("/models/gliner/gliner_config.json").status_code == 401
+    h = {"Authorization": f"Bearer {key}"}
+    assert [c.get("/models/gliner/gliner_config.json", headers=h).status_code for _ in range(4)] == [200, 200, 200, 429]

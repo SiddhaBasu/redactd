@@ -1,6 +1,7 @@
 // On-device mode (D7 + E1): cold load with a throttled connection, warm load from the Cache API, and a tampered
 // model file must be refused.  node e2e/device.e2e.cjs [Standard|Thorough] [mbit=50]
 const { chromium } = require("playwright");
+const { loadSample, setOptions, openMore } = require("./ui.cjs");
 const assert = require("assert/strict");
 const BASE = process.env.BASE_URL || "http://127.0.0.1:3000";
 const mode = process.argv[2] || "Standard", mbit = Number(process.argv[3] || 50);
@@ -19,16 +20,15 @@ async function run(ctx, label, { throttle = false, tamper = false } = {}) {
   if (tamper) await p.route("**/models/**/tokenizer.json", async (route) => { const r = await route.fetch(); const b = await r.body(); b[b.length - 5] ^= 1; await route.fulfill({ response: r, body: b }); });
   if (throttle) { const cdp = await ctx.newCDPSession(p); await cdp.send("Network.emulateNetworkConditions", { offline: false, latency: 20, downloadThroughput: (mbit * 1e6) / 8, uploadThroughput: (mbit * 1e6) / 8 }); }
   await p.goto(`${BASE}/redact`, { waitUntil: "networkidle" });
-  const scan = p.getByRole("button", { name: "Scan for sensitive data" });
-  for (let i = 0; i < 20 && !(await scan.isEnabled()); i++) { await p.getByRole("button", { name: "Try the sample document" }).click().catch(() => {}); await p.waitForTimeout(300); }
-  await p.getByRole("radio", { name: /^On this device only/ }).click();
-  await p.getByRole("radiogroup", { name: "Detection mode" }).getByRole("radio", { name: new RegExp(`^${mode}`) }).click();
+  const scan = await loadSample(p);
+  await setOptions(p, { where: "device", mode });
   const t0 = Date.now(); await scan.click();
   if (tamper) {
     await p.getByRole("alert").filter({ hasText: /integrity check/ }).waitFor({ timeout: 120_000 });
     console.log(`  ✓ ${label}: tampered model file refused ("${(await p.getByRole("alert").filter({ hasText: /integrity check/ }).innerText()).slice(0, 90)}…")`); await p.close(); return 0;
   }
   await p.getByText(/Leak check passed|still present/).waitFor({ timeout: 15 * 60_000 });
+  await openMore(p);
   const s = (Date.now() - t0) / 1000, out = await p.getByTestId("output").innerText();
   assert.deepEqual(MUST.filter((v) => out.includes(v)), [], "identifiers left in on-device output");
   assert.deepEqual(errs, []);

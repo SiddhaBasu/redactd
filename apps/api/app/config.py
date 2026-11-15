@@ -23,6 +23,11 @@ class Settings:
     rate_per_minute: int = int(os.getenv("RATE_PER_MINUTE", "60"))      # default for API keys without their own quota
     anon_rate_per_minute: int = int(os.getenv("ANON_RATE_PER_MINUTE", "20"))  # callers without an API key
     require_api_key: bool = os.getenv("REQUIRE_API_KEY", "0") == "1"
+    # SHA-256 (hex) of keys that are configured as secrets rather than stored in the database, e.g. the key the website
+    # sends (WEB_API_KEY in GitHub -> this hash on Fly). Comma-separated. The database is a SQLite file that resets on
+    # each deploy until Postgres is added, so a deploy-time secret is the reliable place for this key.
+    static_key_sha256: frozenset = frozenset(h.strip().lower() for h in os.getenv("STATIC_API_KEY_SHA256", "").split(",") if h.strip())
+    model_files_per_minute: int = int(os.getenv("MODEL_FILES_PER_MINUTE", "40"))   # on-device model downloads per client
     job_ttl_s: int = int(os.getenv("JOB_TTL_S", "600"))             # how long a FINISHED job's result waits to be collected
     job_max_run_s: int = int(os.getenv("JOB_MAX_RUN_S", "3600"))    # how long a job may run before it is abandoned
     ip_salt: str = os.getenv("IP_SALT", "dev-salt-change-me")

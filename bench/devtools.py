@@ -16,7 +16,7 @@ from redactd import rules
 from redactd.coarse import COARSE
 from redactd.post import Span, Options, finalize
 from redactd.types import DIRECT_TYPES
-DEV = ["eval_gretel_fin", "eval_nemotron_fin", "dev_nemotron_fin_structured"]
+DEV = ["eval_gretel_fin", "eval_nemotron_fin", "dev_nemotron_fin_structured", "dev_nemotron_med"]
 _P = None
 
 def _init():

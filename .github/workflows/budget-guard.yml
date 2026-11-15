@@ -1,0 +1,26 @@
+# Hourly cost guard for the Fly API: see scripts/budget_guard.py. A failed run means an alert or a stop; GitHub
+# emails the repository owner about failed scheduled runs (Settings -> Notifications -> Actions).
+name: budget-guard
+on:
+  schedule: [{ cron: "23 * * * *" }]
+  workflow_dispatch:
+    inputs:
+      dry_run: { description: "Report only, change nothing", type: boolean, default: true }
+permissions: { contents: read }
+concurrency: { group: budget-guard, cancel-in-progress: false }
+jobs:
+  guard:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: superfly/flyctl-actions/setup-flyctl@1.5
+      - name: Check the last 24 hours of running time against the monthly cap
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+          APP: redactd-api
+          MONTHLY_CAP_USD: "15"
+          MONTHLY_ALERT_USD: "10"
+          HOURLY_USD: "0.0904"      # performance-2x, 2 vCPU / 4 GB: $66 / 730 h. Update if the machine size changes.
+          DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run && '1' || '0' }}
+        run: python3 scripts/budget_guard.py

@@ -66,7 +66,8 @@ guessing and is a reasonable next step. Advise users to store the key apart from
 | Memory inspection or a core dump of a live API process. | Text exists only for the duration of the request; job results are deleted on first read or after `JOB_TTL_S`. Disable core dumps and swap on the API hosts. |
 | The hosting provider or a network observer. | TLS to the API. In on-device mode the document never leaves the browser, which is the answer for users who cannot accept this risk. |
 | Redis (jobs) holds findings for large files. | Offsets and categories only, never text; TTL; deleted on collection. Use TLS and auth on Redis. |
-| Abuse of the API as an oracle. | Per-key and per-IP rate limits, monthly character quotas, API keys stored as SHA-256 hashes. |
+| Abuse of the API as an oracle. | With `REQUIRE_API_KEY`, every POST and model download needs a key (the website's is only loadable behind Vercel Authentication); per-key and per-IP rate limits, monthly character quotas, keys stored as SHA-256 hashes. |
+| Running up the hosting bill (no cap at Fly). | Hourly budget guard removes the machine above a $15/month pace (`scripts/budget_guard.py`); model downloads rate-limited per client. |
 
 ## Not addressed yet
 

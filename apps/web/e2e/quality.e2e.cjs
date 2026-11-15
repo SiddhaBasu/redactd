@@ -2,6 +2,7 @@
 //  * axe-core: no WCAG 2.2 A/AA violations on every page and state, at 1280 px and 360 px, light and dark
 //  * 1 MB document (~10k findings): stage-by-stage progress over SSE, then no long task over 100 ms while scrolling
 const { chromium } = require("playwright");
+const { loadSample, setOptions, scanButton } = require("./ui.cjs");
 const fs = require("fs"), path = require("path"), assert = require("assert/strict");
 const BASE = process.env.BASE_URL || "http://127.0.0.1:3000";
 const AXE = fs.readFileSync(require.resolve("axe-core/axe.min.js"), "utf8");
@@ -33,13 +34,16 @@ async function axe(p, label) {
     for (const route of ["/", "/privacy", "/restore"]) { await p.goto(BASE + route, { waitUntil: "networkidle" }); violations.push(...await axe(p, `${route} ${tag}`)); }
     await p.goto(`${BASE}/redact`, { waitUntil: "networkidle" });
     violations.push(...await axe(p, `/redact empty ${tag}`));
-    const scan = p.getByRole("button", { name: "Scan for sensitive data" });
-    for (let i = 0; i < 20 && !(await scan.isEnabled()); i++) { await p.getByRole("button", { name: "Try the sample document" }).click().catch(() => {}); await p.waitForTimeout(300); }
-    await p.getByRole("radio", { name: /^Fast/ }).click(); await scan.click();
+    const scan = await loadSample(p);
+    await p.getByRole("button", { name: /Options/ }).click(); await p.getByRole("dialog", { name: "Options" }).waitFor();
+    violations.push(...await axe(p, `/redact options drawer ${tag}`)); await p.keyboard.press("Escape");
+    await setOptions(p, { mode: "Fast" }); await scan.click();
     await p.getByText("Leak check passed").waitFor();
     await p.getByTestId("viewer").focus(); await p.keyboard.press("j"); await p.keyboard.press("x");
     violations.push(...await axe(p, `/redact review ${tag}`));
-    for (const t of [/Needs review/, "Values"]) { await p.getByRole("tab", { name: t }).click(); violations.push(...await axe(p, `/redact tab ${t} ${tag}`)); }
+    await p.getByRole("button", { name: "Details" }).click(); await p.getByRole("dialog", { name: "Findings" }).waitFor();
+    for (const t of ["Categories", /Needs review/, "Values"]) { await p.getByRole("tab", { name: t }).click(); violations.push(...await axe(p, `/redact findings drawer ${t} ${tag}`)); }
+    await p.keyboard.press("Escape"); await p.getByRole("button", { name: /More$/ }).click(); violations.push(...await axe(p, `/redact export more ${tag}`));
     await p.getByTestId("viewer").focus(); await p.keyboard.press("d"); violations.push(...await axe(p, `/redact diff ${tag}`)); await p.keyboard.press("d");
     await p.keyboard.press("?"); await p.getByRole("dialog").waitFor(); violations.push(...await axe(p, `/redact shortcuts ${tag}`)); await p.keyboard.press("Escape");
     // no horizontal page scroll at this width
@@ -53,9 +57,9 @@ async function axe(p, label) {
   const p = await ctx.newPage();
   await p.goto(`${BASE}/redact`, { waitUntil: "networkidle" });
   const doc = bigDoc(); const file = path.join(require("os").tmpdir(), "redactd-1mb.txt"); fs.writeFileSync(file, doc);
-  const scan = p.getByRole("button", { name: "Scan for sensitive data" });
+  const scan = scanButton(p);
   for (let i = 0; i < 20 && !(await scan.isEnabled()); i++) { await p.locator("input[type=file]").first().setInputFiles(file); await p.waitForTimeout(500); }
-  await p.getByRole("radio", { name: new RegExp(`^${process.env.BIG_MODE || "Fast"}`) }).click();
+  await setOptions(p, { mode: process.env.BIG_MODE || "Fast" });
   const stages = new Set(); const t0 = Date.now();
   await scan.click();
   while (!(await p.getByTestId("viewer").count())) {

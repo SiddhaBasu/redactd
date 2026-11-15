@@ -32,7 +32,8 @@ export async function verifiedFile(base: string, model: string, file: string, on
     if (buf.byteLength === want.bytes && (await sha256(buf)) === want.sha256) { onBytes?.(buf.byteLength); return buf; }
     await cache!.delete(url);      // corrupted or tampered cache entry: download again
   }
-  const r = await fetch(url, { cache: "no-store", credentials: "omit" });
+  const key = process.env.NEXT_PUBLIC_API_KEY;     // the API serves model files only to this site's key when REQUIRE_API_KEY is on
+  const r = await fetch(url, { cache: "no-store", credentials: "omit", headers: key ? { Authorization: `Bearer ${key}` } : undefined });
   if (!r.ok || !r.body) throw new Error(`could not download ${model}/${file} (${r.status})`);
   const reader = r.body.getReader(), chunks: Uint8Array[] = [];
   let n = 0;

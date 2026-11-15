@@ -4,6 +4,10 @@ import { convertOffsets } from "./redact.ts";
 import type { DetectMode, Options, Span } from "./types.ts";
 
 export const API_BASE = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000").replace(/\/$/, "");
+/** Key the website sends to the API (set NEXT_PUBLIC_API_KEY in Vercel). It is part of the page code, so it is only
+ *  as private as the site itself: keep Vercel Authentication on ("All Deployments") so only you can load the site. */
+const API_KEY = process.env.NEXT_PUBLIC_API_KEY || "";
+export const authHeaders = (): Record<string, string> => (API_KEY ? { Authorization: `Bearer ${API_KEY}` } : {});
 const SYNC_LIMIT = 200_000;
 
 export interface Health { status: string; ready_modes: string[]; versions?: Record<string, string>; sync_limit_chars?: number }
@@ -26,12 +30,13 @@ async function fail(r: Response): Promise<never> {
   let detail = `${r.status}`;
   try { const j = await r.json(); if (typeof j.detail === "string") detail = j.detail; } catch { /* no body */ }
   if (r.status === 429) throw new Error("Too many requests. Wait a minute and try again, or switch to on-device processing.");
+  if (r.status === 401) throw new Error("The server did not accept this site's API key. Check NEXT_PUBLIC_API_KEY in the Vercel project settings.");
   if (r.status === 413) throw new Error("This document is too large for the server.");
   throw new Error(`The server could not process this document (${detail}).`);
 }
 
 export async function detectOnServer(text: string, mode: DetectMode, o: Options, onProgress?: Progress, signal?: AbortSignal): Promise<DetectResult> {
-  const headers = { "Content-Type": "application/json" };
+  const headers = { "Content-Type": "application/json", ...authHeaders() };
   let res: DetectResult;
   if (text.length <= SYNC_LIMIT / 4) {
     onProgress?.("Scanning on the server", 30);
@@ -72,7 +77,7 @@ export interface Extracted { text: string; format: string; attachments: number; 
 export async function extractOnServer(file: File, includeAttachments = false, signal?: AbortSignal): Promise<Extracted> {
   const fd = new FormData();
   fd.append("file", file, file.name); fd.append("include_attachments", includeAttachments ? "true" : "false");
-  const r = await fetch(`${API_BASE}/v1/extract`, { method: "POST", body: fd, signal });
+  const r = await fetch(`${API_BASE}/v1/extract`, { method: "POST", body: fd, signal, headers: authHeaders() });
   if (!r.ok) {
     let detail = "";
     try { detail = (await r.json()).detail ?? ""; } catch { /* no body */ }

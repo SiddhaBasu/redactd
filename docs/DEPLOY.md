@@ -16,7 +16,8 @@ configuration below is ready but unapplied.
 | Variable | Example | Purpose |
 |---|---|---|
 | `NEXT_PUBLIC_API_URL` | `https://api.redactd.example` | API origin. Also added to the CSP `connect-src`. |
-| `NEXT_PUBLIC_MODEL_BASE` | `https://models.redactd.example/` | Where the worker downloads model files. Default `/models/` (same origin). Added to `connect-src`. |
+| `NEXT_PUBLIC_MODEL_BASE` | `https://redactd-api.fly.dev/models/` | Where the worker downloads model files (the API serves them). Added to `connect-src`. |
+| `NEXT_PUBLIC_API_KEY` | (secret-ish) | The key the website sends to the API. Same value as the `WEB_API_KEY` GitHub secret. It is visible in the page code, so keep **Vercel Authentication → All Deployments** on: then only you can load the site. |
 
 Build: `npm ci && node scripts/model-manifest.mjs <models dir> && next build`. The manifest
 (`lib/models.manifest.json`) must be generated from the exact files uploaded to R2 and committed with the release.
@@ -37,7 +38,10 @@ R2 must send `Access-Control-Allow-Origin: <web origin>` and `Cross-Origin-Resou
 | `OPENMED_DIR`, `GLINER_DIR`, `DISTILLED_DIR` | `/models/...` in the image | Model directories. |
 | `REDACTD_STANDARD`, `REDACTD_THOROUGH` | `openmed`, `openmed,gliner` | Which models each mode runs, e.g. `REDACTD_STANDARD=distilled`. |
 | `RATE_PER_MINUTE`, `ANON_RATE_PER_MINUTE` | `60`, `20` | Default per-key and anonymous limits. |
-| `REQUIRE_API_KEY` | `0` | `1` rejects anonymous `/v1/*` calls. |
+| `REQUIRE_API_KEY` | `0` | `1` rejects every keyless POST and keyless model-file download (set automatically by the deploy workflow when `WEB_API_KEY` exists). |
+| `STATIC_API_KEY_SHA256` | empty | SHA-256 of keys configured as secrets (the website key). Set by the deploy workflow; the key itself never reaches Fly. |
+| `MODEL_FILES_PER_MINUTE` | `40` | On-device model downloads allowed per client per minute. |
+| `JOB_MAX_RUN_S` | `3600` | How long a large-file job may run; `JOB_TTL_S` (600) is the collection window after it finishes. |
 | `MAX_CHARS`, `SYNC_LIMIT_CHARS`, `MAX_UPLOAD_BYTES`, `JOB_TTL_S` | 1 000 000, 200 000, 10 000 000, 600 | Limits. |
 | `LOG_FORMAT` | `json` | Metadata-only JSON lines on stdout. |
 | `OTEL_EXPORTER_OTLP_ENDPOINT` (+ standard `OTEL_*`) | empty | Set to export traces; install `opentelemetry-sdk` and `opentelemetry-exporter-otlp-proto-http`. |
@@ -47,6 +51,24 @@ Release steps: `alembic upgrade head` (the Fly `release_command` does this), the
 
 Sizing: one detection uses `MODEL_THREADS` cores; see `bench/out/load.md` for measured latency and throughput.
 Give the machine a memory limit and disable swap and core dumps (see `docs/THREAT_MODEL.md`).
+
+## Website API key (once)
+
+1. Generate a key on your own machine: `openssl rand -hex 32`.
+2. Vercel → project → Settings → Environment Variables: `NEXT_PUBLIC_API_KEY` = the key (Production and Preview), then redeploy.
+3. GitHub → Settings → Secrets and variables → Actions: `WEB_API_KEY` = the same key.
+4. Run **Actions → deploy-api**. The workflow stores only the key's SHA-256 on Fly, turns on `REQUIRE_API_KEY`, and its
+   smoke test checks that a keyless request is refused.
+5. Vercel → Settings → Deployment Protection → **Vercel Authentication**, scope **All Deployments** (free on Hobby;
+   "Standard Protection" would leave the production URL public).
+
+## Cost guard
+
+`.github/workflows/budget-guard.yml` runs hourly with the `FLY_API_TOKEN` secret. Fly has no spending cap, so it reads
+the machine's running time over the last 24 hours from Fly's metrics and turns it into a monthly pace: above $10 the
+run fails (GitHub emails you), above $15 it removes the machine (`fly scale count 0`), and it restores one machine once
+the last 24 hours are back under the $10 pace. Manual runs default to a dry run. Change `MONTHLY_CAP_USD`,
+`MONTHLY_ALERT_USD` and `HOURLY_USD` in the workflow if the machine size changes.
 
 ## CI
 

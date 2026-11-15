@@ -27,9 +27,11 @@ SETS = [  # (name, role, description)
     ("eval_nemotron_fin_structured", "held-out", "Nemotron finance, structured format, 300 docs"),
     ("eval_gretel_en", "held-out", "Gretel general-domain PII, 300 docs (labels recovered by exact match)"),
     ("eval_adversarial", "regression", "Synthetic hard cases, 160 docs. Rules WERE tuned on it: an acceptance suite, not a held-out set"),
+    ("eval_nemotron_med", "held-out", "Nemotron Health + Healthcare Providers, 300 docs, both formats (no health docs in training)"),
     ("eval_gretel_fin", "dev", "Gretel finance test, 200 docs — used for tuning"),
     ("eval_nemotron_fin", "dev", "Nemotron finance, unstructured, 300 docs — used for tuning; optimistic"),
     ("dev_nemotron_fin_structured", "dev", "Nemotron finance, structured, 200 docs — used for tuning"),
+    ("dev_nemotron_med", "dev", "Nemotron Health + Healthcare Providers, 200 docs — used for tuning the Medical domain"),
 ]
 ROLE = {n: r for n, r, _ in SETS}
 _P = None
