@@ -49,7 +49,8 @@ const on = (s: ReviewState) => s.spans.map((x) => x.accepted);
 
 test("review: toggle one, toggle every occurrence of a value, bulk by type, undo and redo", () => {
   let s = load();
-  assert.deepEqual(on(s), [true, true, true, true]); assert.equal(s.focus, 0);
+  assert.deepEqual(on(s), [true, true, true, true]); assert.equal(s.focus, -1, "nothing focused (no detail card) right after a scan");
+  s = reviewReducer(s, { type: "focus", id: 0 });
   s = reviewReducer(s, { type: "toggle", id: 1 }); assert.deepEqual(on(s), [true, false, true, true]);
   s = reviewReducer(s, { type: "toggleValue", id: 0 }); assert.deepEqual(on(s), [false, false, false, true]);
   s = reviewReducer(s, { type: "setType", piiType: "NAME", accepted: true }); assert.deepEqual(on(s), [true, true, true, true]);
@@ -64,6 +65,7 @@ test("review: toggle one, toggle every occurrence of a value, bulk by type, undo
 });
 test("review: keyboard navigation wraps and can be restricted to a filter", () => {
   let s = load();
+  s = reviewReducer(s, { type: "move", dir: 1 }); assert.equal(s.focus, 0, "j from nothing focused goes to the first finding");
   s = reviewReducer(s, { type: "move", dir: 1 }); assert.equal(s.focus, 1);
   s = reviewReducer(s, { type: "move", dir: -1 }); s = reviewReducer(s, { type: "move", dir: -1 }); assert.equal(s.focus, 3);
   s = reviewReducer(s, { type: "move", dir: 1, among: (x) => (x.score ?? 1) < 0.7 }); assert.equal(s.focus, 1);

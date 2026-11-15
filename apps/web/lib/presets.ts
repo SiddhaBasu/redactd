@@ -1,11 +1,11 @@
 // Redaction policies (task D4). A preset is plain data: an output style plus detection options. Unit-tested in
 // presets.test.ts. Custom terms and the allow-list are per user, stored in this browser only (localStorage) and
 // applied on the device; they are never sent to the server.
-import { DEFAULT_OPTIONS, type Options, type OutputStyle, type PiiType } from "./types.ts";
+import { DEFAULT_OPTIONS, type Domain, type Options, type OutputStyle, type PiiType } from "./types.ts";
 
 export interface Preset { id: string; name: string; summary: string; style: OutputStyle; options: Partial<Options> }
 export const PRESETS: Preset[] = [
-  { id: "standard", name: "Standard", summary: "Reversible placeholders. Redacts every category; keeps public bodies and reporting periods.",
+  { id: "standard", name: "Default", summary: "Reversible placeholders. Redacts every category; keeps public bodies and reporting periods.",
     style: "placeholder", options: { excludeTypes: [], orgAllowlist: true, dropNonpersonalDates: true } },
   { id: "llm", name: "Share with LLM", summary: "Reversible placeholders. Keeps organisations and dates so the text still makes sense to a model.",
     style: "placeholder", options: { excludeTypes: ["ORG", "DATE"], orgAllowlist: true, dropNonpersonalDates: true } },
@@ -16,8 +16,9 @@ export const PRESETS: Preset[] = [
 ];
 export const presetById = (id: string) => PRESETS.find((p) => p.id === id) ?? PRESETS[0];
 
-export interface UserPolicy { presetId: string; keepLast4: boolean; customTerms: string[]; allowTerms: string[]; sensitivity: number }
-export const DEFAULT_POLICY: UserPolicy = { presetId: "standard", keepLast4: false, customTerms: [], allowTerms: [], sensitivity: DEFAULT_OPTIONS.sensitivity };
+export interface UserPolicy { presetId: string; keepLast4: boolean; customTerms: string[]; allowTerms: string[]; sensitivity: number; domain: Domain }
+export const DEFAULT_POLICY: UserPolicy = { presetId: "standard", keepLast4: false, customTerms: [], allowTerms: [], sensitivity: DEFAULT_OPTIONS.sensitivity, domain: "general" };
+export const DOMAIN_IDS: Domain[] = ["general", "medical"];
 
 /** Detection options for a preset plus the user's own settings. */
 export function optionsFor(policy: UserPolicy): Options {
@@ -41,7 +42,8 @@ export function loadPolicy(): UserPolicy {
     if (!raw || typeof raw !== "object") return DEFAULT_POLICY;
     return { presetId: presetById(String(raw.presetId)).id, keepLast4: !!raw.keepLast4, customTerms: cleanTerms(Array.isArray(raw.customTerms) ? raw.customTerms.map(String) : []),
       allowTerms: cleanTerms(Array.isArray(raw.allowTerms) ? raw.allowTerms.map(String) : []),
-      sensitivity: typeof raw.sensitivity === "number" && raw.sensitivity >= 0.1 && raw.sensitivity <= 0.8 ? raw.sensitivity : DEFAULT_POLICY.sensitivity };
+      sensitivity: typeof raw.sensitivity === "number" && raw.sensitivity >= 0.1 && raw.sensitivity <= 0.8 ? raw.sensitivity : DEFAULT_POLICY.sensitivity,
+      domain: DOMAIN_IDS.includes(raw.domain) ? raw.domain : "general" };
   } catch { return DEFAULT_POLICY; }
 }
 export function savePolicy(p: UserPolicy) { try { localStorage.setItem(KEY, JSON.stringify(p)); } catch { /* private mode: keep in memory only */ } }

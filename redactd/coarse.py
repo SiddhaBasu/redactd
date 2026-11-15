@@ -14,7 +14,9 @@ GROUPS = {
     "DATE": ["date", "time", "date_time", "date_of_birth"],
     "ORG": ["company", "company_name"],
     "DEMOGRAPHIC": ["occupation", "employment_status", "education_level", "age", "gender", "race_ethnicity",
-                    "religious_belief", "political_view", "sexuality", "language", "blood_type"],
+                    "religious_belief", "political_view", "sexuality", "language"],
+    # health information (special-category data): mostly found by the Medical domain bundle (redactd/domains.py)
+    "HEALTH": ["blood_type", "medical_condition", "medication"],
 }
 TYPES = list(GROUPS)
 COARSE = {l: g for g, ls in GROUPS.items() for l in ls}

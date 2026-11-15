@@ -16,7 +16,7 @@ const PAD_X = 12, OVERSCAN = 12, POP_W = 340;
 
 export interface ViewerHandle { scrollToSpan: (id: number) => void; focus: () => void; rows: () => Rows | null; selection: () => { start: number; end: number } | null }
 interface Props {
-  text: string; spans: ReviewSpan[]; focus: number; mode: "review" | "diff";
+  text: string; spans: ReviewSpan[]; focus: number; mode: "review" | "diff" | "output";
   /** replacement string per span id (diff mode / output preview) */
   replacements?: string[];
   hidden: Set<PiiType>; dim?: (s: ReviewSpan) => boolean;
@@ -128,7 +128,8 @@ export const Viewer = forwardRef<ViewerHandle, Props>(function Viewer(p, ref) {
           <div className="absolute inset-y-0 right-0 overflow-hidden" style={{ width: "50%", borderLeft: "1px solid var(--border)" }}><RowWrap side="out"><Row text={text} a={a} b={b} top={0} spans={spans} i0={i0} focus={-1} hidden={p.hidden} replacements={p.replacements} side="out" /></RowWrap></div>
         </div>,
       );
-    } else rendered.push(<RowWrap key={r} side="orig" top={top}><Row text={text} a={a} b={b} top={0} spans={spans} i0={i0} focus={focus} hidden={p.hidden} dim={p.dim} side="orig" /></RowWrap>);
+    } else if (mode === "output") rendered.push(<RowWrap key={r} side="out" top={top}><Row text={text} a={a} b={b} top={0} spans={spans} i0={i0} focus={-1} hidden={p.hidden} replacements={p.replacements} side="out" /></RowWrap>);
+    else rendered.push(<RowWrap key={r} side="orig" top={top}><Row text={text} a={a} b={b} top={0} spans={spans} i0={i0} focus={focus} hidden={p.hidden} dim={p.dim} side="orig" /></RowWrap>);
   }
 
   // ---- popover for the focused finding
@@ -184,13 +185,14 @@ export const Viewer = forwardRef<ViewerHandle, Props>(function Viewer(p, ref) {
   };
 
   return (
-    <div className="relative flex" style={{ height: p.height ?? `min(62vh, 640px, ${Math.max(300, total + 250)}px)` }}>
+    // fits short documents; while the detail card is open there is room below the last line for it
+    <div className="relative flex" style={{ height: p.height ?? `min(62vh, 640px, ${Math.max(120, total + (pop ? 230 : 18))}px)` }}>
       <span ref={probe} aria-hidden="true" className="doc pointer-events-none invisible absolute">{"0".repeat(40)}</span>
       <div ref={scroller} onScroll={onScroll} onClick={onClick} tabIndex={0} role="group" data-testid="viewer"
         aria-label={`Document with ${spans.length} findings. Press j or k to move between findings, x to redact or keep, question mark for all shortcuts.`}
         aria-activedescendant={f ? `f-${f.id}` : undefined}
         className="doc relative min-w-0 flex-1 overflow-y-auto overflow-x-hidden rounded-l-lg" style={{ background: "var(--surface)", border: "1px solid var(--border)", overscrollBehavior: "contain" }}>
-        <div style={{ height: total + (mode === "review" ? 220 : 0), position: "relative" }}>
+        <div style={{ height: total + (pop ? 220 : 0), position: "relative" }}>
           {rendered}
           {pop}
         </div>

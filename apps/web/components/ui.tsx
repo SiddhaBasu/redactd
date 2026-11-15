@@ -65,6 +65,12 @@ export function Dialog({ title, onClose, children, wide, drawer }: { title: stri
 }
 
 type Theme = "system" | "light" | "dark";
+function ThemeIcon({ theme }: { theme: Theme }) {
+  const c = { width: 16, height: 16, viewBox: "0 0 16 16", fill: "none", stroke: "currentColor", strokeWidth: 1.5, "aria-hidden": true } as const;
+  if (theme === "light") return <svg {...c}><circle cx="8" cy="8" r="3" />{[0, 45, 90, 135, 180, 225, 270, 315].map((a) => <line key={a} x1="8" y1="1.5" x2="8" y2="3" transform={`rotate(${a} 8 8)`} strokeLinecap="round" />)}</svg>;
+  if (theme === "dark") return <svg {...c}><path d="M13 9.5A5.5 5.5 0 1 1 6.5 3a4.5 4.5 0 0 0 6.5 6.5z" strokeLinejoin="round" /></svg>;
+  return <svg {...c}><circle cx="8" cy="8" r="5.5" /><path d="M8 2.5a5.5 5.5 0 0 1 0 11z" fill="currentColor" stroke="none" /></svg>;
+}
 export function ThemeToggle() {
   const [theme, setTheme] = useState<Theme>("system");
   useEffect(() => { try { const t = localStorage.getItem("redactd.theme") as Theme | null; if (t === "light" || t === "dark") setTheme(t); } catch { /* ignore */ } }, []);
@@ -76,7 +82,7 @@ export function ThemeToggle() {
   const next: Theme = theme === "system" ? "light" : theme === "light" ? "dark" : "system";
   return (
     <button type="button" className="btn btn-ghost btn-sm" onClick={() => setTheme(next)} aria-label={`Theme: ${theme}. Switch to ${next}.`} title={`Theme: ${theme}`}>
-      <span aria-hidden="true">{theme === "system" ? "◐" : theme === "light" ? "☀" : "☾"}</span><span className="hidden sm:inline">{theme[0].toUpperCase() + theme.slice(1)}</span>
+      <ThemeIcon theme={theme} /><span className="hidden sm:inline">{theme[0].toUpperCase() + theme.slice(1)}</span>
     </button>
   );
 }

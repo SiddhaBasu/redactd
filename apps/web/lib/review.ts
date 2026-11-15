@@ -40,7 +40,7 @@ export function reviewReducer(st: ReviewState, a: ReviewAction): ReviewState {
   switch (a.type) {
     case "load": {
       const spans = index(a.spans.map((s) => ({ ...s, accepted: !a.rejected?.has(decisionKey(s.type, a.text.slice(s.start, s.end))) })));
-      return { text: a.text, spans, focus: spans.length ? 0 : -1, past: [], future: [] };
+      return { text: a.text, spans, focus: -1, past: [], future: [] };   // nothing focused until the user clicks or presses j
     }
     case "focus": return a.id >= -1 && a.id < st.spans.length ? { ...st, focus: a.id } : st;
     case "move": {
