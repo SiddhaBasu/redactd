@@ -1,6 +1,4 @@
-export type PiiType = "NAME" | "CONTACT" | "ADDRESS" | "GOV_ID" | "FIN_ID" | "SECRET" | "NETWORK" | "DATE" | "ORG" | "DEMOGRAPHIC" | "HEALTH" | "CUSTOM";
-/** Document type: adds that domain's model labels on top of the general detectors (redactd/domains.py). */
-export type Domain = "general" | "medical";
+export type PiiType = "NAME" | "CONTACT" | "ADDRESS" | "GOV_ID" | "FIN_ID" | "SECRET" | "NETWORK" | "DATE" | "ORG" | "DEMOGRAPHIC" | "CUSTOM";
 export type DetectMode = "rules" | "standard" | "thorough";
 export type OutputStyle = "placeholder" | "label" | "block";
 
@@ -37,7 +35,7 @@ export const DEFAULT_OPTIONS: Options = {
   customTerms: [], allowTerms: [], excludeTypes: [],
 };
 
-export type WorkerRequest = { kind: "detect"; text: string; mode: DetectMode; sensitivity: number; domain?: Domain };
+export type WorkerRequest = { kind: "detect"; text: string; mode: DetectMode; sensitivity: number };
 export type WorkerResponse =
   | { kind: "progress"; stage: string; pct: number }
   | { kind: "result"; spans: Span[]; ms: number; versions?: Record<string, string>; timings?: Record<string, number> }

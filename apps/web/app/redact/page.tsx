@@ -4,7 +4,7 @@
 // browser by lib/redact.ts finalize(), so presets, custom terms and the allow-list never leave the device and can
 // be changed after a scan without sending the document again.
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
-import { DOMAINS, TYPE_INFO, TYPES } from "../../lib/labels";
+import { TYPE_INFO, TYPES } from "../../lib/labels";
 import { finalize, leakCheck, render, replacementsFor } from "../../lib/redact";
 import { sealVault, passwordStrength } from "../../lib/vault";
 import { detectOnServer, extractOnServer, serverHealth } from "../../lib/api";
@@ -20,7 +20,7 @@ import { Sidebar } from "../../components/Sidebar";
 import type { Where } from "../../components/DataPanel";
 import { ShortcutOverlay } from "../../components/Shortcuts";
 import { Dialog, Progress, Segmented, Switch } from "../../components/ui";
-import { DOMAIN_IDS, PRESETS, parseTerms } from "../../lib/presets";
+import { PRESETS, parseTerms } from "../../lib/presets";
 
 const MAX_BYTES = 1_000_000;
 const MODES: { id: DetectMode; name: string; note: string }[] = [
@@ -53,7 +53,7 @@ export default function RedactPage() {
   // ---- scan
   const [progress, setProgress] = useState<{ stage: string; pct: number } | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [scan, setScan] = useState<{ raw: Span[]; ms: number; versions: Record<string, string>; where: Where; mode: DetectMode; domain: string } | null>(null);
+  const [scan, setScan] = useState<{ raw: Span[]; ms: number; versions: Record<string, string>; where: Where; mode: DetectMode } | null>(null);
   const abort = useRef<AbortController | null>(null);
   const worker = useRef<Worker | null>(null);
   // ---- review
@@ -125,7 +125,7 @@ export default function RedactPage() {
     setError(null); setScan(null); setLeaks([]);
     const doc = text, t0 = performance.now(), opts = optionsFor(policy);
     const done = (raw: Span[], versions: Record<string, string>) => {
-      setScan({ raw, ms: performance.now() - t0, versions: { ...versions, "rules (browser)": RULES_VERSION }, where, mode, domain: policy.domain });
+      setScan({ raw, ms: performance.now() - t0, versions: { ...versions, "rules (browser)": RULES_VERSION }, where, mode });
       apply(raw, doc, policy); setProgress(null);
       setAnnounce("Scan complete. Review the findings."); setTimeout(() => viewer.current?.focus(), 50);
     };
@@ -133,7 +133,7 @@ export default function RedactPage() {
     if (where === "server") {
       abort.current = new AbortController();
       try {
-        const r = await detectOnServer(doc, mode, opts, (stage, pct) => setProgress({ stage, pct }), abort.current.signal, policy.domain);
+        const r = await detectOnServer(doc, mode, opts, (stage, pct) => setProgress({ stage, pct }), abort.current.signal);
         done(r.spans, r.versions ?? {});
       } catch (e) {
         setProgress(null);
@@ -149,7 +149,7 @@ export default function RedactPage() {
       else done(m.spans, m.versions ?? {});
     };
     worker.current.onerror = () => { setError("On-device detection could not start in this browser."); setProgress(null); };
-    worker.current.postMessage({ kind: "detect", text: doc, mode, sensitivity: opts.sensitivity, domain: policy.domain });
+    worker.current.postMessage({ kind: "detect", text: doc, mode, sensitivity: opts.sensitivity });
   }
   function cancel() { abort.current?.abort(); worker.current?.terminate(); worker.current = null; setProgress(null); }
 
@@ -221,7 +221,7 @@ export default function RedactPage() {
 
   // ---- export
   const versions = scan?.versions ?? {};
-  const report = () => buildReport({ chars: text.length, fileName, where: scan?.where ?? where, mode: scan?.mode ?? mode, ms: scan?.ms ?? null, versions, presetName: presetById(policy.presetId).name, documentType: DOMAINS[policy.domain].name,
+  const report = () => buildReport({ chars: text.length, fileName, where: scan?.where ?? where, mode: scan?.mode ?? mode, ms: scan?.ms ?? null, versions, presetName: presetById(policy.presetId).name,
     style, options: optionsFor(policy), spans, leaks: leaks?.length ?? 0 });
   const strength = passwordStrength(password);
   async function downloadKey() {
@@ -269,8 +269,7 @@ export default function RedactPage() {
       <button type="button" className="btn btn-ghost btn-sm" onClick={() => setAttach(null)}>No thanks</button>
     </div>
   );
-  const needsGliner = mode === "thorough" || (mode === "standard" && policy.domain !== "general");
-  const modelMb = mode === "rules" ? 0 : modelMegabytes([hasModel("redactd-small") ? "redactd-small" : "openmed-small", ...(needsGliner ? ["gliner"] : [])]);
+  const modelMb = mode === "rules" ? 0 : modelMegabytes([hasModel("redactd-small") ? "redactd-small" : "openmed-small", ...(mode === "thorough" ? ["gliner"] : [])]);
   const sensLabel = policy.sensitivity <= 0.3 ? "catch more" : policy.sensitivity >= 0.6 ? "fewer flags" : "balanced";
   const sensitivity = (
     <label className="flex items-center gap-2 text-sm" htmlFor="sens">
@@ -286,11 +285,6 @@ export default function RedactPage() {
   // compact option controls (layouts a, b, c)
   const compactOptions = (
     <div className="space-y-4 text-sm">
-      <div className="flex flex-wrap items-center gap-3">
-        <span className="w-24 font-semibold">Document</span>
-        <Segmented label="Document type" value={policy.domain} onChange={(d) => setPolicy({ ...policy, domain: d })} options={DOMAIN_IDS.map((d) => ({ id: d, label: DOMAINS[d].name }))} />
-        <span className="text-xs muted">{DOMAINS[policy.domain].description}{policy.domain !== "general" && mode === "rules" ? " (needs Standard or Thorough)" : ""}</span>
-      </div>
       <div className="flex flex-wrap items-center gap-3">
         <span className="w-24 font-semibold">Detection</span>
         <Segmented label="Detection mode" value={mode} onChange={setMode} options={MODES.map((m) => ({ id: m.id, label: m.name }))} />
@@ -325,7 +319,7 @@ export default function RedactPage() {
       <p className="text-xs muted">Your policy, terms, review decisions, output and restore key stay in this browser. <a href="/privacy" className="link">Data policy</a></p>
     </div>
   );
-  const optionsSummary = `${policy.domain !== "general" ? DOMAINS[policy.domain].name + " · " : ""}${MODES.find((m) => m.id === mode)?.name} · ${where === "server" ? "our server" : "this device"} · ${presetById(policy.presetId).name}${policy.keepLast4 ? " · last 4 kept" : ""}`;
+  const optionsSummary = `${MODES.find((m) => m.id === mode)?.name} · ${where === "server" ? "our server" : "this device"} · ${presetById(policy.presetId).name}${policy.keepLast4 ? " · last 4 kept" : ""}`;
 
   const leakBadge = (
     <span className={`badge ${leaks === null ? "" : leakFail ? "badge-danger" : "badge-ok"}`} role="status" data-testid="leak-badge">
@@ -414,7 +408,6 @@ export default function RedactPage() {
             <span aria-hidden="true">⚙</span> Options
           </button>
           <span className="text-xs muted">{optionsSummary}</span>
-          {scan && scan.domain !== policy.domain && <span className="badge badge-warn" role="status">Document type changed: press Redact again to apply it</span>}
           <span className="ml-auto">{scanButton(scanned ? "Redact again" : "Redact")}</span>
         </div>
         {status}

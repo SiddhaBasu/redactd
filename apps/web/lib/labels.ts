@@ -19,11 +19,9 @@ export const TYPE_INFO: Record<PiiType, TypeInfo> = {
   DATE: { label: "Dates", short: "Date", tier: "indirect", token: "date", description: "Dates and times" },
   ORG: { label: "Organisations", short: "Org", tier: "indirect", token: "org", description: "Companies, banks, insurers" },
   DEMOGRAPHIC: { label: "Demographics", short: "Demo", tier: "indirect", token: "demo", description: "Age, gender, occupation and similar" },
-  HEALTH: { label: "Health info", short: "Health", tier: "indirect", token: "health", description: "Conditions, medications, blood type" },
   CUSTOM: { label: "Custom terms", short: "Custom", tier: "direct", token: "custom", description: "Terms you added" },
 };
 export const TYPES = Object.keys(TYPE_INFO) as PiiType[];
-export const DOMAINS = SPEC.domains as Record<string, { name: string; description: string; gliner: Record<string, PiiType> }>;
 export const SOURCE_NAMES: Record<string, string> = {
   rules: "Pattern rules", openmed: "OpenMed model", gliner: "GLiNER-PII model", distilled: "redactd-small model",
   propagated: "Repeat of another finding", manual: "Added by you", custom: "Your custom terms",

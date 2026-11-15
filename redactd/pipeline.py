@@ -8,8 +8,6 @@ Standard model for the distilled one is a one-line change. Models load lazily an
 from __future__ import annotations
 import os, time
 from . import rules
-from .domains import extra_labels
-from .types import GLINER_LABELS
 from .post import Span, Options, finalize, spans_json, trim_bounds  # noqa: F401  (re-exported)
 
 MODEL_NAMES = {"openmed": "OpenMed", "gliner": "GLiNER", "distilled": "redactd-small"}
@@ -61,34 +59,24 @@ class Pipeline:
     def versions(self) -> dict:
         return {"rules": rules.RULES_VERSION, **{n: os.path.basename(os.path.normpath(self.dirs[n] or "")) for ns in self.modes.values() for n in ns}}
 
-    def detect_raw(self, text: str, mode: str = "thorough", sensitivity: float = 0.35, progress=None,
-                   domain: str | None = None) -> tuple[list[Span], dict]:
-        """Unmerged findings from every stage (used by detect() and by bench/calibrate.py).
-        domain: a document type from redactd/domains.py. Its GLiNER labels are ADDED to GLiNER's general labels in
-        Thorough; in modes without GLiNER, GLiNER runs with only those labels."""
+    def detect_raw(self, text: str, mode: str = "thorough", sensitivity: float = 0.35, progress=None) -> tuple[list[Span], dict]:
+        """Unmerged findings from every stage (used by detect() and by bench/calibrate.py)."""
         t0 = time.perf_counter(); timings = {}
         raw = [Span(s, e, t, "rules", None, rid, [rules.WHY[rid]], ["rules"]) for s, e, t, rid in rules.detect_detailed(text)]
         timings["rules_ms"] = (time.perf_counter() - t0) * 1000
-        extra = extra_labels(domain) if mode != "rules" else {}
-        names = list(self.modes[mode])
-        if extra and "gliner" not in names: names.append("gliner")
+        names = self.modes[mode]
         for k, name in enumerate(names):
             t = time.perf_counter(); disp = MODEL_NAMES[name]
             cb = (lambda f, k=k, disp=disp: progress(f"Scanning with {disp}", 100 * (k + f) / len(names))) if progress else None
-            if name == "gliner":
-                labels = {**GLINER_LABELS, **extra} if "gliner" in self.modes[mode] else extra
-                found = self.model(name)(text, sensitivity, cb, labels)
-            else:
-                found = self.model(name)(text, sensitivity, cb)
-            for sp in found:
+            for sp in self.model(name)(text, sensitivity, cb):
                 raw.append(Span(sp.start, sp.end, sp.type, name, sp.score, sp.label, [f"{disp}: {sp.label.replace('_', ' ')} {sp.score:.2f}"], [name]))
             timings[f"{name}_ms"] = (time.perf_counter() - t) * 1000
         return raw, timings
 
     def detect(self, text: str, mode: str = "thorough", sensitivity: float = 0.35, options: Options | None = None,
-               progress=None, domain: str | None = None) -> tuple[list[Span], dict]:
+               progress=None) -> tuple[list[Span], dict]:
         t0 = time.perf_counter()
-        raw, timings = self.detect_raw(text, mode, sensitivity, progress, domain)
+        raw, timings = self.detect_raw(text, mode, sensitivity, progress)
         if progress: progress("Merging findings", 99)
         t = time.perf_counter()
         o = options or Options(sensitivity=sensitivity)

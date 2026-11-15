@@ -148,24 +148,20 @@ class GlinerOnnx:
                                         local_files_only=True, runtime_options={"session_options": so})
         self.labels = list(GLINER_LABELS); self.floor, self.batch_size, self.glue = threshold_floor, batch_size, glue
 
-    def __call__(self, text: str, sensitivity: float = 0.35, progress=None, labels: dict | None = None) -> list[RawSpan]:
-        """labels: {label: coarse type} to search for; default = the general label set (types.GLINER_LABELS)."""
-        label_map = labels if labels is not None else GLINER_LABELS
-        if not label_map: return []
-        names = list(label_map)
+    def __call__(self, text: str, sensitivity: float = 0.35, progress=None) -> list[RawSpan]:
         th = max(self.floor, sensitivity - 0.2)
         g = Glued(text) if self.glue else None
         parts = char_chunks(g.text if g else text, 1500, 200)
         out = []
         for i in range(0, len(parts), self.batch_size):
             batch = parts[i:i + self.batch_size]
-            res = self.m.inference([c for _, c, _, _ in batch], names, threshold=th, batch_size=self.batch_size)
+            res = self.m.inference([c for _, c, _, _ in batch], self.labels, threshold=th, batch_size=self.batch_size)
             for (off, chunk, cut_l, cut_r), ents in zip(batch, res):
                 for e in ents:
                     # an entity touching an internal chunk edge may be truncated; the neighbouring chunk has it whole
                     if (cut_l and e["start"] == 0) or (cut_r and e["end"] >= len(chunk)): continue
                     a, b = off + e["start"], off + e["end"]
                     if g: a, b = g.span(a, b)
-                    if b > a: out.append(RawSpan(a, b, label_map[e["label"]], float(e["score"]), e["label"]))
+                    if b > a: out.append(RawSpan(a, b, GLINER_LABELS[e["label"]], float(e["score"]), e["label"]))
             if progress: progress(min(1.0, (i + self.batch_size) / len(parts)))
         return out

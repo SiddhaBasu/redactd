@@ -28,7 +28,6 @@ SETS = [  # (name, role, description)
     ("eval_gretel_en", "held-out", "Gretel general-domain PII, 300 docs (labels recovered by exact match)"),
     ("eval_adversarial", "regression", "Synthetic hard cases, 160 docs. Rules WERE tuned on it: an acceptance suite, not a held-out set"),
     ("eval_nemotron_med", "held-out", "Nemotron Health + Healthcare Providers, 300 docs, both formats (no health docs in training)"),
-    ("eval_medical_synthetic", "regression", "Synthetic clinical documents, 60 docs: conditions, medications, NPI/DEA/NHS/MBI. Medical rules written against these cases"),
     ("eval_gretel_fin", "dev", "Gretel finance test, 200 docs — used for tuning"),
     ("eval_nemotron_fin", "dev", "Nemotron finance, unstructured, 300 docs — used for tuning; optimistic"),
     ("dev_nemotron_fin_structured", "dev", "Nemotron finance, structured, 200 docs — used for tuning"),
@@ -37,17 +36,15 @@ SETS = [  # (name, role, description)
 ROLE = {n: r for n, r, _ in SETS}
 _P = None
 
-def _init(mode, threads, domain="general"):
-    global _P, _MODE, _DOMAIN
-    _DOMAIN = domain
+def _init(mode, threads):
+    global _P, _MODE
     from redactd.pipeline import Pipeline
     _P = Pipeline.from_env(threads=threads); _MODE = mode; _P.warm(mode)
-    if domain != "general": _P.model("gliner")
 
 def _run(row):
     from redactd.vault import redact, leak_check
     text = row["text"]
-    spans, tm = _P.detect(text, _MODE, domain=_DOMAIN)
+    spans, tm = _P.detect(text, _MODE)
     tup = [(s.start, s.end, s.type) for s in spans]
     out, vault = redact(text, tup)
     direct = sorted({text[g["start"]:g["end"]] for g in row["spans"] if g["tier"] == "direct"})
@@ -108,11 +105,10 @@ def main():
     ap.add_argument("--limit", type=int, default=0); ap.add_argument("--workers", type=int, default=os.cpu_count() or 4)
     ap.add_argument("--threads", type=int, default=1); ap.add_argument("--tag", default="")
     ap.add_argument("--miss", action="store_true"); ap.add_argument("--save-preds", action="store_true")
-    ap.add_argument("--domain", default="general", help="document type (redactd/domains.py), e.g. medical")
     a = ap.parse_args()
     names = a.sets.split(",") if a.sets else [n for n, _, _ in SETS]
-    t_start = time.time(); report = {"mode": a.mode, "domain": a.domain, "sets": {}, "generated": time.strftime("%Y-%m-%d %H:%M UTC", time.gmtime()), "limit": a.limit}
-    with ProcessPoolExecutor(a.workers, initializer=_init, initargs=(a.mode, a.threads, a.domain)) as ex:
+    t_start = time.time(); report = {"mode": a.mode, "sets": {}, "generated": time.strftime("%Y-%m-%d %H:%M UTC", time.gmtime()), "limit": a.limit}
+    with ProcessPoolExecutor(a.workers, initializer=_init, initargs=(a.mode, a.threads)) as ex:
         list(ex.map(_warm, range(a.workers)))
         for name in names:
             rows = load(name, a.limit); t0 = time.time()

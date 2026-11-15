@@ -26,7 +26,6 @@
   --t-date-bg: #fbf0c4; --t-date-fg: #713f12; --t-date-bd: #a16207;
   --t-org-bg: #e2e5ea; --t-org-fg: #1f2937; --t-org-bd: #4b5563;
   --t-demo-bg: #e3efcf; --t-demo-fg: #365314; --t-demo-bd: #4d7c0f;
-  --t-health-bg: #d6f5ef; --t-health-fg: #0f4f45; --t-health-bd: #0f766e;
   --t-custom-bg: #1b1a18; --t-custom-fg: #ffffff; --t-custom-bd: #1b1a18;
   color-scheme: light;
 }
@@ -48,7 +47,6 @@
     --t-date-bg: #4d3a0c; --t-date-fg: #fdeeb5; --t-date-bd: #facc15;
     --t-org-bg: #353a43; --t-org-fg: #e5e9ef; --t-org-bd: #9ca3af;
     --t-demo-bg: #334713; --t-demo-fg: #e2f3c3; --t-demo-bd: #a3e635;
-    --t-health-bg: #114a43; --t-health-fg: #c8f5ec; --t-health-bd: #2dd4bf;
     --t-custom-bg: #f1efeb; --t-custom-fg: #121211; --t-custom-bd: #f1efeb;
     color-scheme: dark;
   }
@@ -68,7 +66,6 @@
   --t-date-bg: #4d3a0c; --t-date-fg: #fdeeb5; --t-date-bd: #facc15;
   --t-org-bg: #353a43; --t-org-fg: #e5e9ef; --t-org-bd: #9ca3af;
   --t-demo-bg: #334713; --t-demo-fg: #e2f3c3; --t-demo-bd: #a3e635;
-  --t-health-bg: #114a43; --t-health-fg: #c8f5ec; --t-health-bd: #2dd4bf;
   --t-custom-bg: #f1efeb; --t-custom-fg: #121211; --t-custom-bd: #f1efeb;
   color-scheme: dark;
 }
@@ -134,7 +131,6 @@ body { background: var(--bg); color: var(--fg); min-width: 320px; }
   .t-date { --bg-t: var(--t-date-bg); --fg-t: var(--t-date-fg); --bd: var(--t-date-bd); }
   .t-org { --bg-t: var(--t-org-bg); --fg-t: var(--t-org-fg); --bd: var(--t-org-bd); }
   .t-demo { --bg-t: var(--t-demo-bg); --fg-t: var(--t-demo-fg); --bd: var(--t-demo-bd); }
-  .t-health { --bg-t: var(--t-health-bg); --fg-t: var(--t-health-fg); --bd: var(--t-health-bd); }
   .t-custom { --bg-t: var(--t-custom-bg); --fg-t: var(--t-custom-fg); --bd: var(--t-custom-bd); }
   .swatch { display: inline-block; width: .8rem; height: .8rem; border-radius: 3px; background: var(--bg-t); box-shadow: inset 0 0 0 1.5px var(--bd); flex: none; }
   .chip { display: inline-flex; align-items: center; gap: .3rem; border-radius: 6px; padding: 0 .4rem; font-size: .75rem; font-weight: 650; background: var(--bg-t); color: var(--fg-t); box-shadow: inset 0 0 0 1px var(--bd); }

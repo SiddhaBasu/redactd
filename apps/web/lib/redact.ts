@@ -113,9 +113,7 @@ export function mergeSpans(text: string, spans: Span[]): Span[] {
     const a = g[0].start, b = Math.max(...g.map((x) => x.end));
     let best: Span | null = null;
     for (const x of g) if (x.source === "rules" && 2 * (x.end - x.start) >= b - a && (!best || x.end - x.start > best.end - best.start)) best = x;
-    // longest model finding; on equal length the more specific category wins (Health info over Demographics)
-    const spec = (t: string) => (t === "HEALTH" ? 1 : 0);
-    if (!best) for (const x of g) if (!best || x.end - x.start > best.end - best.start || (x.end - x.start === best.end - best.start && spec(x.type) > spec(best.type))) best = x;
+    if (!best) for (const x of g) if (!best || x.end - x.start > best.end - best.start) best = x;
     const scores = g.filter((x) => x.score !== null && x.score !== undefined).map((x) => x.score as number);
     const sources: string[] = [], why: string[] = [];
     for (const x of g) {
