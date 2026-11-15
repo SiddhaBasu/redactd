@@ -10,7 +10,7 @@ import { AutoTokenizer, AutoModelForTokenClassification, env, type PreTrainedTok
 import { env as xenv } from "@xenova/transformers";   // gliner.js loads its tokenizer through this older package
 import { Gliner } from "gliner";
 import { detectRules, RULES_VERSION, SPEC } from "../lib/rules";
-import { FINE_TO_COARSE, GLINER_LABELS } from "../lib/labels";
+import { DOMAINS, FINE_TO_COARSE, GLINER_LABELS } from "../lib/labels";
 import { MANIFEST, hasModel, prepareModels, verifiedCache } from "../lib/models";
 import type { PiiType, Span, WorkerRequest, WorkerResponse } from "../lib/types";
 
@@ -159,7 +159,7 @@ async function runTokenModel(text: string, sensitivity: number, from: number, to
 
 // ---------- GLiNER-PII (zero-shot span model)
 let gliner: Gliner | null = null;
-async function runGliner(text: string, threshold: number, from: number, to: number): Promise<Span[]> {
+async function runGliner(text: string, threshold: number, from: number, to: number, labelMap: Record<string, PiiType> = GLINER_LABELS): Promise<Span[]> {
   if (!gliner) {
     await ensure(["gliner"], from, from + (to - from) * 0.4);
     post({ kind: "progress", stage: "Starting GLiNER-PII", pct: from + (to - from) * 0.42 });
@@ -173,7 +173,7 @@ async function runGliner(text: string, threshold: number, from: number, to: numb
     });
     await gliner.initialize();
   }
-  const labels = Object.keys(GLINER_LABELS), g = glue(text), out: Span[] = [];
+  const labels = Object.keys(labelMap), g = glue(text), out: Span[] = [];
   const parts = chunks(g.text, 1500, 200), base = from + (to - from) * 0.45;
   for (let c = 0; c < parts.length; c++) {
     const { off, chunk, cutL, cutR } = parts[c];
@@ -181,7 +181,7 @@ async function runGliner(text: string, threshold: number, from: number, to: numb
     for (const e of res) {
       if ((cutL && e.start === 0) || (cutR && e.end >= chunk.length)) continue;
       const [a, b] = g.map(off + e.start, off + e.end);
-      if (b > a) out.push({ start: a, end: b, type: GLINER_LABELS[e.label], source: "gliner", score: e.score, label: e.label, why: [`GLiNER: ${e.label} ${e.score.toFixed(2)}`], sources: ["gliner"] });
+      if (b > a) out.push({ start: a, end: b, type: labelMap[e.label], source: "gliner", score: e.score, label: e.label, why: [`GLiNER: ${e.label} ${e.score.toFixed(2)}`], sources: ["gliner"] });
     }
     post({ kind: "progress", stage: "Scanning with GLiNER-PII", pct: base + ((to - base) * (c + 1)) / parts.length });
   }
@@ -190,6 +190,8 @@ async function runGliner(text: string, threshold: number, from: number, to: numb
 
 self.onmessage = async (ev: MessageEvent<WorkerRequest>) => {
   const { text, mode, sensitivity } = ev.data;
+  // a document type ADDS its GLiNER labels: merged into Thorough's list, or run alone in Standard (redactd/domains.py)
+  const extra = mode === "rules" ? {} : (DOMAINS[ev.data.domain ?? "general"]?.gliner ?? {});
   const t0 = performance.now();
   stageMs = {};
   try {
@@ -199,10 +201,11 @@ self.onmessage = async (ev: MessageEvent<WorkerRequest>) => {
       await loadTokenModel();
       spans = spans.concat(await timed("inference (token model)", () => runTokenModel(text, sensitivity, 3, mode === "thorough" ? 55 : 98)));
     }
-    if (mode === "thorough") spans = spans.concat(await runGliner(text, Math.max(0.15, sensitivity - 0.2), 55, 98));
+    if (mode === "thorough") spans = spans.concat(await runGliner(text, Math.max(0.15, sensitivity - 0.2), 55, 98, { ...GLINER_LABELS, ...extra }));
+    else if (Object.keys(extra).length) spans = spans.concat(await runGliner(text, Math.max(0.15, sensitivity - 0.2), 55, 98, extra));
     const versions: Record<string, string> = { rules: RULES_VERSION, "model manifest": MANIFEST.version };
     if (mode !== "rules") versions[SOURCE] = TOKEN_MODEL;
-    if (mode === "thorough") versions.gliner = "gliner-pii-base-v1.0";
+    if (mode === "thorough" || Object.keys(extra).length) versions.gliner = "gliner-pii-base-v1.0";
     post({ kind: "result", spans, ms: performance.now() - t0, versions, timings: stageMs });
   } catch (e) {
     post({ kind: "error", message: e instanceof Error ? e.message : String(e) });
