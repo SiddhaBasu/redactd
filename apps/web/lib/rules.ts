@@ -89,7 +89,25 @@ const SCHEMA_URL = new RegExp("^(?:" + spec.schema_url_pattern + ")", "i");
 export const personalUrl = (v: string) => !SCHEMA_URL.test(v + NL);
 /** A long token is only key-like if it mixes letters and digits. */
 export const mixedAlnum = (v: string) => hasDigit(v) && /[A-Za-z]/.test(v);
+/** US NPI: 10 digits, Luhn over "80840" + NPI. */
+export const npiOk = (v: string) => { const d = digitsOf(v).join(""); return d.length === 10 && luhn("80840" + d); };
+/** US DEA number: 2 letters + 7 digits; (d1+d3+d5) + 2*(d2+d4+d6) ends in d7. */
+export function deaOk(v: string): boolean {
+  if (v.length !== 9 || !/^[0-9]{7}$/.test(v.slice(2))) return false;
+  const d = Array.from(v.slice(2), Number);
+  return (d[0] + d[2] + d[4] + 2 * (d[1] + d[3] + d[5])) % 10 === d[6];
+}
+/** UK NHS number: 10 digits, mod-11 check digit. */
+export function nhsOk(v: string): boolean {
+  const d = digitsOf(v);
+  if (d.length !== 10) return false;
+  let c = 11 - d.slice(0, 9).reduce((a, x, i) => a + x * (10 - i), 0) % 11;
+  if (c === 10) return false;
+  if (c === 11) c = 0;
+  return c === d[9];
+}
 const VALIDATORS: Record<string, (v: string) => boolean | number> = {
+  npi: npiOk, dea: deaOk, nhs: nhsOk,
   coords, personal_url: personalUrl, mixed_alnum: mixedAlnum, luhn, aba, iban: ibanOk, iban_prefix: ibanPrefix, has_digit: hasDigit, org_shape: orgShape, masked_iban: maskedIban,
   digits_8_15: digitCount(8, 15), digits_9_15: digitCount(9, 15), digits_9_11: digitCount(9, 11),
 };

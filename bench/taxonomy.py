@@ -26,6 +26,7 @@ INDIRECT = {
     "occupation", "employment_status", "education_level", "age", "gender", "race_ethnicity",
     "religious_belief", "political_view", "sexuality", "language", "blood_type",
     "company", "company_name", "date", "time", "date_time",
+    "medical_condition", "medication",          # only in the synthetic medical set (Nemotron does not label them)
 }
 
 def tier(label: str):

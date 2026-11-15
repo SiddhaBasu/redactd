@@ -111,12 +111,14 @@ async def no_leak_validation(request: Request, exc: RequestValidationError):
 
 # ---------- schemas ----------
 Mode = Literal["rules", "standard", "thorough"]
-PiiTypeName = Literal["NAME", "CONTACT", "ADDRESS", "GOV_ID", "FIN_ID", "SECRET", "NETWORK", "DATE", "ORG", "DEMOGRAPHIC", "CUSTOM"]
+PiiTypeName = Literal["NAME", "CONTACT", "ADDRESS", "GOV_ID", "FIN_ID", "SECRET", "NETWORK", "DATE", "ORG", "DEMOGRAPHIC", "HEALTH", "CUSTOM"]
+DomainName = Literal["general", "medical"]
 
 class DetectIn(BaseModel):
     text: str = Field(..., max_length=settings.max_chars)
     mode: Mode = "thorough"
     sensitivity: float = Field(0.35, ge=0.05, le=0.95)
+    domain: DomainName = "general"          # document type: adds that domain's model labels (redactd/domains.py)
     org_allowlist: bool = True              # keep public bodies / regulators / card networks
     drop_nonpersonal_dates: bool = True     # keep "Q3 2025", "FY2024"
     keep_last4: bool = False
@@ -136,9 +138,9 @@ class RedactIn(DetectIn):
 def _run(body: DetectIn, progress=None):
     with run_slots:
         if getattr(body, "raw", False) and not isinstance(body, RedactIn):
-            spans, timings = pipeline.detect_raw(body.text, body.mode, body.sensitivity, progress)
+            spans, timings = pipeline.detect_raw(body.text, body.mode, body.sensitivity, progress, body.domain)
             timings["total_ms"] = sum(timings.values()); return spans, timings
-        return pipeline.detect(body.text, body.mode, body.sensitivity, body.options(), progress)
+        return pipeline.detect(body.text, body.mode, body.sensitivity, body.options(), progress, body.domain)
 
 def _render(text, spans, style):
     red, vault = do_redact(text, [(s.start, s.end, s.type) for s in spans], style=style)

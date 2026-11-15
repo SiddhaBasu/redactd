@@ -84,7 +84,7 @@
    "leak_check_failures": 0
   },
   "dev_nemotron_med": {
-   "char_precision": 63.782507834438974,
+   "char_precision": 63.78398176786586,
    "direct_r50": 99.90774907749078,
    "direct_r90": 99.81549815498155,
    "gold_direct_in_output": 1,
@@ -137,6 +137,15 @@
    "indirect_r90": 95.28130671506352,
    "leak_check_failures": 0
   },
+  "eval_medical_synthetic": {
+   "char_precision": 79.77106063316043,
+   "direct_r50": 100.0,
+   "direct_r90": 100.0,
+   "gold_direct_in_output": 0,
+   "indirect_r50": 90.58823529411765,
+   "indirect_r90": 59.411764705882355,
+   "leak_check_failures": 0
+  },
   "eval_nemotron_fin": {
    "char_precision": 76.21749896822121,
    "direct_r50": 99.92917847025495,
@@ -156,12 +165,12 @@
    "leak_check_failures": 0
   },
   "eval_nemotron_med": {
-   "char_precision": 61.45854657113613,
+   "char_precision": 61.46840624200563,
    "direct_r50": 100.0,
    "direct_r90": 100.0,
    "gold_direct_in_output": 1,
-   "indirect_r50": 94.76510067114094,
-   "indirect_r90": 93.28859060402685,
+   "indirect_r50": 94.8993288590604,
+   "indirect_r90": 93.42281879194631,
    "leak_check_failures": 0
   }
  },
@@ -227,6 +236,15 @@
    "gold_direct_in_output": 0,
    "indirect_r50": 97.67441860465117,
    "indirect_r90": 97.67441860465117,
+   "leak_check_failures": 0
+  },
+  "eval_medical_synthetic": {
+   "char_precision": 77.20430107526882,
+   "direct_r50": 100.0,
+   "direct_r90": 100.0,
+   "gold_direct_in_output": 0,
+   "indirect_r50": 97.33333333333333,
+   "indirect_r90": 80.66666666666667,
    "leak_check_failures": 0
   },
   "eval_nemotron_fin": {

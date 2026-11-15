@@ -1,7 +1,7 @@
 // Client for the redactd API (server mode). Text is sent over HTTPS, processed in memory and never stored.
 // Custom terms and allow-list terms are NOT sent: they are applied in the browser (lib/redact.ts applyTerms).
 import { convertOffsets } from "./redact.ts";
-import type { DetectMode, Options, Span } from "./types.ts";
+import type { DetectMode, Domain, Options, Span } from "./types.ts";
 
 export const API_BASE = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000").replace(/\/$/, "");
 /** Key the website sends to the API (set NEXT_PUBLIC_API_KEY in Vercel). It is part of the page code, so it is only
@@ -23,8 +23,8 @@ type Progress = (stage: string, pct: number) => void;
 
 /** The server returns raw (unmerged) findings; lib/redact.ts finalize() applies the policy in the browser. So the
  *  request carries only the text, the mode and the sensitivity: no custom terms, no allow-list, no preset. */
-function body(text: string, mode: DetectMode, o: Options) {
-  return JSON.stringify({ text, mode, sensitivity: o.sensitivity, raw: true });
+function body(text: string, mode: DetectMode, o: Options, domain: Domain) {
+  return JSON.stringify({ text, mode, sensitivity: o.sensitivity, raw: true, domain });
 }
 async function fail(r: Response): Promise<never> {
   let detail = `${r.status}`;
@@ -35,17 +35,17 @@ async function fail(r: Response): Promise<never> {
   throw new Error(`The server could not process this document (${detail}).`);
 }
 
-export async function detectOnServer(text: string, mode: DetectMode, o: Options, onProgress?: Progress, signal?: AbortSignal): Promise<DetectResult> {
+export async function detectOnServer(text: string, mode: DetectMode, o: Options, onProgress?: Progress, signal?: AbortSignal, domain: Domain = "general"): Promise<DetectResult> {
   const headers = { "Content-Type": "application/json", ...authHeaders() };
   let res: DetectResult;
   if (text.length <= SYNC_LIMIT / 4) {
     onProgress?.("Scanning on the server", 30);
-    const r = await fetch(`${API_BASE}/v1/detect`, { method: "POST", headers, body: body(text, mode, o), signal });
+    const r = await fetch(`${API_BASE}/v1/detect`, { method: "POST", headers, body: body(text, mode, o, domain), signal });
     if (!r.ok) await fail(r);
     res = (await r.json()) as DetectResult;
   } else {
     onProgress?.("Uploading", 2);
-    const r = await fetch(`${API_BASE}/v1/jobs`, { method: "POST", headers, body: body(text, mode, o), signal });
+    const r = await fetch(`${API_BASE}/v1/jobs`, { method: "POST", headers, body: body(text, mode, o, domain), signal });
     if (!r.ok) await fail(r);
     const { job_id } = (await r.json()) as { job_id: string };
     await followJob(job_id, onProgress, signal);

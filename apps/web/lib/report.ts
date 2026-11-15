@@ -6,20 +6,20 @@ import type { Options, OutputStyle, PiiType, ReviewSpan } from "./types.ts";
 export interface RedactionReport {
   tool: "redactd"; generated: string; document: { characters: number; extension: string };
   processing: { where: "server" | "device"; mode: string; seconds: number | null; versions: Record<string, string> };
-  policy: { preset: string; style: OutputStyle; reversible: boolean; keepLast4: boolean; excludedTypes: string[]; publicBodiesKept: boolean; reportingPeriodsKept: boolean; customTerms: number; allowTerms: number };
+  policy: { preset: string; documentType: string; style: OutputStyle; reversible: boolean; keepLast4: boolean; excludedTypes: string[]; publicBodiesKept: boolean; reportingPeriodsKept: boolean; customTerms: number; allowTerms: number };
   findings: { total: number; redacted: number; kept: number; byType: Record<string, { found: number; redacted: number; kept: number }>; addedByYou: number };
   leakCheck: { passed: boolean; valuesStillPresent: number };
 }
 
 export function buildReport(a: { chars: number; fileName: string; where: "server" | "device"; mode: string; ms: number | null; versions: Record<string, string>;
-  presetName: string; style: OutputStyle; options: Options; spans: ReviewSpan[]; leaks: number; now?: Date }): RedactionReport {
+  presetName: string; documentType?: string; style: OutputStyle; options: Options; spans: ReviewSpan[]; leaks: number; now?: Date }): RedactionReport {
   const byType: RedactionReport["findings"]["byType"] = {};
   for (const s of a.spans) { const x = (byType[s.type] ??= { found: 0, redacted: 0, kept: 0 }); x.found++; if (s.accepted) x.redacted++; else x.kept++; }
   const ext = /\.[A-Za-z0-9]{1,8}$/.exec(a.fileName)?.[0] ?? "";
   return {
     tool: "redactd", generated: (a.now ?? new Date()).toISOString(), document: { characters: a.chars, extension: ext },
     processing: { where: a.where, mode: a.mode, seconds: a.ms === null ? null : Math.round(a.ms / 100) / 10, versions: a.versions },
-    policy: { preset: a.presetName, style: a.style, reversible: a.style === "placeholder", keepLast4: a.options.keepLast4, excludedTypes: [...a.options.excludeTypes],
+    policy: { preset: a.presetName, documentType: a.documentType ?? "General", style: a.style, reversible: a.style === "placeholder", keepLast4: a.options.keepLast4, excludedTypes: [...a.options.excludeTypes],
       publicBodiesKept: a.options.orgAllowlist, reportingPeriodsKept: a.options.dropNonpersonalDates, customTerms: a.options.customTerms.length, allowTerms: a.options.allowTerms.length },
     findings: { total: a.spans.length, redacted: a.spans.filter((s) => s.accepted).length, kept: a.spans.filter((s) => !s.accepted).length, byType,
       addedByYou: a.spans.filter((s) => s.source === "manual" || s.source === "custom").length },
@@ -35,7 +35,7 @@ export function reportMarkdown(r: RedactionReport): string {
     "## Document", "", `- Characters: ${r.document.characters.toLocaleString("en")}`, `- File type: ${r.document.extension || "(pasted text)"}`, "",
     "## Processing", "", `- Where: ${r.processing.where === "device" ? "on this device (nothing uploaded)" : "redactd server (in memory, not stored)"}`,
     `- Mode: ${r.processing.mode}`, `- Time: ${r.processing.seconds ?? "n/a"} s`, `- Versions: ${Object.entries(r.processing.versions).map(([k, v]) => `${k} ${v}`).join(", ") || "n/a"}`, "",
-    "## Policy", "", `- Preset: ${r.policy.preset}`, `- Output: ${r.policy.style}${r.policy.reversible ? " (reversible with the restore key)" : " (not reversible)"}`,
+    "## Policy", "", `- Preset: ${r.policy.preset}`, `- Document type: ${r.policy.documentType}`, `- Output: ${r.policy.style}${r.policy.reversible ? " (reversible with the restore key)" : " (not reversible)"}`,
     `- Keep last 4 digits: ${r.policy.keepLast4 ? "yes" : "no"}`, `- Categories not redacted: ${r.policy.excludedTypes.join(", ") || "none"}`,
     `- Public bodies kept: ${r.policy.publicBodiesKept ? "yes" : "no"}`, `- Reporting periods kept: ${r.policy.reportingPeriodsKept ? "yes" : "no"}`,
     `- Custom terms: ${r.policy.customTerms}, allow-list terms: ${r.policy.allowTerms}`, "",

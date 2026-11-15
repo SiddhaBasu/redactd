@@ -1,0 +1,1628 @@
+{
+ "mode": "standard",
+ "sets": {
+  "dev_nemotron_med": {
+   "role": "dev",
+   "docs": 200,
+   "chars": 133076,
+   "raw": {
+    "char_precision": 64.98425327366152,
+    "direct_n": 1084,
+    "direct_r50": 99.90774907749078,
+    "direct_r90": 99.90774907749078,
+    "indirect_n": 495,
+    "indirect_r50": 95.35353535353535,
+    "indirect_r90": 94.54545454545455,
+    "by": {
+     "coarse": {
+      "NAME": {
+       "n": 488,
+       "r50": 99.79508196721312,
+       "r90": 99.79508196721312
+      },
+      "DEMOGRAPHIC": {
+       "n": 279,
+       "r50": 97.1326164874552,
+       "r90": 96.05734767025089
+      },
+      "DATE": {
+       "n": 220,
+       "r50": 97.27272727272727,
+       "r90": 97.27272727272727
+      },
+      "GOV_ID": {
+       "n": 303,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "ORG": {
+       "n": 41,
+       "r50": 100.0,
+       "r90": 97.5609756097561
+      },
+      "ADDRESS": {
+       "n": 77,
+       "r50": 88.31168831168831,
+       "r90": 88.31168831168831
+      },
+      "CONTACT": {
+       "n": 102,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "FIN_ID": {
+       "n": 56,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "SECRET": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "NETWORK": {
+       "n": 5,
+       "r50": 100.0,
+       "r90": 100.0
+      }
+     },
+     "label": {
+      "direct:first_name": {
+       "n": 310,
+       "r50": 99.6774193548387,
+       "r90": 99.6774193548387
+      },
+      "direct:last_name": {
+       "n": 175,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:age": {
+       "n": 26,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:date_of_birth": {
+       "n": 107,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:medical_record_number": {
+       "n": 172,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:blood_type": {
+       "n": 55,
+       "r50": 98.18181818181819,
+       "r90": 94.54545454545455
+      },
+      "indirect:date": {
+       "n": 86,
+       "r50": 96.51162790697674,
+       "r90": 96.51162790697674
+      },
+      "indirect:occupation": {
+       "n": 83,
+       "r50": 93.97590361445783,
+       "r90": 92.7710843373494
+      },
+      "indirect:company_name": {
+       "n": 41,
+       "r50": 100.0,
+       "r90": 97.5609756097561
+      },
+      "direct:street_address": {
+       "n": 15,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:tax_id": {
+       "n": 2,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:email": {
+       "n": 49,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:ssn": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:gender": {
+       "n": 50,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:religious_belief": {
+       "n": 10,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:health_plan_beneficiary_number": {
+       "n": 78,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:phone_number": {
+       "n": 38,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:certificate_license_number": {
+       "n": 25,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:state": {
+       "n": 12,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:race_ethnicity": {
+       "n": 14,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:county": {
+       "n": 24,
+       "r50": 62.5,
+       "r90": 62.5
+      },
+      "indirect:country": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:biometric_identifier": {
+       "n": 19,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:employee_id": {
+       "n": 14,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:pin": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:fax_number": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:time": {
+       "n": 15,
+       "r50": 86.66666666666667,
+       "r90": 86.66666666666667
+      },
+      "direct:password": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:unique_id": {
+       "n": 10,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:date_time": {
+       "n": 12,
+       "r50": 91.66666666666667,
+       "r90": 91.66666666666667
+      },
+      "direct:device_identifier": {
+       "n": 5,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:city": {
+       "n": 14,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:language": {
+       "n": 12,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:url": {
+       "n": 9,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:customer_id": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:credit_debit_card": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:cvv": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:bank_routing_number": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:swift_bic": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:education_level": {
+       "n": 6,
+       "r50": 83.33333333333333,
+       "r90": 83.33333333333333
+      },
+      "indirect:employment_status": {
+       "n": 14,
+       "r50": 92.85714285714286,
+       "r90": 92.85714285714286
+      },
+      "indirect:sexuality": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:postcode": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:political_view": {
+       "n": 2,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:user_name": {
+       "n": 3,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:account_number": {
+       "n": 1,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:http_cookie": {
+       "n": 2,
+       "r50": 100.0,
+       "r90": 100.0
+      }
+     },
+     "doctype": {
+      "Heart Disease Management Plan": {
+       "n": 17,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "BIC Code Document": {
+       "n": 3,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Rehabilitation Plan": {
+       "n": 9,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Advance Directive": {
+       "n": 34,
+       "r50": 73.52941176470588,
+       "r90": 73.52941176470588
+      },
+      "COPD Management Plan": {
+       "n": 13,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Behavioral Health Plan": {
+       "n": 12,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Medical Blood Test Results": {
+       "n": 20,
+       "r50": 100.0,
+       "r90": 95.0
+      },
+      "Healthcare Provider Information": {
+       "n": 9,
+       "r50": 100.0,
+       "r90": 88.88888888888889
+      },
+      "Healthcare Provider License": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Wellness Plan": {
+       "n": 39,
+       "r50": 97.43589743589743,
+       "r90": 97.43589743589743
+      },
+      "Medical Certificate": {
+       "n": 44,
+       "r50": 95.45454545454545,
+       "r90": 95.45454545454545
+      },
+      "Health Questionnaire": {
+       "n": 33,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Insurance Enrollment Form": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Medication Refill Request": {
+       "n": 19,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Chronic Disease Management Plan": {
+       "n": 37,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Medical Research Data": {
+       "n": 16,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "school biometric access profile": {
+       "n": 32,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Allergy Information": {
+       "n": 22,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Medical Diagnosis": {
+       "n": 18,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Emergency Information Form": {
+       "n": 43,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Health Assessment Form": {
+       "n": 8,
+       "r50": 87.5,
+       "r90": 87.5
+      },
+      "Living Will": {
+       "n": 11,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Health Card": {
+       "n": 20,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Healthcare Benefits Summary": {
+       "n": 33,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Insurance Claim Form": {
+       "n": 17,
+       "r50": 94.11764705882354,
+       "r90": 94.11764705882354
+      },
+      "Age Verification": {
+       "n": 35,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Arthritis Management Plan": {
+       "n": 24,
+       "r50": 95.83333333333333,
+       "r90": 95.83333333333333
+      },
+      "Lab Report": {
+       "n": 21,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Healthcare Provider Contract": {
+       "n": 13,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Referral Letter": {
+       "n": 33,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Screening Results": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Family Medical History": {
+       "n": 15,
+       "r50": 93.33333333333333,
+       "r90": 93.33333333333333
+      },
+      "blood donor registration form": {
+       "n": 6,
+       "r50": 83.33333333333333,
+       "r90": 83.33333333333333
+      },
+      "Healthcare Facility Information": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Insurance Coverage Letter": {
+       "n": 13,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "customer payment worksheet": {
+       "n": 19,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Patient Consent Form": {
+       "n": 9,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Health Insurance Card": {
+       "n": 47,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Health Screening Form": {
+       "n": 23,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Debit Card Information": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Vaccination Record": {
+       "n": 11,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "SWIFT Code Document": {
+       "n": 24,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Mental Health Assessment": {
+       "n": 13,
+       "r50": 92.3076923076923,
+       "r90": 92.3076923076923
+      },
+      "Imaging Report": {
+       "n": 5,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Alzheimer's Care Plan": {
+       "n": 24,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Therapy Progress Notes": {
+       "n": 32,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Prescription": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "End-of-Life Care Plan": {
+       "n": 18,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Immunization Record": {
+       "n": 33,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Respite Care Plan": {
+       "n": 30,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Allergy List": {
+       "n": 14,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Health Assessment": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Counseling Notes": {
+       "n": 14,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Healthcare Proxy Form": {
+       "n": 33,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "PIN reset request": {
+       "n": 10,
+       "r50": 70.0,
+       "r90": 70.0
+      },
+      "Credit Card Information": {
+       "n": 19,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Healthcare Provider Agreement": {
+       "n": 22,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Disability Certificate": {
+       "n": 18,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Blood Type Record": {
+       "n": 17,
+       "r50": 100.0,
+       "r90": 94.11764705882354
+      },
+      "lab specimen label": {
+       "n": 22,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "blood test report": {
+       "n": 13,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Health History Form": {
+       "n": 17,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Health Insurance Application": {
+       "n": 5,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "patient intake form": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Telehealth Consent Form": {
+       "n": 22,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Discharge Summary": {
+       "n": 24,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Health Screening Report": {
+       "n": 13,
+       "r50": 92.3076923076923,
+       "r90": 84.61538461538461
+      },
+      "Fitness Prescription": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Medical Record": {
+       "n": 15,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Care Coordination Plan": {
+       "n": 33,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Medication List": {
+       "n": 15,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Substance Abuse Treatment Plan": {
+       "n": 26,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Palliative Care Plan": {
+       "n": 27,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Medical Appointment Schedule": {
+       "n": 16,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Emergency Contact Information": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Patient Education Materials": {
+       "n": 5,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Health Insurance Plan": {
+       "n": 3,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Treatment Plan": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Diabetes Management Plan": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Surgical Record": {
+       "n": 28,
+       "r50": 92.85714285714286,
+       "r90": 92.85714285714286
+      },
+      "Diet Plan": {
+       "n": 13,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Remote Monitoring Consent Form": {
+       "n": 10,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Health Education Brochure": {
+       "n": 16,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Employment Contract": {
+       "n": 33,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "organ donor eligibility form": {
+       "n": 5,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "genetic study intake form": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Medical History": {
+       "n": 9,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Cancer Screening Report": {
+       "n": 10,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Nutritional Assessment": {
+       "n": 14,
+       "r50": 100.0,
+       "r90": 100.0
+      }
+     },
+     "tpl": {}
+    },
+    "precision_by_pred": {
+     "NAME": {
+      "pred_chars": 3260,
+      "precision": 90.70552147239263
+     },
+     "tier:direct": {
+      "pred_chars": 11314,
+      "precision": 92.5490542690472
+     },
+     "DEMOGRAPHIC": {
+      "pred_chars": 8980,
+      "precision": 24.37639198218263
+     },
+     "tier:indirect": {
+      "pred_chars": 12818,
+      "precision": 40.65376813855516
+     },
+     "DATE": {
+      "pred_chars": 2657,
+      "precision": 84.00451637184796
+     },
+     "CONTACT": {
+      "pred_chars": 3371,
+      "precision": 97.98279442301988
+     },
+     "ORG": {
+      "pred_chars": 1181,
+      "precision": 66.89246401354784
+     },
+     "SECRET": {
+      "pred_chars": 518,
+      "precision": 68.33976833976834
+     },
+     "ADDRESS": {
+      "pred_chars": 976,
+      "precision": 76.02459016393442
+     },
+     "GOV_ID": {
+      "pred_chars": 2580,
+      "precision": 98.9922480620155
+     },
+     "FIN_ID": {
+      "pred_chars": 561,
+      "precision": 91.44385026737967
+     },
+     "NETWORK": {
+      "pred_chars": 48,
+      "precision": 100.0
+     }
+    }
+   },
+   "policy": {
+    "char_precision": 64.98425327366152,
+    "direct_n": 1084,
+    "direct_r50": 99.90774907749078,
+    "direct_r90": 99.90774907749078,
+    "indirect_n": 484,
+    "indirect_r50": 97.52066115702479,
+    "indirect_r90": 96.69421487603306,
+    "by": {
+     "coarse": {
+      "NAME": {
+       "n": 488,
+       "r50": 99.79508196721312,
+       "r90": 99.79508196721312
+      },
+      "DEMOGRAPHIC": {
+       "n": 277,
+       "r50": 97.83393501805054,
+       "r90": 96.75090252707581
+      },
+      "DATE": {
+       "n": 220,
+       "r50": 97.27272727272727,
+       "r90": 97.27272727272727
+      },
+      "GOV_ID": {
+       "n": 303,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "ORG": {
+       "n": 41,
+       "r50": 100.0,
+       "r90": 97.5609756097561
+      },
+      "ADDRESS": {
+       "n": 68,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "CONTACT": {
+       "n": 102,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "FIN_ID": {
+       "n": 56,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "SECRET": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "NETWORK": {
+       "n": 5,
+       "r50": 100.0,
+       "r90": 100.0
+      }
+     },
+     "label": {
+      "direct:first_name": {
+       "n": 310,
+       "r50": 99.6774193548387,
+       "r90": 99.6774193548387
+      },
+      "direct:last_name": {
+       "n": 175,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:age": {
+       "n": 26,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:date_of_birth": {
+       "n": 107,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:medical_record_number": {
+       "n": 172,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:blood_type": {
+       "n": 55,
+       "r50": 98.18181818181819,
+       "r90": 94.54545454545455
+      },
+      "indirect:date": {
+       "n": 86,
+       "r50": 96.51162790697674,
+       "r90": 96.51162790697674
+      },
+      "indirect:occupation": {
+       "n": 82,
+       "r50": 95.1219512195122,
+       "r90": 93.90243902439025
+      },
+      "indirect:company_name": {
+       "n": 41,
+       "r50": 100.0,
+       "r90": 97.5609756097561
+      },
+      "direct:street_address": {
+       "n": 15,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:tax_id": {
+       "n": 2,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:email": {
+       "n": 49,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:ssn": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:gender": {
+       "n": 50,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:religious_belief": {
+       "n": 10,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:health_plan_beneficiary_number": {
+       "n": 78,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:phone_number": {
+       "n": 38,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:certificate_license_number": {
+       "n": 25,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:state": {
+       "n": 12,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:race_ethnicity": {
+       "n": 14,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:county": {
+       "n": 15,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:country": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:biometric_identifier": {
+       "n": 19,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:employee_id": {
+       "n": 14,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:pin": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:fax_number": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:time": {
+       "n": 15,
+       "r50": 86.66666666666667,
+       "r90": 86.66666666666667
+      },
+      "direct:password": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:unique_id": {
+       "n": 10,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:date_time": {
+       "n": 12,
+       "r50": 91.66666666666667,
+       "r90": 91.66666666666667
+      },
+      "direct:device_identifier": {
+       "n": 5,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:city": {
+       "n": 14,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:language": {
+       "n": 12,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:url": {
+       "n": 9,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:customer_id": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:credit_debit_card": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:cvv": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:bank_routing_number": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:swift_bic": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:education_level": {
+       "n": 6,
+       "r50": 83.33333333333333,
+       "r90": 83.33333333333333
+      },
+      "indirect:sexuality": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:postcode": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:employment_status": {
+       "n": 13,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "indirect:political_view": {
+       "n": 2,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:user_name": {
+       "n": 3,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:account_number": {
+       "n": 1,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "direct:http_cookie": {
+       "n": 2,
+       "r50": 100.0,
+       "r90": 100.0
+      }
+     },
+     "doctype": {
+      "Heart Disease Management Plan": {
+       "n": 17,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "BIC Code Document": {
+       "n": 3,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Rehabilitation Plan": {
+       "n": 9,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Advance Directive": {
+       "n": 25,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "COPD Management Plan": {
+       "n": 13,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Behavioral Health Plan": {
+       "n": 12,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Medical Blood Test Results": {
+       "n": 20,
+       "r50": 100.0,
+       "r90": 95.0
+      },
+      "Healthcare Provider Information": {
+       "n": 9,
+       "r50": 100.0,
+       "r90": 88.88888888888889
+      },
+      "Healthcare Provider License": {
+       "n": 8,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Wellness Plan": {
+       "n": 39,
+       "r50": 97.43589743589743,
+       "r90": 97.43589743589743
+      },
+      "Medical Certificate": {
+       "n": 43,
+       "r50": 97.67441860465117,
+       "r90": 97.67441860465117
+      },
+      "Health Questionnaire": {
+       "n": 33,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Insurance Enrollment Form": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Medication Refill Request": {
+       "n": 19,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Chronic Disease Management Plan": {
+       "n": 37,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Medical Research Data": {
+       "n": 16,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "school biometric access profile": {
+       "n": 32,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Allergy Information": {
+       "n": 22,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Medical Diagnosis": {
+       "n": 18,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Emergency Information Form": {
+       "n": 43,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Health Assessment Form": {
+       "n": 8,
+       "r50": 87.5,
+       "r90": 87.5
+      },
+      "Living Will": {
+       "n": 11,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Health Card": {
+       "n": 20,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Healthcare Benefits Summary": {
+       "n": 33,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Insurance Claim Form": {
+       "n": 17,
+       "r50": 94.11764705882354,
+       "r90": 94.11764705882354
+      },
+      "Age Verification": {
+       "n": 35,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Arthritis Management Plan": {
+       "n": 24,
+       "r50": 95.83333333333333,
+       "r90": 95.83333333333333
+      },
+      "Lab Report": {
+       "n": 21,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Healthcare Provider Contract": {
+       "n": 13,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Referral Letter": {
+       "n": 33,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Screening Results": {
+       "n": 4,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Family Medical History": {
+       "n": 14,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "blood donor registration form": {
+       "n": 6,
+       "r50": 83.33333333333333,
+       "r90": 83.33333333333333
+      },
+      "Healthcare Facility Information": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Insurance Coverage Letter": {
+       "n": 13,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "customer payment worksheet": {
+       "n": 19,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Patient Consent Form": {
+       "n": 9,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Health Insurance Card": {
+       "n": 47,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Health Screening Form": {
+       "n": 23,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Debit Card Information": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Vaccination Record": {
+       "n": 11,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "SWIFT Code Document": {
+       "n": 24,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Mental Health Assessment": {
+       "n": 13,
+       "r50": 92.3076923076923,
+       "r90": 92.3076923076923
+      },
+      "Imaging Report": {
+       "n": 5,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Alzheimer's Care Plan": {
+       "n": 24,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Therapy Progress Notes": {
+       "n": 32,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Prescription": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "End-of-Life Care Plan": {
+       "n": 18,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Immunization Record": {
+       "n": 33,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Respite Care Plan": {
+       "n": 30,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Allergy List": {
+       "n": 14,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Health Assessment": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Counseling Notes": {
+       "n": 14,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Healthcare Proxy Form": {
+       "n": 33,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "PIN reset request": {
+       "n": 10,
+       "r50": 70.0,
+       "r90": 70.0
+      },
+      "Credit Card Information": {
+       "n": 19,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Healthcare Provider Agreement": {
+       "n": 22,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Disability Certificate": {
+       "n": 18,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Blood Type Record": {
+       "n": 17,
+       "r50": 100.0,
+       "r90": 94.11764705882354
+      },
+      "lab specimen label": {
+       "n": 22,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "blood test report": {
+       "n": 13,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Health History Form": {
+       "n": 17,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Health Insurance Application": {
+       "n": 5,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "patient intake form": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Telehealth Consent Form": {
+       "n": 22,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Discharge Summary": {
+       "n": 24,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Health Screening Report": {
+       "n": 13,
+       "r50": 92.3076923076923,
+       "r90": 84.61538461538461
+      },
+      "Fitness Prescription": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Medical Record": {
+       "n": 15,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Care Coordination Plan": {
+       "n": 33,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Medication List": {
+       "n": 15,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Substance Abuse Treatment Plan": {
+       "n": 26,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Palliative Care Plan": {
+       "n": 27,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Medical Appointment Schedule": {
+       "n": 16,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Emergency Contact Information": {
+       "n": 7,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Patient Education Materials": {
+       "n": 5,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Health Insurance Plan": {
+       "n": 3,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Treatment Plan": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Diabetes Management Plan": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Surgical Record": {
+       "n": 28,
+       "r50": 92.85714285714286,
+       "r90": 92.85714285714286
+      },
+      "Diet Plan": {
+       "n": 13,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Remote Monitoring Consent Form": {
+       "n": 10,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Health Education Brochure": {
+       "n": 16,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Employment Contract": {
+       "n": 33,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "organ donor eligibility form": {
+       "n": 5,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "genetic study intake form": {
+       "n": 6,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Medical History": {
+       "n": 9,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Cancer Screening Report": {
+       "n": 10,
+       "r50": 100.0,
+       "r90": 100.0
+      },
+      "Nutritional Assessment": {
+       "n": 14,
+       "r50": 100.0,
+       "r90": 100.0
+      }
+     },
+     "tpl": {}
+    },
+    "precision_by_pred": {
+     "NAME": {
+      "pred_chars": 3260,
+      "precision": 90.70552147239263
+     },
+     "tier:direct": {
+      "pred_chars": 11314,
+      "precision": 92.5490542690472
+     },
+     "DEMOGRAPHIC": {
+      "pred_chars": 8980,
+      "precision": 24.37639198218263
+     },
+     "tier:indirect": {
+      "pred_chars": 12818,
+      "precision": 40.65376813855516
+     },
+     "DATE": {
+      "pred_chars": 2657,
+      "precision": 84.00451637184796
+     },
+     "CONTACT": {
+      "pred_chars": 3371,
+      "precision": 97.98279442301988
+     },
+     "ORG": {
+      "pred_chars": 1181,
+      "precision": 66.89246401354784
+     },
+     "SECRET": {
+      "pred_chars": 518,
+      "precision": 68.33976833976834
+     },
+     "ADDRESS": {
+      "pred_chars": 976,
+      "precision": 76.02459016393442
+     },
+     "GOV_ID": {
+      "pred_chars": 2580,
+      "precision": 98.9922480620155
+     },
+     "FIN_ID": {
+      "pred_chars": 561,
+      "precision": 91.44385026737967
+     },
+     "NETWORK": {
+      "pred_chars": 48,
+      "precision": 100.0
+     }
+    }
+   },
+   "latency_ms": {
+    "p50": 42.66114400002152,
+    "p95": 183.2962830001179,
+    "p99": 576.195430000098,
+    "mean": 70.14259668999784,
+    "per_1k_chars": 105.41735052150327,
+    "stage_share": {
+     "rules_ms": 0.008899115080623543,
+     "distilled_ms": 0.9823845920553279,
+     "finalize_ms": 0.008632684325636136
+    }
+   },
+   "wall_s": 4.975548267364502,
+   "leak_check_failures": 0,
+   "gold_direct_in_output": 1,
+   "gold_direct_values": 863,
+   "docs_with_gold_direct_in_output": 1
+  }
+ },
+ "generated": "2026-11-14 23:42 UTC",
+ "limit": 0,
+ "total_wall_s": 5.996297836303711,
+ "workers": 3,
+ "threads_per_worker": 1
+}

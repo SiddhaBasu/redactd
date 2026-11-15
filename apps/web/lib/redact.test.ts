@@ -122,3 +122,13 @@ test("leak check ignores our own placeholders; partial digit findings are widene
   const out = render(u, fin).output;
   assert.ok(!/4471|7788|5566/.test(out), out); assert.deepEqual(leakCheck(out, fin.map((s) => u.slice(s.start, s.end))), []);
 });
+
+test("medical checksums match the Python rules", async () => {
+  const { npiOk, deaOk, nhsOk } = await import("./rules.ts");
+  assert.ok(npiOk("1234567893") && !npiOk("1234567894"));
+  assert.ok(deaOk("AS1234563") && !deaOk("AS1234564"));
+  assert.ok(nhsOk("943 476 5919") && !nhsOk("943 476 5918"));
+  const t = "Blood type: O positive. NHS number 943 476 5919. MRN: 00123456";
+  const got = detectRules(t).map((s) => [t.slice(s.start, s.end), s.type]);
+  for (const [v, ty] of [["O positive", "HEALTH"], ["943 476 5919", "GOV_ID"], ["00123456", "GOV_ID"]]) assert.ok(got.some(([a, b]) => a === v && b === ty), v);
+});

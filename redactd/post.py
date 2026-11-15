@@ -112,6 +112,7 @@ def occurrences_many(text: str, values: list[str]) -> list[tuple[int, int, int]]
     return out
 
 # ---------------------------------------------------------------- merge
+_SPECIFIC = {"HEALTH": 1}      # tie-break between equally long model findings (mirrored in redact.ts)
 def merge_spans(text: str, spans: list[Span]) -> list[Span]:
     """Union overlapping spans. Type: a rule covering at least half of the union wins (validated patterns beat model
     guesses); otherwise the longest member. Provenance (sources, why, max model score) is kept for the review UI."""
@@ -126,9 +127,9 @@ def merge_spans(text: str, spans: list[Span]) -> list[Span]:
         best = None
         for x in g:  # first longest rule member that covers >= half
             if x.source == "rules" and 2 * (x.end - x.start) >= (b - a) and (best is None or x.end - x.start > best.end - best.start): best = x
-        if best is None:
+        if best is None:   # longest model finding; on equal length the more specific category wins (Health info over Demographics)
             for x in g:
-                if best is None or x.end - x.start > best.end - best.start: best = x
+                if best is None or (x.end - x.start, _SPECIFIC.get(x.type, 0)) > (best.end - best.start, _SPECIFIC.get(best.type, 0)): best = x
         scores = [x.score for x in g if x.score is not None]
         sources, why = [], []
         for x in g:
