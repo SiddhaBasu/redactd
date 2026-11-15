@@ -5,7 +5,7 @@ import { DEFAULT_OPTIONS, type Domain, type Options, type OutputStyle, type PiiT
 
 export interface Preset { id: string; name: string; summary: string; style: OutputStyle; options: Partial<Options> }
 export const PRESETS: Preset[] = [
-  { id: "standard", name: "Standard", summary: "Reversible placeholders. Redacts every category; keeps public bodies and reporting periods.",
+  { id: "standard", name: "Default", summary: "Reversible placeholders. Redacts every category; keeps public bodies and reporting periods.",
     style: "placeholder", options: { excludeTypes: [], orgAllowlist: true, dropNonpersonalDates: true } },
   { id: "llm", name: "Share with LLM", summary: "Reversible placeholders. Keeps organisations and dates so the text still makes sense to a model.",
     style: "placeholder", options: { excludeTypes: ["ORG", "DATE"], orgAllowlist: true, dropNonpersonalDates: true } },

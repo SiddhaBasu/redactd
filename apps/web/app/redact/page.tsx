@@ -61,7 +61,8 @@ export default function RedactPage() {
   const [hidden, setHidden] = useState<Set<PiiType>>(new Set());
   const [below, setBelow] = useState(0.7);
   const [filterOn, setFilterOn] = useState(false);
-  const [view, setView] = useState<"review" | "diff">("review");
+  const [view, setView] = useState<"review" | "diff" | "output">("review");
+  const [editing, setEditing] = useState(false);      // after a scan the input collapses to one line until "Edit text"
   const [addType, setAddType] = useState<PiiType>("NAME");
   const [search, setSearch] = useState<string | null>(null);
   const [help, setHelp] = useState(false);
@@ -126,7 +127,7 @@ export default function RedactPage() {
     const doc = text, t0 = performance.now(), opts = optionsFor(policy);
     const done = (raw: Span[], versions: Record<string, string>) => {
       setScan({ raw, ms: performance.now() - t0, versions: { ...versions, "rules (browser)": RULES_VERSION }, where, mode, domain: policy.domain });
-      apply(raw, doc, policy); setProgress(null);
+      apply(raw, doc, policy); setProgress(null); setEditing(false);
       setAnnounce("Scan complete. Review the findings."); setTimeout(() => viewer.current?.focus(), 50);
     };
     setProgress({ stage: where === "server" ? "Sending" : "Starting", pct: 1 });
@@ -407,7 +408,16 @@ export default function RedactPage() {
       {announcer}
       <section className="space-y-3" aria-labelledby="h-input">
         <h2 id="h-input" className="sr-only">Add a document</h2>
-        {dropZone}
+        {scanned && !editing
+          ? <div className="card flex flex-wrap items-center gap-x-3 gap-y-1 px-3 py-2 text-sm" data-testid="doc-bar">
+              <span className="font-medium">{fileName}</span>
+              <span className="muted">· {text.length.toLocaleString("en")} characters</span>
+              <span className="ml-auto flex gap-1">
+                <button type="button" className="btn btn-ghost btn-sm" onClick={() => setEditing(true)}>Edit text</button>
+                <button type="button" className="btn btn-ghost btn-sm" onClick={() => { resetDoc("", "document.txt"); setEditing(false); }}>New document</button>
+              </span>
+            </div>
+          : dropZone}
         {attachAlert}
         <div className="flex flex-wrap items-center gap-3">
           <button type="button" className="btn btn-ghost btn-sm" aria-expanded={showOptions} onClick={() => setShowOptions((v) => !v)}>
@@ -427,7 +437,7 @@ export default function RedactPage() {
             <span className="sr-only" data-testid="summary">{accepted.length} of {spans.length} findings will be redacted</span>
             <div className="ml-auto flex flex-wrap items-center gap-2">
               <button type="button" className="btn btn-sm" onClick={() => dispatch({ type: "undo" })} disabled={!review.past.length}>Undo</button>
-              <button type="button" className="btn btn-sm" aria-pressed={view === "diff"} onClick={() => setView(view === "diff" ? "review" : "diff")}>Compare</button>
+              <Segmented label="Show" value={view} onChange={setView} options={[{ id: "review", label: "Original" }, { id: "output", label: "Redacted" }, { id: "diff", label: "Side by side" }]} />
               {search === null && <button type="button" className="btn btn-sm" onClick={openSearch}>Find &amp; redact</button>}
               <button type="button" className="btn btn-sm" aria-pressed={showDetails} onClick={() => setShowDetails((v) => !v)}>Details</button>
               <button type="button" className="btn btn-ghost btn-sm" onClick={() => setHelp(true)} aria-label="Keyboard shortcuts">?</button>

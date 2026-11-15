@@ -35,6 +35,9 @@ const MODEL_ONLY = ["Priya", "Raman", "Okafor", "Boise"];   // names and places 
 
   // 2. keyboard-only review: focus the viewer with Tab-reachable focus(), then drive everything from the keyboard
   await p.getByTestId("viewer").focus();
+  assert.equal(await p.getByTestId("popover").count(), 0, "no detail card until the user asks for one");
+  assert.equal(await p.getByTestId("doc-bar").count(), 1, "the input collapses to one line after a scan");
+  await p.keyboard.press("j");                       // select the first finding
   const focusedText = () => p.locator("mark[data-focus='1']").first().innerText();
   const first = await focusedText();
   await p.keyboard.press("j"); const second = await focusedText();
@@ -56,6 +59,9 @@ const MODEL_ONLY = ["Priya", "Raman", "Okafor", "Boise"];   // names and places 
   await p.keyboard.press("?"); await p.getByRole("dialog", { name: "Keyboard shortcuts" }).waitFor();
   await p.keyboard.press("Escape"); await p.getByRole("dialog").waitFor({ state: "detached" });
   await p.keyboard.press("d"); await p.getByText("Redacted output", { exact: true }).waitFor(); await p.keyboard.press("d");
+  await p.getByRole("group", { name: "Show" }).getByRole("button", { name: "Redacted" }).click();
+  assert.match(await p.getByTestId("viewer").innerText(), /\[[A-Z_]+_1\]/, "Redacted view shows placeholders");
+  await p.getByRole("group", { name: "Show" }).getByRole("button", { name: "Original" }).click();
   step("keyboard review: j/k, x, u/U, a/A, / search, ? overlay, d diff");
 
   // 3. presets change the output without rescanning
